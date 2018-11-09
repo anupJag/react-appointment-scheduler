@@ -1,7 +1,7 @@
 @import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
 .Header{
-    height: 15%;
+    height: 20%;
     background: $ms-color-themePrimary;
     display: flex;
     flex-direction: row;
@@ -24,7 +24,7 @@
         height: 100%;
         background-position: center;
         background-size: contain;
-        margin-right: 2px;
+        margin-right: 10px;
     }
 }
 
