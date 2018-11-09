@@ -1,10 +1,11 @@
 import * as React from 'react';
-
+import styles from './Header.module.scss';
 
 const header = (props) => {
     return(
-        <header>
-            
+        <header className={styles.Header}>
+            <div className={styles.LeftLogo}></div>
+            <div className={styles.RightLogo}></div>
         </header>
     );
 };
