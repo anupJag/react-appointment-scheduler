@@ -1,0 +1,13 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "react-appointment-scheduler-client-side-solution",
+    "id": "198d9eba-077d-4d43-a013-32ffc60ade8d",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "isDomainIsolated": false
+  },
+  "paths": {
+    "zippedPackage": "solution/react-appointment-scheduler.sppkg"
+  }
+}
