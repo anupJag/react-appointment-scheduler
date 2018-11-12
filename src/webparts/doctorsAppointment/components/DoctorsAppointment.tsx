@@ -8,6 +8,7 @@ import Header from './Header/Header';
 import TopicSelection from './TopicSelection/TopicSelection';
 import Footer from './Footer/Footer';
 import DaysOfWeek from './DaysOfWeek/DaysOfWeek';
+import TrainerCalender from './TrainerCalender/TrainerCalender';
 import TrainingSelection from './TypeSelectionHolder/TrainingTypeSelection';
 import { IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 
@@ -104,7 +105,16 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
   }
 
   public render(): React.ReactElement<IDoctorsAppointmentProps> {
-    const trainingModuleRendering : JSX.Element = this.state.trainingType ? <div /> : <TrainingSelection />;
+    const trainingModuleRendering : JSX.Element = this.state.trainingType ? 
+    <TrainerCalender 
+      daysOfWeek={this.daysArray}
+      months={this.monthArray}
+      trainingType={this.state.trainingType}
+      startDate={this.state.firstDayOfWeek}
+      endDate={this.state.lastDayOfWeek}
+    /> 
+    :
+    <TrainingSelection />;
 
     let currentWeekStringValue: string;
 
