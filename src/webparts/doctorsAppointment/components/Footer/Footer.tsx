@@ -1,10 +1,11 @@
 import * as React from 'react';
 import styles from './Footer.module.scss';
+
 const footer = (props) => {
-    return(
+    return (
         <footer className={styles.Footer}>
             <span className={styles.FooterText}>
-                 &copy; 2018 Mars, Incorporated and its Affiliates. All Rights Reserved
+                MARS Inc |  myAnalytics | Doctor's Appointment
             </span>
         </footer>
     );

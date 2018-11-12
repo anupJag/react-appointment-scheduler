@@ -1,15 +1,19 @@
 @import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
+
+@font-face{
+  font-family: 'Roboto';
+  src: url('/jQuery/fonts/Roboto/Roboto-Thin.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-size : 14px;
+}
+
 .doctorsAppointment {
   height: 500px;
+  font-family: 'Roboto';
   @include ms-Grid-row;
   
-  .container {
-    max-width: 700px;
-    margin: 0px auto;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
-  }
-
   .row {
     @include ms-Grid-row;
     @include ms-fontColor-white;

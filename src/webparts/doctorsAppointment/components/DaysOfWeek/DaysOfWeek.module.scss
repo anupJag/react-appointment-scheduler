@@ -1,0 +1,13 @@
+@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
+
+.DaysOfWeek{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border: 1px solid #ccc;
+    font-size: 1.2em;
+    font-weight: 700;
+    box-sizing: border-box;
+    align-items: center;
+}
