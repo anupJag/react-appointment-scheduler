@@ -1,0 +1,12 @@
+.TrainingType{
+    width: 100%;
+    height: 42%;
+    box-sizing: border-box;
+    display: flex;
+
+    .TrainingTypeInfo{
+        margin: auto;
+        font-size: 2em;
+        font-weight: bold;
+    }
+}

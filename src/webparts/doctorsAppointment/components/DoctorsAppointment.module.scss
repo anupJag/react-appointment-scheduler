@@ -13,6 +13,8 @@
   height: 500px;
   font-family: 'Roboto';
   @include ms-Grid-row;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
   
   .row {
     @include ms-Grid-row;
