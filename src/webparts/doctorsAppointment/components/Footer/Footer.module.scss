@@ -1,7 +1,7 @@
 @import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
 .Footer{
-    height: 10%;
+    height: 6%;
     width: 100%;
     box-sizing: border-box;
     background: $ms-color-themePrimary;
@@ -12,9 +12,10 @@
     bottom:0;
 
         .FooterText{
-            padding: 12px;
+            margin-left: 12px;
             color: $ms-color-white;
             align-self: center;
             font-family: 'Roboto';
+            font-weight: bold;
         }
 }
