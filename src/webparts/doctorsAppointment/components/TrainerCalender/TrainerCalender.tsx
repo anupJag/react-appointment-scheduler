@@ -38,7 +38,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         };
     }
 
-    public componentWillMount(){
+    public componentWillMount() {
         this.showSpinner();
     }
 
@@ -57,7 +57,8 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         this.setState({
             startDate: currentStartDate,
             endDate: currentEndDate,
-        });
+            showSpinner: true
+        }, this.showSpinner);
     }
 
     protected onTrainingRegisterClickHandler = (index: number): void => {
@@ -73,44 +74,44 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
     protected onDismissClickHandler = (): void => {
         this.setState({
             isRegisterPanelOpen: false
-        }, this.render);
+        });
     }
 
     protected showSpinner = async () => {
         console.log("Timeout started");
-        
+
         await setTimeout(() => {
             this.setState({
                 showSpinner: false
             });
-        }, 7000);
+        }, 5000);
 
         console.log("Timeout completed");
     }
 
     public render(): React.ReactElement<ITrainerCalenderProps> {
-        const showSpinner : JSX.Element = this.state.showSpinner ? <Spinner size={SpinnerSize.large}>Please wait while we get data..</Spinner> : <div />;
-    
+        const trainingData: any = this.props.daysOfWeek.map((day: string, index: number) => {
+            let temp = new Date(this.state.startDate.toUTCString());
+            let tempVar = new Date(this.state.startDate.toUTCString());
+            const tempDateParser = new Date(temp.setDate(tempVar.getDate() + index));
+            let date: string = `${this.props.months[tempDateParser.getMonth()]} ${tempDateParser.getDate()}, ${tempDateParser.getFullYear()}`;
+            temp = tempVar = null;
+
+            return (
+                <TrainingDay
+                    day={day}
+                    date={date}
+                    key={index}
+                    onRegisterButtonClicked={this.onTrainingRegisterClickHandler.bind(this, index)}
+                />
+            );
+        });
+        
+        const showSpinner: JSX.Element = this.state.showSpinner ? <Spinner size={SpinnerSize.large} label="Please wait while we get data.." style={{margin: "auto"}}/> : <div />;
+
         return (
             <div className={styles.TrainerCalender}>
-                {
-                    this.props.daysOfWeek.map((day: string, index: number) => {
-                        let temp = new Date(this.state.startDate.toUTCString());
-                        let tempVar = new Date(this.state.startDate.toUTCString());
-                        const tempDateParser = new Date(temp.setDate(tempVar.getDate() + index));
-                        let date: string = `${this.props.months[tempDateParser.getMonth()]} ${tempDateParser.getDate()}, ${tempDateParser.getFullYear()}`;
-                        temp = tempVar = null;
-
-                        return (
-                            <TrainingDay
-                                day={day}
-                                date={date}
-                                key={index}
-                                onRegisterButtonClicked={this.onTrainingRegisterClickHandler.bind(this, index)}
-                            />
-                        );
-                    })
-                }
+                {!this.state.showSpinner ? trainingData : null}
                 <RegisterPanel
                     isPanelOpen={this.state.isRegisterPanelOpen}
                     registrationDate={this.state.registrationDate}
