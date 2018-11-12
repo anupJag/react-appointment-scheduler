@@ -7,10 +7,12 @@ import Header from './Header/Header';
 import TopicSelection from './TopicSelection/TopicSelection';
 import Footer from './Footer/Footer';
 import DaysOfWeek from './DaysOfWeek/DaysOfWeek';
+import { IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 
 export interface IDoctorsAppointmentState {
   firstDayOfWeek: Date;
   lastDayOfWeek: Date;
+  trainingType: string;
 }
 
 export default class DoctorsAppointment extends React.Component<IDoctorsAppointmentProps, IDoctorsAppointmentState> {
@@ -24,7 +26,8 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
     super(props);
     this.state = {
       firstDayOfWeek: undefined,
-      lastDayOfWeek: undefined
+      lastDayOfWeek: undefined,
+      trainingType: ""
     };
   }
 
@@ -88,6 +91,15 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
     });
   }
 
+  /**
+   * Method which handles change in Training Option Selection
+   */
+  protected getTopicSelectionDropDownChangeHandler = (item: IDropdownOption) => {
+    let selectedKey = item.key as string;
+    this.setState({
+      trainingType : selectedKey
+    });
+  }
 
   public render(): React.ReactElement<IDoctorsAppointmentProps> {
     let currentWeekStringValue: string;
@@ -122,7 +134,10 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
     return (
       <div className={styles.doctorsAppointment}>
         <Header />
-        <TopicSelection />
+        <TopicSelection 
+          onDropDownChange={this.getTopicSelectionDropDownChangeHandler.bind(this)}
+          topicLabel={"I need help on:"}
+        />
         <DaysOfWeek
           currentWeek={currentWeekStringValue}
           nextButtonClick={this.getNextWeekClickHandler.bind(this)}
