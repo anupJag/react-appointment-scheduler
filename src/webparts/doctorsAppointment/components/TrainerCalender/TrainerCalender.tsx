@@ -2,6 +2,7 @@ import * as React from 'react';
 import TrainingDay from './TrainingDay/TrainingDay';
 import styles from './TrainerCalender.module.scss';
 import RegisterPanel from './RegisterPanel/RegisterPanel';
+import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 
 export interface ITrainerCalenderProps {
     startDate: Date;
@@ -17,6 +18,7 @@ export interface ITrainerCalenderState {
     trainingType: string;
     isRegisterPanelOpen: boolean;
     registrationDate: string;
+    showSpinner: boolean;
 }
 
 export default class TrainerCalender extends React.Component<ITrainerCalenderProps, ITrainerCalenderState>{
@@ -31,8 +33,13 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             endDate: props.endDate,
             trainingType: props.trainingType,
             isRegisterPanelOpen: false,
-            registrationDate: ""
+            registrationDate: "",
+            showSpinner: true
         };
+    }
+
+    public componentWillMount(){
+        this.showSpinner();
     }
 
     public componentWillReceiveProps(nextProps: ITrainerCalenderProps) {
@@ -54,7 +61,6 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
     }
 
     protected onTrainingRegisterClickHandler = (index: number): void => {
-        debugger;
         let currentStartDate: Date = new Date(this.state.startDate.toUTCString());
         const dateToBeRegistered: Date = new Date(currentStartDate.setDate(currentStartDate.getDate() + index));
 
@@ -70,7 +76,21 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         }, this.render);
     }
 
+    protected showSpinner = async () => {
+        console.log("Timeout started");
+        
+        await setTimeout(() => {
+            this.setState({
+                showSpinner: false
+            });
+        }, 7000);
+
+        console.log("Timeout completed");
+    }
+
     public render(): React.ReactElement<ITrainerCalenderProps> {
+        const showSpinner : JSX.Element = this.state.showSpinner ? <Spinner size={SpinnerSize.large}>Please wait while we get data..</Spinner> : <div />;
+    
         return (
             <div className={styles.TrainerCalender}>
                 {
@@ -96,6 +116,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                     registrationDate={this.state.registrationDate}
                     onDismissClick={this.onDismissClickHandler.bind(this)}
                 />
+                {showSpinner}
             </div>
         );
     }
