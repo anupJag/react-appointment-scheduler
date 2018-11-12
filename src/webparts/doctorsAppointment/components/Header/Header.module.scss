@@ -1,21 +1,30 @@
 @import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
 .Header{
-    height: 10%;
+    height: 20%;
     background: $ms-color-themePrimary;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 
     .LeftLogo{
-        background-image:url("https://team.effem.com/sites/myAnalytics/SiteAssets/__sitelogo__Picture1.png");
-        width:20%;
-        background-repeat:no-repeat;
+        background-image: url("https://team.effem.com/sites/myAnalytics/SiteAssets/__sitelogo__Picture1.png");
+        width: 32%;
+        background-repeat: no-repeat;
+        background-position: center;
+        height: 100%;
+        background-size: contain;
+        margin: 2px 0px;
     }
+
     .RightLogo{
         background-image:url("https://team.effem.com/sites/myAnalytics/SiteAssets/__sitelogo__Logo1.jpg");
         width:20%;
         background-repeat:no-repeat;
+        height: 100%;
+        background-position: center;
+        background-size: contain;
+        margin-right: 10px;
     }
 }
 
