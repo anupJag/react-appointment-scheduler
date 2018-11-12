@@ -1,0 +1,14 @@
+@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
+.Footer{
+    height: 10%;
+    background: $ms-color-themePrimary;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+        .FooterText{
+            position: absolute;
+            left: 1%;
+            bottom:3%;
+            color:blue;
+        }
+}
