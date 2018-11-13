@@ -5,7 +5,7 @@ const footer = (props) => {
     return (
         <footer className={styles.Footer}>
             <span className={styles.FooterText}>
-                MARS Inc |  myAnalytics | Doctor's Appointment
+                MARS Inc  |   myAnalytics  |  Doctor's Appointment
             </span>
         </footer>
     );

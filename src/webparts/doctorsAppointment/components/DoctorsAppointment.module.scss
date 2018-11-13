@@ -3,16 +3,20 @@
 
 @font-face{
   font-family: 'Roboto';
-  src: url('/jQuery/fonts/Roboto/Roboto-Thin.ttf') format('truetype');
+  //src: url('/jQuery/fonts/Roboto/Roboto-Thin.ttf') format('truetype');
+  src: url('https://publiccdn.sharepointonline.com/myadmo365.sharepoint.com/CDN/Fonts/Roboto/Roboto-Thin.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-size : 14px;
 }
 
 .doctorsAppointment {
-  height: 500px;
+  height: 100vh;
   font-family: 'Roboto';
   @include ms-Grid-row;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  position: relative;
   
   .row {
     @include ms-Grid-row;

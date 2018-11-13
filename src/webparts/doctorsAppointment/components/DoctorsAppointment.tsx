@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styles from './DoctorsAppointment.module.scss';
+import * as strings from 'DoctorsAppointmentWebPartStrings';
 import { IDoctorsAppointmentProps } from './IDoctorsAppointmentProps';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { CommandBarButton, IButtonProps } from 'office-ui-fabric-react/lib/Button';
@@ -7,6 +8,8 @@ import Header from './Header/Header';
 import TopicSelection from './TopicSelection/TopicSelection';
 import Footer from './Footer/Footer';
 import DaysOfWeek from './DaysOfWeek/DaysOfWeek';
+import TrainerCalender from './TrainerCalender/TrainerCalender';
+import TrainingSelection from './TypeSelectionHolder/TrainingTypeSelection';
 import { IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 
 export interface IDoctorsAppointmentState {
@@ -102,6 +105,17 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
   }
 
   public render(): React.ReactElement<IDoctorsAppointmentProps> {
+    const trainingModuleRendering : JSX.Element = this.state.trainingType ? 
+    <TrainerCalender 
+      daysOfWeek={this.daysArray}
+      months={this.monthArray}
+      trainingType={this.state.trainingType}
+      startDate={this.state.firstDayOfWeek}
+      endDate={this.state.lastDayOfWeek}
+    /> 
+    :
+    <TrainingSelection />;
+
     let currentWeekStringValue: string;
 
     if (this.state.firstDayOfWeek && this.state.lastDayOfWeek) {
@@ -136,13 +150,14 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
         <Header />
         <TopicSelection 
           onDropDownChange={this.getTopicSelectionDropDownChangeHandler.bind(this)}
-          topicLabel={"I need help on:"}
+          topicLabel={strings.TopicSelectionHeaderTrainer}
         />
         <DaysOfWeek
           currentWeek={currentWeekStringValue}
           nextButtonClick={this.getNextWeekClickHandler.bind(this)}
           previousButtonClick={this.getPreviousWeekClickHandler.bind(this)}
         />
+        {trainingModuleRendering}
         <Footer />
       </div>
     );
