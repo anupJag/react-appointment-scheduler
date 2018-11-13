@@ -84,7 +84,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             this.setState({
                 showSpinner: false
             });
-        }, 5000);
+        }, 1000);
 
         console.log("Timeout completed");
     }

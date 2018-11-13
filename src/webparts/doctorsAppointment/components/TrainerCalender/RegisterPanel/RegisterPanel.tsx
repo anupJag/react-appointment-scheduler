@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { PrimaryButton, DefaultButton } from 'office-ui-fabric-react/lib/Button';
-import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
+import { Panel, PanelType, } from 'office-ui-fabric-react/lib/Panel';
+import RegistrationPortal from './RegistrationPortal/RegistrationPortal';
 
 export interface IRegisterPanelProps {
     isPanelOpen: boolean;
@@ -14,13 +15,12 @@ const registerPanel = (props: IRegisterPanelProps) => {
         <div>
             <Panel
                 isOpen={props.isPanelOpen}
-                type={PanelType.large}
+                type={PanelType.medium}
                 headerText={"Register your availability"}
                 onDismiss={props.onDismissClick}
+                
             >
-                <div>
-                    Registration For {props.registrationDate}
-                </div>
+                <RegistrationPortal />
             </Panel>
         </div>
     );
