@@ -7,6 +7,12 @@ export interface IRegisterPanelProps {
     isPanelOpen: boolean;
     onDismissClick: () => void;
     registrationDate: string;
+    timeOfDay: string[];
+    sessionNameFieldOnBlur: (event: any) => void;
+    sessionDescFieldOnBlur: (event: any) => void;
+    sessionName: string;
+    sessionDate: string;
+    onCheckboxChangeEvent: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
 }
 
 
@@ -18,9 +24,16 @@ const registerPanel = (props: IRegisterPanelProps) => {
                 type={PanelType.medium}
                 headerText={"Register your availability"}
                 onDismiss={props.onDismissClick}
-                
+
             >
-                <RegistrationPortal />
+                <RegistrationPortal
+                    timeOfDay={props.timeOfDay}
+                    sessionDescFieldOnBlur={props.sessionDescFieldOnBlur.bind(this)}
+                    sessionNameFieldOnBlur={props.sessionNameFieldOnBlur.bind(this)}
+                    sessionDate={props.sessionDate}
+                    sessionName={props.sessionName}
+                    onCheckboxChangeEvent={props.onCheckboxChangeEvent.bind(this)}
+                />
             </Panel>
         </div>
     );

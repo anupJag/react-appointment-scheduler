@@ -1,26 +1,44 @@
 import * as React from 'react';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import styles from './RegistrationPortal.module.scss';
+import LeftSection from './LeftSection/LeftSection';
+import RightSection from './RightSection/RightSection';
 
-const registrationPortal = (props) => {
-    return(
+
+export interface IRegistrationPortalProps {
+    timeOfDay: string[];
+    sessionName: string;
+    sessionDate: string;
+    sessionNameFieldOnBlur: (event: any) => void;
+    sessionDescFieldOnBlur: (event: any) => void;
+    onCheckboxChangeEvent: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
+}
+
+const registrationPortal = (props: IRegistrationPortalProps) => {
+    return (
         <div className={styles.RegistrationPortal}>
             <div className={styles.HeaderContainer}>
                 <header className={styles.Header}>
                     <div>
-                        Session on Power BI
+                        Session on {props.sessionName}
                     </div>
                     <div>
-                        Session date: Nov 10, 2018
+                        Session date: {props.sessionDate}
                     </div>
                 </header>
             </div>
             <div className={styles.BodyContainer}>
                 <div className={styles.LeftContainer}>
-                    Left DIV 50% width
+                    <LeftSection 
+                        sessionNameFieldOnBlur={props.sessionNameFieldOnBlur.bind(this)}
+                        sessionDescFieldOnBlur={props.sessionDescFieldOnBlur.bind(this)}
+                    />
                 </div>
                 <div className={styles.RightContainer}>
-                    Right DIV 50% width
+                    <RightSection
+                        timeOfDay={props.timeOfDay}
+                        onCheckboxChangeEvent={props.onCheckboxChangeEvent.bind(this)}
+                    />
                 </div>
             </div>
         </div>

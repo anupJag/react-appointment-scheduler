@@ -2,27 +2,12 @@ import * as React from 'react';
 import TrainingDay from './TrainingDay/TrainingDay';
 import styles from './TrainerCalender.module.scss';
 import RegisterPanel from './RegisterPanel/RegisterPanel';
+import { ITrainerCalenderProps, ITrainerCalenderState, ITrainerData, TrainerRegistrationStatus } from './ITrainerCalender';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
-
-export interface ITrainerCalenderProps {
-    startDate: Date;
-    endDate: Date;
-    trainingType: string;
-    daysOfWeek: string[];
-    months: string[];
-}
-
-export interface ITrainerCalenderState {
-    startDate: Date;
-    endDate: Date;
-    trainingType: string;
-    isRegisterPanelOpen: boolean;
-    registrationDate: string;
-    showSpinner: boolean;
-}
+import { escape, findIndex, find, assign } from '@microsoft/sp-lodash-subset';
 
 export default class TrainerCalender extends React.Component<ITrainerCalenderProps, ITrainerCalenderState>{
-
+    private timeOfDay: string[] = ["09:00 - 09:45", "09:45 - 10:30", "10:30 - 11:15", "11:15 - 12:00", "13:00 - 13:45", "13:45 - 14:30", "14:30 - 15:15", "15:15 - 16:00", "16:00 - 16:45", "16:45 - 17:30", "17:30 - 18:15"];
     /**
      *Default Constructor
      */
@@ -34,7 +19,9 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             trainingType: props.trainingType,
             isRegisterPanelOpen: false,
             registrationDate: "",
-            showSpinner: true
+            showSpinner: true,
+            sessionName: "",
+            sessionDesc: ""
         };
     }
 
@@ -89,6 +76,25 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         console.log("Timeout completed");
     }
 
+    protected sessionNameOnBlurHandler = (event: any): void => {
+        let tempSessionName: string = escape(event.target.value);
+        this.setState({
+            sessionName: tempSessionName
+        });
+    }
+
+    protected sessionDescOnBlurHandler = (event: any): void => {
+        let tempSessionDesc: string = escape(event.target.value);
+        this.setState({
+            sessionDesc: tempSessionDesc
+        });
+    }
+
+    protected onSessionScheduleChangeEventHandler = (key: any, ev: React.FormEvent<HTMLElement>, isChecked: boolean): void =>{
+        console.log(`${this.timeOfDay[key]} selected`);
+    }
+
+
     public render(): React.ReactElement<ITrainerCalenderProps> {
         const trainingData: any = this.props.daysOfWeek.map((day: string, index: number) => {
             let temp = new Date(this.state.startDate.toUTCString());
@@ -106,8 +112,10 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                 />
             );
         });
-        
-        const showSpinner: JSX.Element = this.state.showSpinner ? <Spinner size={SpinnerSize.large} label="Please wait while we get data.." style={{margin: "auto"}}/> : <div />;
+
+        const showSpinner: JSX.Element = this.state.showSpinner ? <Spinner size={SpinnerSize.large} label="Please wait while we get data.." style={{ margin: "auto" }} /> : <div />;
+        const tempSelectedDate : Date = new Date(this.state.registrationDate);
+        let selectedDate: string = `${this.props.months[tempSelectedDate.getMonth()]} ${tempSelectedDate.getDate()}, ${tempSelectedDate.getFullYear()}`;
 
         return (
             <div className={styles.TrainerCalender}>
@@ -116,6 +124,12 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                     isPanelOpen={this.state.isRegisterPanelOpen}
                     registrationDate={this.state.registrationDate}
                     onDismissClick={this.onDismissClickHandler.bind(this)}
+                    timeOfDay={this.timeOfDay}
+                    sessionName={this.state.trainingType}
+                    sessionDate={selectedDate}
+                    sessionDescFieldOnBlur={this.sessionDescOnBlurHandler.bind(this)}
+                    sessionNameFieldOnBlur={this.sessionNameOnBlurHandler.bind(this)}
+                    onCheckboxChangeEvent={this.onSessionScheduleChangeEventHandler.bind(this)}
                 />
                 {showSpinner}
             </div>

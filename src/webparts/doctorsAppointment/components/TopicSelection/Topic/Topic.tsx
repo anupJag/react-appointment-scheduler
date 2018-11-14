@@ -10,11 +10,11 @@ export interface ITopicProps {
 const topic = (props: ITopicProps) => {
     const dropDownOption: IDropdownOption[] = [
         {
-            key: "tableau",
+            key: "Tableau",
             text: "Tableau"
         },
         {
-            key: "powerbi",
+            key: "Power BI",
             text: "Power BI"
         }
     ];
