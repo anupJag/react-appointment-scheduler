@@ -10,7 +10,7 @@ export interface ILeftSectionProps {
 const leftSection = (props: ILeftSectionProps) => {
     return (
         <div className={styles.LeftSection}>
-            <div>
+            <div className={styles.TextFieldSection}>
                 <TextField
                     label={"Session Name"}
                     ariaLabel={"Session Name"}
@@ -18,7 +18,7 @@ const leftSection = (props: ILeftSectionProps) => {
                     onBlur={props.sessionNameFieldOnBlur}
                 />
             </div>
-            <div>
+            <div className={styles.TextMultiLineFieldSection}>
                 <TextField
                     label={"Session Information"}
                     ariaLabel={"Session Name"}

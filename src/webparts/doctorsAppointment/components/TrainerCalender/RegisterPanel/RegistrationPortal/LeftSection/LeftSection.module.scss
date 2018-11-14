@@ -1,3 +1,17 @@
 .LeftSection{
     width: 95%;
+
+    .TextFieldSection{
+
+        div[class^="ms-TextField-fieldGroup fieldGroup_"] input{
+            font-weight: bold;
+        }
+    }
+
+    .TextMultiLineFieldSection{
+
+        div[class^="ms-TextField-fieldGroup fieldGroup_"] textarea{
+            font-weight: bold;
+        }
+    }
 }

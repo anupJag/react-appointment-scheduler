@@ -8,6 +8,7 @@ export interface ITopicProps {
 }
 
 const topic = (props: ITopicProps) => {
+
     const dropDownOption: IDropdownOption[] = [
         {
             key: "Tableau",
@@ -28,6 +29,7 @@ const topic = (props: ITopicProps) => {
                     placeHolder={"Select a training"}
                     className={styles.TopicDropDown}
                     onChanged={props.onDropDownChange}
+
                 />
             </div>
         </div>

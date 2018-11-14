@@ -22,9 +22,7 @@ const registerPanel = (props: IRegisterPanelProps) => {
             <Panel
                 isOpen={props.isPanelOpen}
                 type={PanelType.medium}
-                headerText={"Register your availability"}
                 onDismiss={props.onDismissClick}
-
             >
                 <RegistrationPortal
                     timeOfDay={props.timeOfDay}
