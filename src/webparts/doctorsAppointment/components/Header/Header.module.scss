@@ -1,11 +1,14 @@
 @import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
 .Header{
-    height: 20%;
+    /* Commented on 15 Nov 2018 By Sandesh
+    height: 20%;*/
+    height : 10%;
     background: $ms-color-themePrimary;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    color: #fff;
 
     .LeftLogo{
         background-image: url("https://team.effem.com/sites/myAnalytics/SiteAssets/__sitelogo__Picture1.png");
@@ -25,6 +28,14 @@
         background-position: center;
         background-size: contain;
         margin-right: 10px;
+    }
+    .HeaderContent{
+        text-align: center;
+        width: 100%;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: bold;
+        line-height: 2.5em;
     }
 }
 

@@ -3,7 +3,7 @@ define([], function() {
     "PropertyPaneDescription": "Description",
     "BasicGroupName": "Group Name",
     "DescriptionFieldLabel": "Description Field",
-    "TopicSelectionHeaderTrainer" : "I'm available to provide training session on:",
-    "TopicSelectionHeaderTrainee" : "I need help in:"
+    "TopicSelectionHeaderTrainer" : "Choose a tool you are going to provide consultancy:",
+    "TopicSelectionHeaderTrainee" : "I am booking the slot with the Doctor on:"
   }
 });

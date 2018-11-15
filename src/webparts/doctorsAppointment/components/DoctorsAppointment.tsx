@@ -157,7 +157,7 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
           nextButtonClick={this.getNextWeekClickHandler.bind(this)}
           previousButtonClick={this.getPreviousWeekClickHandler.bind(this)}
         />
-        {trainingModuleRendering}
+        {trainingModuleRendering}        
         <Footer />
       </div>
     );

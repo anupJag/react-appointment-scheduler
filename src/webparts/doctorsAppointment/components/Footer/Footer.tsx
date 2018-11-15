@@ -5,7 +5,7 @@ const footer = (props) => {
     return (
         <footer className={styles.Footer}>
             <span className={styles.FooterText}>
-                MARS Inc  |   myAnalytics  |  Doctor's Appointment
+                Please do not forget to inform Doctor by email/Skype in case you cannot attend the meeting
             </span>
         </footer>
     );
