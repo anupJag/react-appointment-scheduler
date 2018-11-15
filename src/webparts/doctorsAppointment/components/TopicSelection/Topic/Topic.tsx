@@ -5,26 +5,17 @@ import styles from './Topic.module.scss';
 export interface ITopicProps {
     onDropDownChange: (item: IDropdownOption) => void;
     topicLabel: string;
+    topicDropDownOptions : IDropdownOption[];
 }
 
 const topic = (props: ITopicProps) => {
 
-    const dropDownOption: IDropdownOption[] = [
-        {
-            key: "Tableau",
-            text: "Tableau"
-        },
-        {
-            key: "Power BI",
-            text: "Power BI"
-        }
-    ];
     return (
         <div className={styles.Topic}>
             <div className={styles.TopicContainer}>
                 <div className={styles.TopicLabel}>{props.topicLabel}</div>
                 <Dropdown
-                    options={dropDownOption}
+                    options={props.topicDropDownOptions}
                     ariaLabel={"Select training dropdown session"}
                     placeHolder={"Select a training"}
                     className={styles.TopicDropDown}

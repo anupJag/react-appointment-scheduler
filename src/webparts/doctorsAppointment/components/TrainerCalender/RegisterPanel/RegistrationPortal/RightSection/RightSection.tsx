@@ -2,9 +2,10 @@ import * as React from 'react';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { Checkbox, ICheckboxProps, ICheckboxStyles } from 'office-ui-fabric-react/lib/Checkbox';
 import styles from './RightSection.module.scss';
+import { ITrainingSlots } from '../../../ITrainerCalender';
 
 export interface IRightSectionProps {
-    timeOfDay: string[];
+    timeOfDay: ITrainingSlots[];
     onCheckboxChangeEvent: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
 }
 
@@ -25,12 +26,13 @@ const rightSection = (props: IRightSectionProps) => {
             </div>
             <div className={styles.SessionCheckSection}>
                 {
-                    props.timeOfDay.map((el: string, index: number) =>
+                    props.timeOfDay.map((el: ITrainingSlots) =>
                         <Checkbox
-                            label={el}
-                            key={index}
+                            label={el.Label}
+                            key={el.Id}
+                            checked={el.isChecked}
                             styles={checkBoxStyle}
-                            onChange={props.onCheckboxChangeEvent.bind(this, index)}
+                            onChange={props.onCheckboxChangeEvent.bind(this, el.Id)}
                         />
                     )
                 }

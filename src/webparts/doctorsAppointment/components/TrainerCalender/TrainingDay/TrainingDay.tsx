@@ -1,6 +1,7 @@
 import * as React from 'react';
 import TrainingInfo from './TrainingInfo/TrainingInfo';
 import styles from './TrainingDay.module.scss';
+import TrainingDataInfo from './TrainingDataInfo/TrainingDataInfo';
 
 export interface ITrainingDay {
     day: string;
@@ -18,7 +19,7 @@ const trainingDay = (props: ITrainingDay) => {
                 day={props.day}
                 onRegisterButtonClicked={props.onRegisterButtonClicked.bind(this, props.key)}
             />
-            <div>Training Data</div>
+            <TrainingDataInfo />
         </div>
     );
 };

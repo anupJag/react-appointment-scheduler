@@ -2,12 +2,14 @@ import * as React from 'react';
 import TrainingDay from './TrainingDay/TrainingDay';
 import styles from './TrainerCalender.module.scss';
 import RegisterPanel from './RegisterPanel/RegisterPanel';
-import { ITrainerCalenderProps, ITrainerCalenderState, ITrainerData, TrainerRegistrationStatus } from './ITrainerCalender';
+import { ITrainerCalenderProps, ITrainerCalenderState, ITrainerData, TrainerRegistrationStatus, ITrainingSlots } from './ITrainerCalender';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { escape, findIndex, find, assign } from '@microsoft/sp-lodash-subset';
+import pnp, { Web } from 'sp-pnp-js';
 
 export default class TrainerCalender extends React.Component<ITrainerCalenderProps, ITrainerCalenderState>{
-    private timeOfDay: string[] = ["09:00 - 09:45", "09:45 - 10:30", "10:30 - 11:15", "11:15 - 12:00", "13:00 - 13:45", "13:45 - 14:30", "14:30 - 15:15", "15:15 - 16:00", "16:00 - 16:45", "16:45 - 17:30", "17:30 - 18:15"];
+   
+   
     /**
      *Default Constructor
      */
@@ -21,31 +23,43 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             registrationDate: "",
             showSpinner: true,
             sessionName: "",
-            sessionDesc: ""
+            sessionDesc: "",
+            trainingSlots: undefined,
+            selectedTraininigSlots: []
         };
     }
 
-    public componentWillMount() {
-        this.showSpinner();
+    public componentDidMount() {
+        this.getTrainingSlots().then(() => {
+            this.setState({
+                showSpinner: false
+            });
+        });
     }
 
     public componentWillReceiveProps(nextProps: ITrainerCalenderProps) {
-        let currentStartDate = this.state.startDate;
-        let currentEndDate = this.state.endDate;
+        let tempStartDate = this.state.startDate;
+        let tempEndDate = this.state.endDate;
+        let tempTrainingType = this.state.trainingType;
 
         if (nextProps.startDate != this.props.startDate) {
-            currentStartDate = nextProps.startDate;
+            tempStartDate = nextProps.startDate;
         }
 
         if (nextProps.endDate != this.props.endDate) {
-            currentEndDate = nextProps.endDate;
+            tempEndDate = nextProps.endDate;
+        }
+
+        if (nextProps.trainingType != this.props.trainingType) {
+            tempTrainingType = nextProps.trainingType;
         }
 
         this.setState({
-            startDate: currentStartDate,
-            endDate: currentEndDate,
-            showSpinner: true
-        }, this.showSpinner);
+            startDate: tempStartDate,
+            endDate: tempEndDate,
+            showSpinner: true,
+            trainingType: tempTrainingType
+        });
     }
 
     protected onTrainingRegisterClickHandler = (index: number): void => {
@@ -64,16 +78,15 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         });
     }
 
-    protected showSpinner = async () => {
-        console.log("Timeout started");
+    protected createItemCreationDataStructure = () => {
+        
+    }
 
-        await setTimeout(() => {
-            this.setState({
-                showSpinner: false
-            });
-        }, 1000);
-
-        console.log("Timeout completed");
+    protected onSaveClickHandler = (): void => {
+        console.log("Data needs to be saved here");
+        this.setState({
+            isRegisterPanelOpen: false
+        });
     }
 
     protected sessionNameOnBlurHandler = (event: any): void => {
@@ -90,8 +103,69 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         });
     }
 
-    protected onSessionScheduleChangeEventHandler = (key: any, ev: React.FormEvent<HTMLElement>, isChecked: boolean): void =>{
-        console.log(`${this.timeOfDay[key]} selected`);
+    protected getTrainingSlots = async () => {
+        let web = new Web(this.props.siteURL);
+        let trainingSlotsGUID: string = this.props.trainingSlotsListGUID;
+        let trainingSlotsCollection: ITrainingSlots[] = [];
+
+        if (web && trainingSlotsGUID) {
+            const data = await web.lists.getById(trainingSlotsGUID).items.select("Id", "Title").usingCaching({
+                expiration: pnp.util.dateAdd(new Date, "minute", 60),
+                key: trainingSlotsGUID,
+                storeName: "local"
+            }).configure({
+                headers: {
+                    'Accept': 'application/json;odata=nometadata',
+                    'odata-version': ''
+                }
+            }).get().then(p => p).catch((error: any) => error);
+
+            if (data) {
+                if (!data.status) {
+                    data.forEach(element => {
+                        trainingSlotsCollection.push({
+                            Id: element["Id"],
+                            Label: element["Title"],
+                            isChecked: false
+                        })
+                    });
+                }
+            }
+
+            this.setState({
+                trainingSlots: trainingSlotsCollection
+            });
+        }
+    }
+
+
+    protected onSessionScheduleChangeEventHandler = (key: any, ev: React.FormEvent<HTMLElement>, isChecked: boolean): void => {
+        let tempTrainingSlots: ITrainingSlots[] = [...this.state.trainingSlots];
+        let tempSelectedTrainingSlots: string[] = [...this.state.selectedTraininigSlots];
+        for (let i = 0; i < tempTrainingSlots.length; i++) {
+            if (tempTrainingSlots[i]["Id"] === key) {
+                tempTrainingSlots[i]["isChecked"] = isChecked;
+            }
+        }
+
+        if (isChecked === true) {
+            let conditionCheck = tempTrainingSlots.filter(el => el.Id === key);
+            if (conditionCheck && conditionCheck.length > 0) {
+                tempSelectedTrainingSlots.push(conditionCheck[0]["Id"]);
+            }
+        }
+        else {
+            tempSelectedTrainingSlots.splice(findIndex(tempSelectedTrainingSlots, el => {
+                return el === key;
+            }), 1);
+        }
+
+        tempSelectedTrainingSlots.sort();
+
+        this.setState({
+            trainingSlots: tempTrainingSlots,
+            selectedTraininigSlots: tempSelectedTrainingSlots
+        });
     }
 
 
@@ -114,7 +188,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         });
 
         const showSpinner: JSX.Element = this.state.showSpinner ? <Spinner size={SpinnerSize.large} label="Please wait while we get data.." style={{ margin: "auto" }} /> : <div />;
-        const tempSelectedDate : Date = new Date(this.state.registrationDate);
+        const tempSelectedDate: Date = new Date(this.state.registrationDate);
         let selectedDate: string = `${this.props.months[tempSelectedDate.getMonth()]} ${tempSelectedDate.getDate()}, ${tempSelectedDate.getFullYear()}`;
 
         return (
@@ -124,12 +198,14 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                     isPanelOpen={this.state.isRegisterPanelOpen}
                     registrationDate={this.state.registrationDate}
                     onDismissClick={this.onDismissClickHandler.bind(this)}
-                    timeOfDay={this.timeOfDay}
+                    timeOfDay={this.state.trainingSlots}
                     sessionName={this.state.trainingType}
                     sessionDate={selectedDate}
                     sessionDescFieldOnBlur={this.sessionDescOnBlurHandler.bind(this)}
                     sessionNameFieldOnBlur={this.sessionNameOnBlurHandler.bind(this)}
                     onCheckboxChangeEvent={this.onSessionScheduleChangeEventHandler.bind(this)}
+                    onSaveClick={this.onSaveClickHandler.bind(this)}
+                    primaryButtonText={this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 1 ? "Reserve Slots" : "Reserve Slot"}
                 />
                 {showSpinner}
             </div>

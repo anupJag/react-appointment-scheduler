@@ -7,6 +7,7 @@ import { IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 export interface ITopicSelectionProps{
     onDropDownChange: (item: IDropdownOption) => void;
     topicLabel: string;
+    topicDropDownOptions : IDropdownOption[];
 }
 
 const topicSelection = (props : ITopicSelectionProps) => {
@@ -15,6 +16,7 @@ const topicSelection = (props : ITopicSelectionProps) => {
             <Topic 
                 topicLabel={props.topicLabel}
                 onDropDownChange={props.onDropDownChange.bind(this)}
+                topicDropDownOptions={props.topicDropDownOptions}
             />
             <TopicLabel />
         </div>

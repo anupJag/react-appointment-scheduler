@@ -4,6 +4,8 @@ export interface ITrainerCalenderProps {
     trainingType: string;
     daysOfWeek: string[];
     months: string[];
+    siteURL: string;
+    trainingSlotsListGUID : string;
 }
 
 export interface ITrainerCalenderState {
@@ -15,6 +17,8 @@ export interface ITrainerCalenderState {
     showSpinner: boolean;
     sessionName: string;
     sessionDesc: string;
+    trainingSlots: ITrainingSlots[];
+    selectedTraininigSlots: string[];
 }
 
 export interface ITrainerData {
@@ -26,7 +30,13 @@ export interface ITrainerData {
     TrainingInfo: string;
 }
 
-export enum TrainerRegistrationStatus{
+export enum TrainerRegistrationStatus {
     Booked = "Booked",
     Cancelled = "Cancelled"
+}
+
+export interface ITrainingSlots {
+    Id: string;
+    Label: string;
+    isChecked: boolean;
 }

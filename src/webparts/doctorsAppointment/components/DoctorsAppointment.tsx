@@ -11,11 +11,16 @@ import DaysOfWeek from './DaysOfWeek/DaysOfWeek';
 import TrainerCalender from './TrainerCalender/TrainerCalender';
 import TrainingSelection from './TypeSelectionHolder/TrainingTypeSelection';
 import { IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
+import pnp, { Web } from 'sp-pnp-js';
+import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
+import Aux from './HOC/Auxilliary';
 
 export interface IDoctorsAppointmentState {
   firstDayOfWeek: Date;
   lastDayOfWeek: Date;
   trainingType: string;
+  trainingTypes: IDropdownOption[];
+  showSpinner: boolean;
 }
 
 export default class DoctorsAppointment extends React.Component<IDoctorsAppointmentProps, IDoctorsAppointmentState> {
@@ -30,14 +35,61 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
     this.state = {
       firstDayOfWeek: undefined,
       lastDayOfWeek: undefined,
-      trainingType: ""
+      trainingType: "",
+      trainingTypes: undefined,
+      showSpinner: true
     };
   }
 
   // tslint:disable-next-line:member-access
   componentDidMount() {
     this.getCurrentWeekData();
+    this.getTrainingType().then(() => {
+      this.setState({
+        showSpinner : false
+      });
+    });
   }
+
+
+  protected getTrainingType = async () => {
+    let web = new Web(this.props.siteURL);
+    let trainingListGUID: string = this.props.trainingSession;
+
+    let trainingTypes: IDropdownOption[] = [];
+
+    if (web && trainingListGUID) {
+      const data = await web.lists.getById(trainingListGUID).items.select("Title").usingCaching({
+        expiration: pnp.util.dateAdd(new Date, "minute", 60),
+        key: trainingListGUID,
+        storeName: "local"
+      }).configure({
+        headers: {
+          'Accept': 'application/json;odata=nometadata',
+          'odata-version': ''
+        }
+      }).get().then(p => p).catch((error: any) => error);
+
+      if (data) {
+        if (!data.status) {
+          data.forEach(element => {
+            trainingTypes.push({
+              key: element["Title"],
+              text: element["Title"]
+            });
+          });
+        }
+        else {
+          //Error occured ... Handle the required error
+        }
+      }
+
+      this.setState({
+        trainingTypes: trainingTypes
+      });
+    }
+  }
+
 
   /**
    * Default Current Week Date Builder
@@ -64,7 +116,7 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
     const tempLastDate: Date = this.state.lastDayOfWeek;
 
     let nextWeekFirstDate = tempStartDate.getDate() + 7;
-    let nextWeekLastDate = tempLastDate.getDate()  + 7;
+    let nextWeekLastDate = tempLastDate.getDate() + 7;
 
     var firstday = new Date(tempStartDate.setDate(nextWeekFirstDate));
     var lastday = new Date(tempLastDate.setDate(nextWeekLastDate));
@@ -75,15 +127,15 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
     });
   }
 
-   /**
-   * Previous Week Button Click Handler
-   */
+  /**
+  * Previous Week Button Click Handler
+  */
   protected getPreviousWeekClickHandler = (): void => {
     const tempStartDate: Date = this.state.firstDayOfWeek;
     const tempLastDate: Date = this.state.lastDayOfWeek;
 
     let nextWeekFirstDate = tempStartDate.getDate() - 7;
-    let nextWeekLastDate = tempLastDate.getDate()  - 7;
+    let nextWeekLastDate = tempLastDate.getDate() - 7;
 
     var firstday = new Date(tempStartDate.setDate(nextWeekFirstDate));
     var lastday = new Date(tempLastDate.setDate(nextWeekLastDate));
@@ -100,21 +152,23 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
   protected getTopicSelectionDropDownChangeHandler = (item: IDropdownOption) => {
     let selectedKey = item.key as string;
     this.setState({
-      trainingType : selectedKey
+      trainingType: selectedKey
     });
   }
 
   public render(): React.ReactElement<IDoctorsAppointmentProps> {
-    const trainingModuleRendering : JSX.Element = this.state.trainingType ? 
-    <TrainerCalender 
-      daysOfWeek={this.daysArray}
-      months={this.monthArray}
-      trainingType={this.state.trainingType}
-      startDate={this.state.firstDayOfWeek}
-      endDate={this.state.lastDayOfWeek}
-    /> 
-    :
-    <TrainingSelection />;
+    const trainingModuleRendering: JSX.Element = this.state.trainingType ?
+      <TrainerCalender
+        daysOfWeek={this.daysArray}
+        months={this.monthArray}
+        trainingType={this.state.trainingType}
+        startDate={this.state.firstDayOfWeek}
+        endDate={this.state.lastDayOfWeek}
+        siteURL={this.props.siteURL}
+        trainingSlotsListGUID={this.props.trainingSlots}
+      />
+      :
+      <TrainingSelection />;
 
     let currentWeekStringValue: string;
 
@@ -145,20 +199,27 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
       currentWeekStringValue = "";
     }
 
-    return (
-      <div className={styles.doctorsAppointment}>
+    const showSpinner: JSX.Element = this.state.showSpinner ? <div style={{ height: "100%", width: "100%", display: "flex"}}><Spinner size={SpinnerSize.large} label="Please wait while finish loading..." style={{ margin: "auto" }} /></div> :
+      <Aux className={styles.doctorsAppointment}>
         <Header />
-        <TopicSelection 
+        <TopicSelection
           onDropDownChange={this.getTopicSelectionDropDownChangeHandler.bind(this)}
           topicLabel={strings.TopicSelectionHeaderTrainer}
+          topicDropDownOptions={this.state.trainingTypes && this.state.trainingTypes.length > 0 ? this.state.trainingTypes : []}
         />
         <DaysOfWeek
           currentWeek={currentWeekStringValue}
           nextButtonClick={this.getNextWeekClickHandler.bind(this)}
           previousButtonClick={this.getPreviousWeekClickHandler.bind(this)}
         />
-        {trainingModuleRendering}        
+        {trainingModuleRendering}
         <Footer />
+      </Aux>
+      ;
+
+    return (
+      <div style={{width: "100%", height: "100vh"} }>
+        {showSpinner}
       </div>
     );
   }

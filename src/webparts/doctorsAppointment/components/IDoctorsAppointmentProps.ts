@@ -1,3 +1,5 @@
 export interface IDoctorsAppointmentProps {
-  description: string;
+  siteURL: string;
+  trainingSession: string;
+  trainingSlots: string;
 }

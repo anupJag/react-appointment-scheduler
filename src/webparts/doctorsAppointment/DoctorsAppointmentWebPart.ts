@@ -10,9 +10,11 @@ import {
 import * as strings from 'DoctorsAppointmentWebPartStrings';
 import DoctorsAppointment from './components/DoctorsAppointment';
 import { IDoctorsAppointmentProps } from './components/IDoctorsAppointmentProps';
+import { PropertyFieldListPicker, PropertyFieldListPickerOrderBy } from '@pnp/spfx-property-controls/lib/PropertyFieldListPicker';
 
 export interface IDoctorsAppointmentWebPartProps {
-  description: string;
+  trainingSession: string;
+  trainingSlots : string;
 }
 
 export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDoctorsAppointmentWebPartProps> {
@@ -21,7 +23,9 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
     const element: React.ReactElement<IDoctorsAppointmentProps > = React.createElement(
       DoctorsAppointment,
       {
-        description: this.properties.description
+        siteURL: this.context.pageContext.web.absoluteUrl,
+        trainingSession: this.properties.trainingSession,
+        trainingSlots : this.properties.trainingSlots
       }
     );
 
@@ -47,8 +51,33 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
             {
               groupName: strings.BasicGroupName,
               groupFields: [
-                PropertyPaneTextField('description', {
-                  label: strings.DescriptionFieldLabel
+                PropertyFieldListPicker('trainingSession', {
+                  label: 'Select list to populate Training Type',
+                  selectedList: this.properties.trainingSession,
+                  includeHidden: false,
+                  orderBy: PropertyFieldListPickerOrderBy.Title,
+                  disabled: false,
+                  onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
+                  properties: this.properties,
+                  context: this.context,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'trainingSession',
+                  baseTemplate: 100
+                }),
+                PropertyFieldListPicker('trainingSlots', {
+                  label: 'Select list to populate Training Slots',
+                  selectedList: this.properties.trainingSlots,
+                  includeHidden: false,
+                  orderBy: PropertyFieldListPickerOrderBy.Title,
+                  disabled: false,
+                  onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
+                  properties: this.properties,
+                  context: this.context,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'trainingSlots',
+                  baseTemplate: 100
                 })
               ]
             }

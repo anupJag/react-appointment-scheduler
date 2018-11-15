@@ -3,10 +3,11 @@ import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import styles from './RegistrationPortal.module.scss';
 import LeftSection from './LeftSection/LeftSection';
 import RightSection from './RightSection/RightSection';
+import { ITrainingSlots } from '../../ITrainerCalender';
 
 
 export interface IRegistrationPortalProps {
-    timeOfDay: string[];
+    timeOfDay: ITrainingSlots[];
     sessionName: string;
     sessionDate: string;
     sessionNameFieldOnBlur: (event: any) => void;
