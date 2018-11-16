@@ -5,11 +5,11 @@ import RegisterPanel from './RegisterPanel/RegisterPanel';
 import { ITrainerCalenderProps, ITrainerCalenderState, ITrainerData, TrainerRegistrationStatus, ITrainingSlots } from './ITrainerCalender';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { escape, findIndex, find, assign } from '@microsoft/sp-lodash-subset';
-import pnp, { Web } from 'sp-pnp-js';
+import pnp, { Web, ItemAddResult } from 'sp-pnp-js';
 
 export default class TrainerCalender extends React.Component<ITrainerCalenderProps, ITrainerCalenderState>{
-   
-   
+
+
     /**
      *Default Constructor
      */
@@ -78,28 +78,76 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         });
     }
 
-    protected createItemCreationDataStructure = async () => {
-        alert("entered in main function");
-        debugger;
-        let web = new Web(this.props.siteURL);
-        let doctorBookingList: string = "4E8C33B9-BB1B-4EC4-81E0-52C7EEBEB7F4";
-        // add an item to the list
-        pnp1.sp.web.lists.getById(doctorBookingList).items.add({
-            Title: "Title added from PNP",
-            SlotTimingId: 2           
-            
-        }).then((iar: ItemAddResult) => {
-            console.log(iar);
+    // protected createItemCreationDataStructure = async () => {
+    //     alert("entered in main function");
+    //     debugger;
+    //     let web = new Web(this.props.siteURL);
+    //     let doctorBookingListID: string = "4E8C33B9-BB1B-4EC4-81E0-52C7EEBEB7F4";
+    //     // add an item to the list
+    //     pnp.sp.web.lists.getById(doctorBookingListID).items.add({
+    //         Title: "Title added from PNP",
+    //         RegistrationDate:"2018-11-14",
+    //         TrainerRegistrationStatus:"Booked",
+    //         CategoryId:2,
+    //         TrainingInfo:"iosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?",
+    //         SlotTimingId: 2    
+    //     }).then((iar: ItemAddResult) => {
+    //         console.log(iar);
+    //     });
+    // }
+
+    protected reserveTrainerSlots = async (data: ITrainerData[]) => {
+        //let web = new Web(this.props.siteURL);
+        let doctorBookingListID = "4E8C33B9-BB1B-4EC4-81E0-52C7EEBEB7F4";
+        let list = await pnp.sp.web.lists.getById(doctorBookingListID);
+
+        list.getListItemEntityTypeFullName().then(async (entityTypeFullName) => {
+
+            let batch = pnp.sp.createBatch();
+
+            for (let dt = 0; dt < data.length; dt++) {
+                list.items.inBatch(batch).add(data[dt], entityTypeFullName).then(b => {
+                    console.log(b);
+                });
+            }
+
+            await batch.execute().then(d => console.log("Done"));
         });
+    }
+
+    protected createItemCreationDataStructure = (): ITrainerData[] => {
+        let tempSelectedData = [...this.state.selectedTraininigSlots];
+        let postBody: ITrainerData[] = [];
+        const sessionName = this.state.sessionName;
+        const tempSelectedDate: Date = new Date(this.state.registrationDate);
+        let registrationDate = `${tempSelectedDate.getFullYear()}-${tempSelectedDate.getMonth() + 1}-${tempSelectedDate.getDate()}`;
+        const sessionDesc = this.state.sessionDesc;
+        const key = this.state.trainingType.key;
+        const trainingTypeAsNumber: number = parseInt(key as string, 0);
+
+        tempSelectedData.forEach((el: string) => {
+            postBody.push({
+                Title: sessionName,
+                TrainingInfo: sessionDesc,
+                TrainerRegistrationStatus: TrainerRegistrationStatus.Booked,
+                RegistrationDate: registrationDate,
+                CategoryId: trainingTypeAsNumber,
+                SlotTimingId: parseInt(el as string, 0)
+            });
+        });
+
+        return postBody;
     }
 
     protected onSaveClickHandler = (): void => {
         console.log("Data needs to be saved here");
-        this.createItemCreationDataStructure().then(() => {
-            console.log("Function Executed.");
-        })
-        this.setState({
-            isRegisterPanelOpen: false
+        let data: ITrainerData[] = this.createItemCreationDataStructure();
+
+        this.reserveTrainerSlots(data).then((el) => {
+            console.log("Completed");
+            this.setState({
+                isRegisterPanelOpen: false
+            });
         });
     }
 
@@ -141,7 +189,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                             Id: element["Id"],
                             Label: element["Title"],
                             isChecked: false
-                        })
+                        });
                     });
                 }
             }
@@ -213,7 +261,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                     registrationDate={this.state.registrationDate}
                     onDismissClick={this.onDismissClickHandler.bind(this)}
                     timeOfDay={this.state.trainingSlots}
-                    sessionName={this.state.trainingType}
+                    sessionName={this.state.trainingType.text}
                     sessionDate={selectedDate}
                     sessionDescFieldOnBlur={this.sessionDescOnBlurHandler.bind(this)}
                     sessionNameFieldOnBlur={this.sessionNameOnBlurHandler.bind(this)}

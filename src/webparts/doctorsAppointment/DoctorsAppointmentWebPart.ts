@@ -11,21 +11,33 @@ import * as strings from 'DoctorsAppointmentWebPartStrings';
 import DoctorsAppointment from './components/DoctorsAppointment';
 import { IDoctorsAppointmentProps } from './components/IDoctorsAppointmentProps';
 import { PropertyFieldListPicker, PropertyFieldListPickerOrderBy } from '@pnp/spfx-property-controls/lib/PropertyFieldListPicker';
-
+import pnp from "sp-pnp-js";
 export interface IDoctorsAppointmentWebPartProps {
   trainingSession: string;
   trainingSlots : string;
+  doctorsAppointments : string;
 }
 
 export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDoctorsAppointmentWebPartProps> {
 
+  public onInit(): Promise<void> {
+
+    return super.onInit().then(_ => {
+  
+      pnp.setup({
+        spfxContext: this.context
+      });
+      
+    });
+  }
   public render(): void {
     const element: React.ReactElement<IDoctorsAppointmentProps > = React.createElement(
       DoctorsAppointment,
       {
         siteURL: this.context.pageContext.web.absoluteUrl,
         trainingSession: this.properties.trainingSession,
-        trainingSlots : this.properties.trainingSlots
+        trainingSlots : this.properties.trainingSlots,
+        doctorsAppointments : this.properties.doctorsAppointments        
       }
     );
 
@@ -77,6 +89,20 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
                   key: 'trainingSlots',
+                  baseTemplate: 100
+                }),
+                PropertyFieldListPicker('doctorsAppointments', {
+                  label: 'Select list to populate Store Data',
+                  selectedList: this.properties.doctorsAppointments,
+                  includeHidden: false,
+                  orderBy: PropertyFieldListPickerOrderBy.Title,
+                  disabled: false,
+                  onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
+                  properties: this.properties,
+                  context: this.context,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'doctorsAppointments',
                   baseTemplate: 100
                 })
               ]

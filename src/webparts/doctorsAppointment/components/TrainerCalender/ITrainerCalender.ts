@@ -1,7 +1,9 @@
+import { IDropdownOption } from "office-ui-fabric-react/lib/Dropdown";
+
 export interface ITrainerCalenderProps {
     startDate: Date;
     endDate: Date;
-    trainingType: string;
+    trainingType: IDropdownOption;
     daysOfWeek: string[];
     months: string[];
     siteURL: string;
@@ -11,7 +13,7 @@ export interface ITrainerCalenderProps {
 export interface ITrainerCalenderState {
     startDate: Date;
     endDate: Date;
-    trainingType: string;
+    trainingType: IDropdownOption;
     isRegisterPanelOpen: boolean;
     registrationDate: string;
     showSpinner: boolean;
@@ -25,9 +27,9 @@ export interface ITrainerData {
     Title: string;
     RegistrationDate: string;
     TrainerRegistrationStatus: string;
-    Slot: string;
-    SlotTiming: string;
+    CategoryId: number;
     TrainingInfo: string;
+    SlotTimingId: number;
 }
 
 export enum TrainerRegistrationStatus {

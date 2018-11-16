@@ -18,7 +18,7 @@ import Aux from './HOC/Auxilliary';
 export interface IDoctorsAppointmentState {
   firstDayOfWeek: Date;
   lastDayOfWeek: Date;
-  trainingType: string;
+  trainingType: IDropdownOption;
   trainingTypes: IDropdownOption[];
   showSpinner: boolean;
 }
@@ -35,7 +35,7 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
     this.state = {
       firstDayOfWeek: undefined,
       lastDayOfWeek: undefined,
-      trainingType: "",
+      trainingType: undefined,
       trainingTypes: undefined,
       showSpinner: true
     };
@@ -59,7 +59,7 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
     let trainingTypes: IDropdownOption[] = [];
 
     if (web && trainingListGUID) {
-      const data = await web.lists.getById(trainingListGUID).items.select("Title").usingCaching({
+      const data = await web.lists.getById(trainingListGUID).items.select("Id", "Title").usingCaching({
         expiration: pnp.util.dateAdd(new Date, "minute", 60),
         key: trainingListGUID,
         storeName: "local"
@@ -74,7 +74,7 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
         if (!data.status) {
           data.forEach(element => {
             trainingTypes.push({
-              key: element["Title"],
+              key: element["Id"],
               text: element["Title"]
             });
           });
@@ -150,10 +150,16 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
    * Method which handles change in Training Option Selection
    */
   protected getTopicSelectionDropDownChangeHandler = (item: IDropdownOption) => {
-    let selectedKey = item.key as string;
-    this.setState({
-      trainingType: selectedKey
-    });
+    let selectedKey = item.key;
+    let temptrainingTypes : IDropdownOption[] = [...this.state.trainingTypes];
+
+    let conditionCheck = temptrainingTypes.filter(el => el.key === selectedKey);
+
+    if(conditionCheck && conditionCheck.length > 0){
+      this.setState({
+        trainingType: conditionCheck[0]
+      });
+    }    
   }
 
   public render(): React.ReactElement<IDoctorsAppointmentProps> {
