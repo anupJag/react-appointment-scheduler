@@ -78,12 +78,26 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         });
     }
 
-    protected createItemCreationDataStructure = () => {
-        
+    protected createItemCreationDataStructure = async () => {
+        alert("entered in main function");
+        debugger;
+        let web = new Web(this.props.siteURL);
+        let doctorBookingList: string = "4E8C33B9-BB1B-4EC4-81E0-52C7EEBEB7F4";
+        // add an item to the list
+        pnp1.sp.web.lists.getById(doctorBookingList).items.add({
+            Title: "Title added from PNP",
+            SlotTimingId: 2           
+            
+        }).then((iar: ItemAddResult) => {
+            console.log(iar);
+        });
     }
 
     protected onSaveClickHandler = (): void => {
         console.log("Data needs to be saved here");
+        this.createItemCreationDataStructure().then(() => {
+            console.log("Function Executed.");
+        })
         this.setState({
             isRegisterPanelOpen: false
         });
