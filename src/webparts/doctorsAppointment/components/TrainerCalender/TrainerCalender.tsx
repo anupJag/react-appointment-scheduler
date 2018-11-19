@@ -64,7 +64,11 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         let currentStartDate: Date = new Date(this.state.startDate.toUTCString());
         const dateToBeRegistered: Date = new Date(currentStartDate.setDate(currentStartDate.getDate() + index));
 
+        const getTrainingSlots: ITrainingSlots[] = this.getAvailableTrainingSlots(dateToBeRegistered);
+
         this.setState({
+            selectedTraininigSlots: [],
+            trainingSlots: getTrainingSlots,
             isRegisterPanelOpen: true,
             registrationDate: dateToBeRegistered.toString()
         });
@@ -80,187 +84,51 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         this.setState({
             showSpinner: true
         });
-        const slotData : ITrainingSlots[] = [...this.state.trainingSlots];
+        const slotData: ITrainingSlots[] = [...this.state.trainingSlots];
         const doctorBookingListID = "4E8C33B9-BB1B-4EC4-81E0-52C7EEBEB7F4";
         const startDate: Date = new Date(this.state.startDate.toUTCString());
         const trainingType: number = parseInt(this.state.trainingType.key.toString(), 0);
+        const daysOfWeek: string[] = [...this.props.daysOfWeek];
         let batch = pnp.sp.createBatch();
 
-        pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate").expand("Author", "SlotTiming", "Category").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}T08:00:00Z'`).configure({
-            headers: {
-                'Accept': 'application/json;odata=nometadata',
-                'odata-version': ''
-            }
-        }).inBatch(batch).get().then((p: any) => {
-            //Monday Data
-            let tempMondayData: ITrainerRegisteredDataStructure[] = [];
-            let tempRegisteredWeekData: IWeekTrainerData = { ...(this.state.registeredWeekData ? this.state.registeredWeekData : null) }
-            if (p && p.length > 0) {
-                p.forEach(element => {
-                    let slotTiming = slotData.filter(el => el.Id === element["SlotTiming"]["Id"]);
-                    let slotName : string;
+        for (let index = 0; index < daysOfWeek.length; index++) {
 
-                    if(slotTiming && slotTiming.length > 0){
-                        slotName = slotTiming[0]["Label"];
-                    }
+            pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate").expand("Author", "SlotTiming", "Category").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + index}T08:00:00Z'`).configure({
+                headers: {
+                    'Accept': 'application/json;odata=nometadata',
+                    'odata-version': ''
+                }
+            }).inBatch(batch).get().then((p: any) => {
+                let tempData: ITrainerRegisteredDataStructure[] = [];
+                let tempRegisteredWeekData: IWeekTrainerData = { ...(this.state.registeredWeekData ? this.state.registeredWeekData : null) };
+                if (p && p.length > 0) {
+                    p.forEach(element => {
+                        let slotTiming = slotData.filter(el => el.Id === element["SlotTiming"]["Id"]);
+                        let slotName: string;
 
-                    tempMondayData.push({
-                        Title: element["Title"],
-                        SlotTiming: element["SlotTiming"] ? slotName : null,
-                        Author: element["Author"]["Title"],
-                        Id: element["Id"]
+                        if (slotTiming && slotTiming.length > 0) {
+                            slotName = slotTiming[0]["Label"];
+                        }
+
+                        tempData.push({
+                            Title: element["Title"],
+                            SlotTiming: element["SlotTiming"] ? slotName : null,
+                            Author: element["Author"]["Title"],
+                            Id: element["Id"],
+                            DeregisterDisabled: !(element["Author"]["Title"] === this.props.loggedInUser)
+                        });
                     });
+                }
+
+                tempRegisteredWeekData[daysOfWeek[index]] = tempData;
+
+                this.setState({
+                    registeredWeekData: tempRegisteredWeekData
                 });
-            }
 
-            tempRegisteredWeekData["Monday"] = tempMondayData;
+            }).catch(error => error);
 
-            this.setState({
-                registeredWeekData: tempRegisteredWeekData
-            });
-
-        }).catch(error => error);
-
-        pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate").expand("Author", "SlotTiming", "Category").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + 1}T08:00:00Z'`).configure({
-            headers: {
-                'Accept': 'application/json;odata=nometadata',
-                'odata-version': ''
-            }
-        }).inBatch(batch).get().then((p: any) => {
-            //Tuesday Data
-            let tempTuesdayData: ITrainerRegisteredDataStructure[] = [];
-
-            let tempRegisteredWeekData: IWeekTrainerData = { ...(this.state.registeredWeekData ? this.state.registeredWeekData : null) }
-            if (p && p.length > 0) {
-                p.forEach(element => {
-                    let slotTiming = slotData.filter(el => el.Id === element["SlotTiming"]["Id"]);
-                    let slotName : string = "";
-
-                    if(slotTiming && slotTiming.length > 0){
-                        slotName = slotTiming[0]["Label"];
-                    }
-                    
-                    tempTuesdayData.push({
-                        Title: element["Title"],
-                        SlotTiming: element["SlotTiming"] ? slotName : null,
-                        Author: element["Author"]["Title"],
-                        Id: element["Id"]
-                    });
-                });
-            }
-
-            tempRegisteredWeekData["Tuesday"] = tempTuesdayData;
-
-            this.setState({
-                registeredWeekData: tempRegisteredWeekData
-            });
-
-        }).catch(error => error);
-
-        pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate").expand("Author", "SlotTiming", "Category").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + 2}T08:00:00Z'`).configure({
-            headers: {
-                'Accept': 'application/json;odata=nometadata',
-                'odata-version': ''
-            }
-        }).inBatch(batch).get().then((p: any) => {
-            //Wednesday Data
-            let tempWednesdayData: ITrainerRegisteredDataStructure[] = [];
-            let tempRegisteredWeekData: IWeekTrainerData = { ...(this.state.registeredWeekData ? this.state.registeredWeekData : null) }
-            if (p && p.length > 0) {
-                p.forEach(element => {
-                    let slotTiming = slotData.filter(el => el.Id === element["SlotTiming"]["Id"]);
-                    let slotName : string = "";
-
-                    if(slotTiming && slotTiming.length > 0){
-                        slotName = slotTiming[0]["Label"];
-                    }
-
-                    tempWednesdayData.push({
-                        Title: element["Title"],
-                        SlotTiming: element["SlotTiming"] ? slotName : null,
-                        Author: element["Author"]["Title"],
-                        Id: element["Id"]
-                    });
-                });
-            }
-
-            tempRegisteredWeekData["Wednesday"] = tempWednesdayData;
-
-            this.setState({
-                registeredWeekData: tempRegisteredWeekData
-            });
-
-        }).catch(error => error);
-
-        pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate").expand("Author", "SlotTiming", "Category").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + 3}T08:00:00Z'`).configure({
-            headers: {
-                'Accept': 'application/json;odata=nometadata',
-                'odata-version': ''
-            }
-        }).inBatch(batch).get().then((p: any) => {
-            //Thursday Data
-            let tempThursdayData: ITrainerRegisteredDataStructure[] = [];
-            let tempRegisteredWeekData: IWeekTrainerData = { ...(this.state.registeredWeekData ? this.state.registeredWeekData : null) }
-            if (p && p.length > 0) {
-                p.forEach(element => {
-                    let slotTiming = slotData.filter(el => el.Id === element["SlotTiming"]["Id"]);
-                    let slotName : string = "";
-
-                    if(slotTiming && slotTiming.length > 0){
-                        slotName = slotTiming[0]["Label"];
-                    }
-
-                    tempThursdayData.push({
-                        Title: element["Title"],
-                        SlotTiming: element["SlotTiming"] ? slotName : null,
-                        Author: element["Author"]["Title"],
-                        Id: element["Id"]
-                    });
-                });
-            }
-
-            tempRegisteredWeekData["Thursday"] = tempThursdayData;
-
-            this.setState({
-                registeredWeekData: tempRegisteredWeekData
-            });
-
-        }).catch(error => error);
-
-        pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate").expand("Author", "SlotTiming", "Category").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + 1}T08:00:00Z'`).configure({
-            headers: {
-                'Accept': 'application/json;odata=nometadata',
-                'odata-version': ''
-            }
-        }).inBatch(batch).get().then((p: any) => {
-            //Friday Data
-            let tempFridayData: ITrainerRegisteredDataStructure[] = [];
-            let tempRegisteredWeekData: IWeekTrainerData = { ...(this.state.registeredWeekData ? this.state.registeredWeekData : null) }
-            if (p && p.length > 0) {
-                p.forEach(element => {
-                    let slotTiming = slotData.filter(el => el.Id === element["SlotTiming"]["Id"]);
-                    let slotName : string = "";
-
-                    if(slotTiming && slotTiming.length > 0){
-                        slotName = slotTiming[0]["Label"];
-                    }
-
-                    tempFridayData.push({
-                        Title: element["Title"],
-                        SlotTiming: element["SlotTiming"] ? slotName : null,
-                        Author: element["Author"]["Title"],
-                        Id: element["Id"]
-                    });
-                });
-            }
-
-            tempRegisteredWeekData["Friday"] = tempFridayData;
-
-            this.setState({
-                registeredWeekData: tempRegisteredWeekData
-            });
-
-        }).catch(error => error);
+        }
 
         await batch.execute().then(d => {
             console.log("Done");
@@ -331,27 +199,43 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         return postBody;
     }
 
-    protected onSaveClickHandler = (): void => {
+    protected onSaveClickHandler = async () => {
         console.log("Data needs to be saved here");
+        debugger;
         let data: ITrainerData[] = this.createItemCreationDataStructure();
 
-        this.reserveTrainerSlots(data).then((el) => {
-            console.log("Completed");
-            this.setState({
-                isRegisterPanelOpen: false
+        this.reserveTrainerSlots(data).then(async () => {
+            let promise = new Promise((resolve, reject) => {
+                setTimeout(() => resolve("Time Out on Save Click Handler Completed"), 5000);
             });
-        });
+
+            let result = await promise;
+            console.log(result);
+        }).then(async () => {
+            let promise = new Promise((resolve, reject) => {
+                this.setState({
+                    isRegisterPanelOpen: false,
+                });
+
+                resolve("Registraion Panel Closed");
+            });
+            
+            await promise.then(() => {
+                this.getTrainerRegisteredData();
+            });
+            
+        });        
     }
 
     protected sessionNameOnBlurHandler = (event: any): void => {
-        let tempSessionName: string = escape(event.target.value);
+        let tempSessionName: string = escape(event.target.value).trim();
         this.setState({
             sessionName: tempSessionName
         });
     }
 
     protected sessionDescOnBlurHandler = (event: any): void => {
-        let tempSessionDesc: string = escape(event.target.value);
+        let tempSessionDesc: string = escape(event.target.value).trim();
         this.setState({
             sessionDesc: tempSessionDesc
         });
@@ -380,7 +264,8 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                         trainingSlotsCollection.push({
                             Id: element["Id"],
                             Label: element["Title"],
-                            isChecked: false
+                            isChecked: false,
+                            isDisabled: false
                         });
                     });
                 }
@@ -414,7 +299,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             }), 1);
         }
 
-        tempSelectedTrainingSlots.sort();
+        tempSelectedTrainingSlots.sort((a: any, b: any) => { return a - b; });
 
         this.setState({
             trainingSlots: tempTrainingSlots,
@@ -423,24 +308,71 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
     }
 
 
+    protected getAvailableTrainingSlots = (dateToBeRegistered: Date): ITrainingSlots[] => {
+
+        const selectedDate: Date = new Date(dateToBeRegistered.toUTCString());
+        const startDateOfTheWeek: Date = new Date(this.state.startDate.toUTCString());
+        const dayDiff: number = selectedDate.getDate() - startDateOfTheWeek.getDate();
+        const registrationData: IWeekTrainerData = { ...this.state.registeredWeekData };
+        let currentDayData: ITrainerRegisteredDataStructure[] = [];
+        let trainingSlots: ITrainingSlots[] = [...this.state.trainingSlots];
+
+        for (let index = 0; index < trainingSlots.length; index++) {
+            trainingSlots[index]["isChecked"] = false;
+            trainingSlots[index]["isDisabled"] = false;
+        }
+
+        if (registrationData) {
+            currentDayData = [...(registrationData[this.props.daysOfWeek[dayDiff]] ? registrationData[this.props.daysOfWeek[dayDiff]] : [])];
+        }
+
+        if (currentDayData && currentDayData.length > 0) {
+            currentDayData.forEach(element => {
+                let slotTaken = trainingSlots.filter(el => el.Label === element.SlotTiming);
+                if (slotTaken && slotTaken.length > 0) {
+                    let index = findIndex(trainingSlots, (el) => el.Label === slotTaken[0].Label);
+                    trainingSlots[index]["isChecked"] = true;
+                    trainingSlots[index]["isDisabled"] = true;
+                }
+            });
+        }
+
+        return trainingSlots;
+    }
+
+
     public render(): React.ReactElement<ITrainerCalenderProps> {
         const trainingData: any = this.props.daysOfWeek.map((day: string, index: number) => {
+            let todayDate = new Date();
             let temp = new Date(this.state.startDate.toUTCString());
             let tempVar = new Date(this.state.startDate.toUTCString());
             const tempDateParser = new Date(temp.setDate(tempVar.getDate() + index));
             let date: string = `${this.props.months[tempDateParser.getMonth()]} ${tempDateParser.getDate()}, ${tempDateParser.getFullYear()}`;
             temp = tempVar = null;
 
-            let daysData : ITrainerRegisteredDataStructure[] = this.state.registeredWeekData ? 
+            let daysData: ITrainerRegisteredDataStructure[] = this.state.registeredWeekData ?
                 [...(this.state.registeredWeekData[day] ? this.state.registeredWeekData[day] : [])]
-            : 
-            [];
+                :
+                [];
+
+            daysData.sort((a: any, b: any) => {
+                var SlotA = a["SlotTiming"].toUpperCase();
+                var SlotB = b["SlotTiming"].toUpperCase();
+                if (SlotA < SlotB) {
+                    return -1;
+                }
+                if (SlotA > SlotB) {
+                    return 1;
+                }
+                return 0;
+            });
 
             return (
                 <TrainingDay
                     day={day}
                     date={date}
                     key={index}
+                    isRegistrationButtonDisabled={false}
                     onRegisterButtonClicked={this.onTrainingRegisterClickHandler.bind(this, index)}
                     trainingDataInfo={daysData}
                 />
@@ -448,25 +380,32 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         });
 
         const showSpinner: JSX.Element = this.state.showSpinner ? <Spinner size={SpinnerSize.large} label="Please wait while we get data.." style={{ margin: "auto" }} /> : <div />;
+
         const tempSelectedDate: Date = new Date(this.state.registrationDate);
         let selectedDate: string = `${this.props.months[tempSelectedDate.getMonth()]} ${tempSelectedDate.getDate()}, ${tempSelectedDate.getFullYear()}`;
+
+        const registrationPanel: JSX.Element = this.state.isRegisterPanelOpen ?
+            <RegisterPanel
+                isPanelOpen={this.state.isRegisterPanelOpen}
+                registrationDate={this.state.registrationDate}
+                onDismissClick={this.onDismissClickHandler.bind(this)}
+                timeOfDay={this.state.trainingSlots}
+                sessionName={this.state.trainingType.text}
+                sessionDate={selectedDate}
+                sessionDescFieldOnBlur={this.sessionDescOnBlurHandler.bind(this)}
+                sessionNameFieldOnBlur={this.sessionNameOnBlurHandler.bind(this)}
+                onCheckboxChangeEvent={this.onSessionScheduleChangeEventHandler.bind(this)}
+                onSaveClick={this.onSaveClickHandler.bind(this)}
+                primaryButtonText={this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 1 ? "Reserve Slots" : "Reserve Slot"}
+                isReserveSlotsDisabled={!(this.state.sessionName && this.state.sessionName.length > 0 && this.state.sessionDesc && this.state.sessionDesc.length > 0 && this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 0)}
+            />
+            :
+            null;
 
         return (
             <div className={styles.TrainerCalender}>
                 {!this.state.showSpinner ? trainingData : null}
-                <RegisterPanel
-                    isPanelOpen={this.state.isRegisterPanelOpen}
-                    registrationDate={this.state.registrationDate}
-                    onDismissClick={this.onDismissClickHandler.bind(this)}
-                    timeOfDay={this.state.trainingSlots}
-                    sessionName={this.state.trainingType.text}
-                    sessionDate={selectedDate}
-                    sessionDescFieldOnBlur={this.sessionDescOnBlurHandler.bind(this)}
-                    sessionNameFieldOnBlur={this.sessionNameOnBlurHandler.bind(this)}
-                    onCheckboxChangeEvent={this.onSessionScheduleChangeEventHandler.bind(this)}
-                    onSaveClick={this.onSaveClickHandler.bind(this)}
-                    primaryButtonText={this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 1 ? "Reserve Slots" : "Reserve Slot"}
-                />
+                {registrationPanel}
                 {showSpinner}
             </div>
         );

@@ -3,4 +3,5 @@ export interface IDoctorsAppointmentProps {
   trainingSession: string;
   trainingSlots: string;
   doctorsAppointments: string;
+  loggedInUserName: string;
 }

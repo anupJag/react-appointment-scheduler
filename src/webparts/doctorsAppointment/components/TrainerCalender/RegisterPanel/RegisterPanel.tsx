@@ -3,6 +3,7 @@ import { PrimaryButton, DefaultButton } from 'office-ui-fabric-react/lib/Button'
 import { Panel, PanelType, } from 'office-ui-fabric-react/lib/Panel';
 import RegistrationPortal from './RegistrationPortal/RegistrationPortal';
 import { ITrainingSlots } from '../ITrainerCalender';
+import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 
 export interface IRegisterPanelProps {
     isPanelOpen: boolean;
@@ -16,27 +17,93 @@ export interface IRegisterPanelProps {
     onCheckboxChangeEvent: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
     primaryButtonText: string;
     onSaveClick: () => void;
+    isReserveSlotsDisabled: boolean;
 }
 
-export default class registerPanel extends React.Component<IRegisterPanelProps, {}>{
+export interface IRegisterPanelState {
+    showSpinner: boolean;
+    isSessionNameDisabled: boolean;
+    isSessionDescDisabled: boolean;
+    isReserveSlotsDisabled: boolean;
+    isCancelDisabled: boolean;
+    isTrainingSlotsDisabled : boolean;
+}
 
+export default class registerPanel extends React.Component<IRegisterPanelProps, IRegisterPanelState>{
 
+    /**
+     *
+     */
+    constructor(props: IRegisterPanelProps) {
+        super(props);
+        this.state = {
+            showSpinner: false,
+            isSessionDescDisabled: false,
+            isSessionNameDisabled: false,
+            isReserveSlotsDisabled: false,
+            isCancelDisabled: false,
+            isTrainingSlotsDisabled: false
+        };
+    }
+
+    protected onSaveButtonClicked = async () => {
+
+        const updateState = async () => {
+            let promise = new Promise((resolve, reject) => {
+                this.setState({
+                    showSpinner: true,
+                    isReserveSlotsDisabled: true,
+                    isSessionDescDisabled: true,
+                    isSessionNameDisabled: true,
+                    isCancelDisabled: true,
+                    isTrainingSlotsDisabled: true
+                });
+                resolve("State Updated");
+            });
+
+            let result = await promise;
+            console.log(result);
+        };
+
+        const timingOut = async () => {
+            let promise = new Promise((resolve, reject) => {
+                setTimeout(() => resolve("Complete"), 2000);
+            });
+
+            let result = await promise;
+            console.log(result);
+        };
+
+        updateState().then(() => {
+            timingOut().then(this.props.onSaveClick);
+        });
+    }
 
     private _onRenderFooterContent = (): JSX.Element => {
+
+        const showSpinner: JSX.Element = this.state.showSpinner ?
+            <Spinner
+                size={SpinnerSize.medium}
+                style={{ marginLeft: "3%" }}
+            />
+            :
+            null;
+
         return (
-            <div>
-                <PrimaryButton onClick={this.props.onSaveClick} style={{ marginRight: '8px' }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+                <PrimaryButton onClick={this.onSaveButtonClicked} style={{ marginRight: '8px' }} disabled={this.props.isReserveSlotsDisabled || this.state.isReserveSlotsDisabled}>
                     {this.props.primaryButtonText}
                 </PrimaryButton>
-                <DefaultButton onClick={this.props.onDismissClick}>Cancel</DefaultButton>
+                <DefaultButton onClick={this.props.onDismissClick} disabled={this.state.isCancelDisabled}>Cancel</DefaultButton>
+                {showSpinner}
             </div>
         );
-    };
+    }
 
 
     public render(): React.ReactElement<IRegisterPanelProps> {
-        
-        
+
+
         return (
             <div>
                 <Panel
@@ -52,12 +119,15 @@ export default class registerPanel extends React.Component<IRegisterPanelProps, 
                         sessionNameFieldOnBlur={this.props.sessionNameFieldOnBlur.bind(this)}
                         sessionDate={this.props.sessionDate}
                         sessionName={this.props.sessionName}
+                        isSessionDescDisabled={this.state.isSessionDescDisabled}
+                        isSessionNameDisabled={this.state.isSessionNameDisabled}
                         onCheckboxChangeEvent={this.props.onCheckboxChangeEvent.bind(this)}
+                        forceDisable={this.state.isTrainingSlotsDisabled}
                     />
                 </Panel>
             </div>
         );
     }
 
-};
+}
 

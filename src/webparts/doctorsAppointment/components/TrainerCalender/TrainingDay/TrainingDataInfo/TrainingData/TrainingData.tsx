@@ -6,23 +6,30 @@ export interface ITrainingDataProps {
     time: string;
     session: string;
     trainer: string;
+    isLastElement: boolean;
+    isDeregisterDisabled: boolean;
 }
 
 const trainingData = (props: ITrainingDataProps) => {
+
+    const styleToBeApplied : React.CSSProperties = {
+        borderBottom: "none"
+    };
+
     return (
-        <div className={styles.Info}>
+        <div className={styles.Info} style={props.isLastElement ? styleToBeApplied : null}>
             <div className={styles.InfoHolder}>
                 <div style={{ width: "96px" }}>{props.time}</div>
                 <div className={styles.SessionCss}>{props.session} Session</div>
-            </div>            
-                <div>by {props.trainer}</div>
-            <ActionButton  
-                iconProps={{iconName: "EventDeclined"}}
+            </div>
+            <div>by {props.trainer}</div>
+            <ActionButton
+                iconProps={{ iconName: "EventDeclined" }}
+                disabled={props.isDeregisterDisabled}
             >
-                De-register
             </ActionButton>
         </div>
     );
-    }
+};
 
 export default trainingData;

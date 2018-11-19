@@ -6,6 +6,7 @@ import { ITrainingSlots } from '../../../ITrainerCalender';
 
 export interface IRightSectionProps {
     timeOfDay: ITrainingSlots[];
+    forceDisable: boolean;
     onCheckboxChangeEvent: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
 }
 
@@ -31,6 +32,7 @@ const rightSection = (props: IRightSectionProps) => {
                             label={el.Label}
                             key={el.Id}
                             checked={el.isChecked}
+                            disabled={el.isDisabled || props.forceDisable}
                             styles={checkBoxStyle}
                             onChange={props.onCheckboxChangeEvent.bind(this, el.Id)}
                         />

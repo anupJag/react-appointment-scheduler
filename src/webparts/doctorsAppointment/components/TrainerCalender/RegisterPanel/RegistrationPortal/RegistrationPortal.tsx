@@ -13,6 +13,9 @@ export interface IRegistrationPortalProps {
     sessionNameFieldOnBlur: (event: any) => void;
     sessionDescFieldOnBlur: (event: any) => void;
     onCheckboxChangeEvent: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
+    isSessionNameDisabled: boolean;
+    isSessionDescDisabled: boolean;
+    forceDisable: boolean;
 }
 
 const registrationPortal = (props: IRegistrationPortalProps) => {
@@ -33,12 +36,15 @@ const registrationPortal = (props: IRegistrationPortalProps) => {
                     <LeftSection 
                         sessionNameFieldOnBlur={props.sessionNameFieldOnBlur.bind(this)}
                         sessionDescFieldOnBlur={props.sessionDescFieldOnBlur.bind(this)}
+                        isSessionDescDisabled={props.isSessionDescDisabled}
+                        isSessionNameDisabled={props.isSessionNameDisabled}
                     />
                 </div>
                 <div className={styles.RightContainer}>
                     <RightSection
                         timeOfDay={props.timeOfDay}
                         onCheckboxChangeEvent={props.onCheckboxChangeEvent.bind(this)}
+                        forceDisable={props.forceDisable}
                     />
                 </div>
             </div>

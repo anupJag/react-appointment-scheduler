@@ -5,6 +5,8 @@ import styles from './LeftSection.module.scss';
 export interface ILeftSectionProps {
     sessionNameFieldOnBlur: (event: any) => void;
     sessionDescFieldOnBlur: (event: any) => void;
+    isSessionNameDisabled: boolean;
+    isSessionDescDisabled: boolean;
 }
 
 const leftSection = (props: ILeftSectionProps) => {
@@ -15,6 +17,7 @@ const leftSection = (props: ILeftSectionProps) => {
                     label={"Session Name"}
                     ariaLabel={"Session Name"}
                     required={true}
+                    disabled={props.isSessionNameDisabled}
                     onBlur={props.sessionNameFieldOnBlur}
                 />
             </div>
@@ -25,6 +28,7 @@ const leftSection = (props: ILeftSectionProps) => {
                     multiline={true}
                     rows={4}
                     required={true}
+                    disabled={props.isSessionDescDisabled}
                     onBlur={props.sessionDescFieldOnBlur}
                 />
             </div>

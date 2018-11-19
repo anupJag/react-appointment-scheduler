@@ -10,6 +10,7 @@ export interface ITrainingDay {
     key: any;
     onRegisterButtonClicked: (event, key) => void;
     trainingDataInfo: ITrainerRegisteredDataStructure[];
+    isRegistrationButtonDisabled: boolean;
 }
 
 const trainingDay = (props: ITrainingDay) => {
@@ -19,6 +20,7 @@ const trainingDay = (props: ITrainingDay) => {
             <TrainingInfo
                 date={props.date}
                 day={props.day}
+                isRegistrationButtonDisabled={props.isRegistrationButtonDisabled}
                 onRegisterButtonClicked={props.onRegisterButtonClicked.bind(this, props.key)}
             />
             <TrainingDataInfo 

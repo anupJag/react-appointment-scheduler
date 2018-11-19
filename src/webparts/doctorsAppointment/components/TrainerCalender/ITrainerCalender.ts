@@ -8,6 +8,7 @@ export interface ITrainerCalenderProps {
     months: string[];
     siteURL: string;
     trainingSlotsListGUID : string;
+    loggedInUser: string;
 }
 
 export interface ITrainerCalenderState {
@@ -42,6 +43,7 @@ export interface ITrainingSlots {
     Id: string;
     Label: string;
     isChecked: boolean;
+    isDisabled: boolean;
 }
 
 export interface ITrainerRegisteredDataStructure{
@@ -49,6 +51,7 @@ export interface ITrainerRegisteredDataStructure{
     SlotTiming: string;
     Author: string;
     Id: number;
+    DeregisterDisabled : boolean;
 }
 
 export interface IWeekTrainerData{
