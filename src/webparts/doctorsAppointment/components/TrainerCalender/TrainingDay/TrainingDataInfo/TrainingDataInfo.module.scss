@@ -1,8 +1,22 @@
-.TrainingDataInfo{
-    height: 50px;
-    display: flex;
+@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
-    .Info{
+
+.TrainingDataInfo{
+   /*   
+        height: 50px;
+        display: flex;
+        flex-direction: row;
+        flex-direction: row;
+    */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: inherit;
+
+    .NoData{
+        width: 100%;
+        height: 80px;
         margin: auto;
     }
+
 }

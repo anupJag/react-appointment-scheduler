@@ -1,10 +1,29 @@
 import * as React from 'react';
 import styles from './TrainingDataInfo.module.scss';
+import TrainingData from './TrainingData/TrainingData';
+import { ITrainerRegisteredDataStructure } from '../../ITrainerCalender';
 
-const trainingDataInfo = (props) => {
-    return(
+export interface ITrainingDataInfoProps {
+    trainingDataInfo: ITrainerRegisteredDataStructure[];
+}
+
+const trainingDataInfo = (props: ITrainingDataInfoProps) => {
+    return (
         <div className={styles.TrainingDataInfo}>
-            <div className={styles.Info}>Day Information (Yet to be Implemented)</div>
+            {
+                props.trainingDataInfo && props.trainingDataInfo.length > 0 ? props.trainingDataInfo.map(el =>
+                    <TrainingData
+                        session={el.Title}
+                        time={el.SlotTiming}
+                        trainer={el.Author}
+                    />
+                )
+                :
+                <div className={styles.NoData}>
+                    No Registrations available for this day
+                </div>
+            }
+
         </div>
     );
 };

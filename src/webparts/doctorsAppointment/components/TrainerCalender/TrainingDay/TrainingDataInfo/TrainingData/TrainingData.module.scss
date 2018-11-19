@@ -1,0 +1,24 @@
+@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
+
+.Info{
+    display: flex;
+    width: 100%;    
+    justify-content: space-around;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    flex-direction: row;
+    height: 40px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 12px;
+    box-sizing: border-box;
+    padding-right: 17px;
+    
+    .InfoHolder{
+        display: flex;
+
+    .SessionCss{
+        margin-left: 15px;
+    }
+  }
+}

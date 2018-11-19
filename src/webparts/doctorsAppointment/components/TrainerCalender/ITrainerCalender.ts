@@ -21,6 +21,7 @@ export interface ITrainerCalenderState {
     sessionDesc: string;
     trainingSlots: ITrainingSlots[];
     selectedTraininigSlots: string[];
+    registeredWeekData: IWeekTrainerData;
 }
 
 export interface ITrainerData {
@@ -41,4 +42,19 @@ export interface ITrainingSlots {
     Id: string;
     Label: string;
     isChecked: boolean;
+}
+
+export interface ITrainerRegisteredDataStructure{
+    Title: string;
+    SlotTiming: string;
+    Author: string;
+    Id: number;
+}
+
+export interface IWeekTrainerData{
+    Monday: ITrainerRegisteredDataStructure[];
+    Tuesday: ITrainerRegisteredDataStructure[];
+    Wednesday: ITrainerRegisteredDataStructure[];
+    Thursday: ITrainerRegisteredDataStructure[];
+    Friday: ITrainerRegisteredDataStructure[];
 }

@@ -2,7 +2,7 @@ import * as React from 'react';
 import TrainingDay from './TrainingDay/TrainingDay';
 import styles from './TrainerCalender.module.scss';
 import RegisterPanel from './RegisterPanel/RegisterPanel';
-import { ITrainerCalenderProps, ITrainerCalenderState, ITrainerData, TrainerRegistrationStatus, ITrainingSlots } from './ITrainerCalender';
+import { ITrainerCalenderProps, ITrainerCalenderState, ITrainerData, TrainerRegistrationStatus, ITrainingSlots, ITrainerRegisteredDataStructure, IWeekTrainerData } from './ITrainerCalender';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { escape, findIndex, find, assign } from '@microsoft/sp-lodash-subset';
 import pnp, { Web, ItemAddResult } from 'sp-pnp-js';
@@ -25,15 +25,14 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             sessionName: "",
             sessionDesc: "",
             trainingSlots: undefined,
-            selectedTraininigSlots: []
+            selectedTraininigSlots: [],
+            registeredWeekData: undefined
         };
     }
 
     public componentDidMount() {
         this.getTrainingSlots().then(() => {
-            this.setState({
-                showSpinner: false
-            });
+            this.getTrainerRegisteredData().then(() => console.log('Loading Complete'));
         });
     }
 
@@ -57,9 +56,8 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         this.setState({
             startDate: tempStartDate,
             endDate: tempEndDate,
-            showSpinner: true,
             trainingType: tempTrainingType
-        });
+        }, this.getTrainerRegisteredData);
     }
 
     protected onTrainingRegisterClickHandler = (index: number): void => {
@@ -75,6 +73,200 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
     protected onDismissClickHandler = (): void => {
         this.setState({
             isRegisterPanelOpen: false
+        });
+    }
+
+    protected getTrainerRegisteredData = async () => {
+        this.setState({
+            showSpinner: true
+        });
+        const slotData : ITrainingSlots[] = [...this.state.trainingSlots];
+        const doctorBookingListID = "4E8C33B9-BB1B-4EC4-81E0-52C7EEBEB7F4";
+        const startDate: Date = new Date(this.state.startDate.toUTCString());
+        const trainingType: number = parseInt(this.state.trainingType.key.toString(), 0);
+        let batch = pnp.sp.createBatch();
+
+        pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate").expand("Author", "SlotTiming", "Category").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}T08:00:00Z'`).configure({
+            headers: {
+                'Accept': 'application/json;odata=nometadata',
+                'odata-version': ''
+            }
+        }).inBatch(batch).get().then((p: any) => {
+            //Monday Data
+            let tempMondayData: ITrainerRegisteredDataStructure[] = [];
+            let tempRegisteredWeekData: IWeekTrainerData = { ...(this.state.registeredWeekData ? this.state.registeredWeekData : null) }
+            if (p && p.length > 0) {
+                p.forEach(element => {
+                    let slotTiming = slotData.filter(el => el.Id === element["SlotTiming"]["Id"]);
+                    let slotName : string;
+
+                    if(slotTiming && slotTiming.length > 0){
+                        slotName = slotTiming[0]["Label"];
+                    }
+
+                    tempMondayData.push({
+                        Title: element["Title"],
+                        SlotTiming: element["SlotTiming"] ? slotName : null,
+                        Author: element["Author"]["Title"],
+                        Id: element["Id"]
+                    });
+                });
+            }
+
+            tempRegisteredWeekData["Monday"] = tempMondayData;
+
+            this.setState({
+                registeredWeekData: tempRegisteredWeekData
+            });
+
+        }).catch(error => error);
+
+        pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate").expand("Author", "SlotTiming", "Category").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + 1}T08:00:00Z'`).configure({
+            headers: {
+                'Accept': 'application/json;odata=nometadata',
+                'odata-version': ''
+            }
+        }).inBatch(batch).get().then((p: any) => {
+            //Tuesday Data
+            let tempTuesdayData: ITrainerRegisteredDataStructure[] = [];
+
+            let tempRegisteredWeekData: IWeekTrainerData = { ...(this.state.registeredWeekData ? this.state.registeredWeekData : null) }
+            if (p && p.length > 0) {
+                p.forEach(element => {
+                    let slotTiming = slotData.filter(el => el.Id === element["SlotTiming"]["Id"]);
+                    let slotName : string = "";
+
+                    if(slotTiming && slotTiming.length > 0){
+                        slotName = slotTiming[0]["Label"];
+                    }
+                    
+                    tempTuesdayData.push({
+                        Title: element["Title"],
+                        SlotTiming: element["SlotTiming"] ? slotName : null,
+                        Author: element["Author"]["Title"],
+                        Id: element["Id"]
+                    });
+                });
+            }
+
+            tempRegisteredWeekData["Tuesday"] = tempTuesdayData;
+
+            this.setState({
+                registeredWeekData: tempRegisteredWeekData
+            });
+
+        }).catch(error => error);
+
+        pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate").expand("Author", "SlotTiming", "Category").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + 2}T08:00:00Z'`).configure({
+            headers: {
+                'Accept': 'application/json;odata=nometadata',
+                'odata-version': ''
+            }
+        }).inBatch(batch).get().then((p: any) => {
+            //Wednesday Data
+            let tempWednesdayData: ITrainerRegisteredDataStructure[] = [];
+            let tempRegisteredWeekData: IWeekTrainerData = { ...(this.state.registeredWeekData ? this.state.registeredWeekData : null) }
+            if (p && p.length > 0) {
+                p.forEach(element => {
+                    let slotTiming = slotData.filter(el => el.Id === element["SlotTiming"]["Id"]);
+                    let slotName : string = "";
+
+                    if(slotTiming && slotTiming.length > 0){
+                        slotName = slotTiming[0]["Label"];
+                    }
+
+                    tempWednesdayData.push({
+                        Title: element["Title"],
+                        SlotTiming: element["SlotTiming"] ? slotName : null,
+                        Author: element["Author"]["Title"],
+                        Id: element["Id"]
+                    });
+                });
+            }
+
+            tempRegisteredWeekData["Wednesday"] = tempWednesdayData;
+
+            this.setState({
+                registeredWeekData: tempRegisteredWeekData
+            });
+
+        }).catch(error => error);
+
+        pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate").expand("Author", "SlotTiming", "Category").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + 3}T08:00:00Z'`).configure({
+            headers: {
+                'Accept': 'application/json;odata=nometadata',
+                'odata-version': ''
+            }
+        }).inBatch(batch).get().then((p: any) => {
+            //Thursday Data
+            let tempThursdayData: ITrainerRegisteredDataStructure[] = [];
+            let tempRegisteredWeekData: IWeekTrainerData = { ...(this.state.registeredWeekData ? this.state.registeredWeekData : null) }
+            if (p && p.length > 0) {
+                p.forEach(element => {
+                    let slotTiming = slotData.filter(el => el.Id === element["SlotTiming"]["Id"]);
+                    let slotName : string = "";
+
+                    if(slotTiming && slotTiming.length > 0){
+                        slotName = slotTiming[0]["Label"];
+                    }
+
+                    tempThursdayData.push({
+                        Title: element["Title"],
+                        SlotTiming: element["SlotTiming"] ? slotName : null,
+                        Author: element["Author"]["Title"],
+                        Id: element["Id"]
+                    });
+                });
+            }
+
+            tempRegisteredWeekData["Thursday"] = tempThursdayData;
+
+            this.setState({
+                registeredWeekData: tempRegisteredWeekData
+            });
+
+        }).catch(error => error);
+
+        pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate").expand("Author", "SlotTiming", "Category").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + 1}T08:00:00Z'`).configure({
+            headers: {
+                'Accept': 'application/json;odata=nometadata',
+                'odata-version': ''
+            }
+        }).inBatch(batch).get().then((p: any) => {
+            //Friday Data
+            let tempFridayData: ITrainerRegisteredDataStructure[] = [];
+            let tempRegisteredWeekData: IWeekTrainerData = { ...(this.state.registeredWeekData ? this.state.registeredWeekData : null) }
+            if (p && p.length > 0) {
+                p.forEach(element => {
+                    let slotTiming = slotData.filter(el => el.Id === element["SlotTiming"]["Id"]);
+                    let slotName : string = "";
+
+                    if(slotTiming && slotTiming.length > 0){
+                        slotName = slotTiming[0]["Label"];
+                    }
+
+                    tempFridayData.push({
+                        Title: element["Title"],
+                        SlotTiming: element["SlotTiming"] ? slotName : null,
+                        Author: element["Author"]["Title"],
+                        Id: element["Id"]
+                    });
+                });
+            }
+
+            tempRegisteredWeekData["Friday"] = tempFridayData;
+
+            this.setState({
+                registeredWeekData: tempRegisteredWeekData
+            });
+
+        }).catch(error => error);
+
+        await batch.execute().then(d => {
+            console.log("Done");
+            this.setState({
+                showSpinner: false
+            });
         });
     }
 
@@ -239,12 +431,18 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             let date: string = `${this.props.months[tempDateParser.getMonth()]} ${tempDateParser.getDate()}, ${tempDateParser.getFullYear()}`;
             temp = tempVar = null;
 
+            let daysData : ITrainerRegisteredDataStructure[] = this.state.registeredWeekData ? 
+                [...(this.state.registeredWeekData[day] ? this.state.registeredWeekData[day] : [])]
+            : 
+            [];
+
             return (
                 <TrainingDay
                     day={day}
                     date={date}
                     key={index}
                     onRegisterButtonClicked={this.onTrainingRegisterClickHandler.bind(this, index)}
+                    trainingDataInfo={daysData}
                 />
             );
         });
