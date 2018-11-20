@@ -23,6 +23,8 @@ export interface ITrainerCalenderState {
     trainingSlots: ITrainingSlots[];
     selectedTraininigSlots: string[];
     registeredWeekData: IWeekTrainerData;
+    hideConfirmDialog: boolean;
+    deleteRegistration: ITrainerRegisteredDataStructure;
 }
 
 export interface ITrainerData {
@@ -51,7 +53,8 @@ export interface ITrainerRegisteredDataStructure{
     SlotTiming: string;
     Author: string;
     Id: number;
-    DeregisterDisabled : boolean;
+    RegistrationDate: string;
+    DeregisterDisabled? : boolean;
 }
 
 export interface IWeekTrainerData{

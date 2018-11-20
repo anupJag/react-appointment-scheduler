@@ -5,6 +5,7 @@ import { ITrainerRegisteredDataStructure } from '../../ITrainerCalender';
 
 export interface ITrainingDataInfoProps {
     trainingDataInfo: ITrainerRegisteredDataStructure[];
+    onDeRegistrationButtonClicked:(event, key) => void;
 }
 
 const trainingDataInfo = (props: ITrainingDataInfoProps) => {
@@ -22,10 +23,12 @@ const trainingDataInfo = (props: ITrainingDataInfoProps) => {
                         return (
                             <TrainingData
                                 session={el.Title}
+                                key={el.Id}
                                 time={el.SlotTiming}
                                 trainer={el.Author}
                                 isLastElement={lastElement}
                                 isDeregisterDisabled={el.DeregisterDisabled}
+                                onDeRegistrationButtonClicked={props.onDeRegistrationButtonClicked.bind(this, el.Id)}
                             />
                         );
                     }

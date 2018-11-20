@@ -8,6 +8,7 @@ export interface ITrainingDataProps {
     trainer: string;
     isLastElement: boolean;
     isDeregisterDisabled: boolean;
+    onDeRegistrationButtonClicked:() => void;
 }
 
 const trainingData = (props: ITrainingDataProps) => {
@@ -16,16 +17,19 @@ const trainingData = (props: ITrainingDataProps) => {
         borderBottom: "none"
     };
 
+    const classToBeApplied = props.isDeregisterDisabled ? `${styles.Info} ${styles.OtherUsersDataStyles}` : `${styles.Info} ${styles.CurrLoggedInUserStyles}`;
+
     return (
-        <div className={styles.Info} style={props.isLastElement ? styleToBeApplied : null}>
+        <div className={classToBeApplied} style={props.isLastElement ? styleToBeApplied : null}>
             <div className={styles.InfoHolder}>
                 <div style={{ width: "96px" }}>{props.time}</div>
                 <div className={styles.SessionCss}>{props.session} Session</div>
             </div>
-            <div>by {props.trainer}</div>
+            <div className={styles.DoctorDispNameCss}>by {props.trainer}</div>
             <ActionButton
                 iconProps={{ iconName: "EventDeclined" }}
-                disabled={props.isDeregisterDisabled}
+                disabled={props.isDeregisterDisabled} 
+                onClick={props.onDeRegistrationButtonClicked}
             >
             </ActionButton>
         </div>

@@ -11,6 +11,7 @@ export interface ITrainingDay {
     onRegisterButtonClicked: (event, key) => void;
     trainingDataInfo: ITrainerRegisteredDataStructure[];
     isRegistrationButtonDisabled: boolean;
+    onDeRegistrationButtonClicked:(event, key) => void;
 }
 
 const trainingDay = (props: ITrainingDay) => {
@@ -25,6 +26,7 @@ const trainingDay = (props: ITrainingDay) => {
             />
             <TrainingDataInfo 
                 trainingDataInfo={props.trainingDataInfo}
+                onDeRegistrationButtonClicked={props.onDeRegistrationButtonClicked.bind(this)}
             />
         </div>
     );
