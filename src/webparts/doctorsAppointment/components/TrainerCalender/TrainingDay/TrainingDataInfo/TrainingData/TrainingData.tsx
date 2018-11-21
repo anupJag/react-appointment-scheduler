@@ -22,10 +22,10 @@ const trainingData = (props: ITrainingDataProps) => {
     return (
         <div className={classToBeApplied} style={props.isLastElement ? styleToBeApplied : null}>
             <div className={styles.InfoHolder}>
-                <div style={{ width: "96px" }}>{props.time}</div>
-                <div className={styles.SessionCss}>{props.session} Session</div>
+                <div>{props.time}</div>
+                <div className={styles.SessionCss}>{`${props.session}`}</div>
             </div>
-            <div className={styles.DoctorDispNameCss}>by {props.trainer}</div>
+            <div className={styles.DoctorDispNameCss}>{`by ${props.trainer}`}</div>
             <ActionButton
                 iconProps={{ iconName: "EventDeclined" }}
                 disabled={props.isDeregisterDisabled} 

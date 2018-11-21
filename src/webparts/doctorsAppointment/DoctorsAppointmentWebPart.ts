@@ -6,6 +6,9 @@ import {
   IPropertyPaneConfiguration,
   PropertyPaneTextField
 } from '@microsoft/sp-webpart-base';
+//IE Fixes
+import 'core-js/es6/number';
+import 'core-js/es6/array';
 
 import * as strings from 'DoctorsAppointmentWebPartStrings';
 import DoctorsAppointment from './components/DoctorsAppointment';

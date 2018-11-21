@@ -2,7 +2,7 @@
 
 .Info{
     display: flex;
-    width: 100%;    
+    width: 100% !important;    
     justify-content: space-around;
     align-items: center;
     border-bottom: 1px solid #ccc;
@@ -13,32 +13,31 @@
     padding: 0 12px;
     box-sizing: border-box;
     padding-right: 17px;
-    font-weight: bold;
+    font-weight: 500;
     
     .InfoHolder{
         display: flex;
+        flex-direction: row;
 
-    .SessionCss{
-        margin-left: 13px;
+        .SessionCss{
+            margin-left: 13px;
+            white-space: nowrap;
+            flex: 1;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            max-width: 150px;
+        }
+    }
+
+    .DoctorDispNameCss {
+        max-width: 150px;
         white-space: nowrap;
         flex: 1;
         text-overflow: ellipsis;
         overflow: hidden;
-        min-width: 0;
-        width: 250px;
     }
-  }
-
-  .DoctorDispNameCss{
-    margin-left: 13px;
-    max-width: 210px;
-    white-space: nowrap;
-    flex: 1;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    min-width: 0;
-  }
 }
+
 .CurrLoggedInUserStyles{
     border: 1px solid;
     border-color:$ms-color-themePrimary;

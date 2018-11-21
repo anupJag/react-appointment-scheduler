@@ -12,7 +12,7 @@ export interface ITrainingInfoProps {
 const trainingInfo = (props: ITrainingInfoProps) => {
     const registerButtonStyle: IButtonStyles = {
         label: {
-            fontWeight: "bold",
+            fontWeight: "500",
         },
         root: {
             padding: "10px"
