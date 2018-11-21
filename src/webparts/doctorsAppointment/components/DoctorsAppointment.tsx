@@ -173,6 +173,7 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
         siteURL={this.props.siteURL}
         trainingSlotsListGUID={this.props.trainingSlots}
         loggedInUser={this.props.loggedInUserName}
+        doctorsAppointments={this.props.doctorsAppointments}
       />
       :
       <TrainingSelection />;

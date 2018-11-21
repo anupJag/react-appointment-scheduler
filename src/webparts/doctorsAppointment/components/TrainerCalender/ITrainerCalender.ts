@@ -9,6 +9,7 @@ export interface ITrainerCalenderProps {
     siteURL: string;
     trainingSlotsListGUID : string;
     loggedInUser: string;
+    doctorsAppointments: string;
 }
 
 export interface ITrainerCalenderState {

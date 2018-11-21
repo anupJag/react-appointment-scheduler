@@ -88,7 +88,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             showSpinner: true
         });
         const slotData: ITrainingSlots[] = [...this.state.trainingSlots];
-        const doctorBookingListID = "4E8C33B9-BB1B-4EC4-81E0-52C7EEBEB7F4";
+        const doctorBookingListID = this.props.doctorsAppointments;
         const startDate: Date = new Date(this.state.startDate.toUTCString());
         const trainingType: number = parseInt(this.state.trainingType.key.toString(), 0);
         const daysOfWeek: string[] = [...this.props.daysOfWeek];
@@ -162,7 +162,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
 
     protected reserveTrainerSlots = async (data: ITrainerData[]) => {
         //let web = new Web(this.props.siteURL);
-        let doctorBookingListID = "4E8C33B9-BB1B-4EC4-81E0-52C7EEBEB7F4";
+        let doctorBookingListID = this.props.doctorsAppointments;
         let list = await pnp.sp.web.lists.getById(doctorBookingListID);
 
         list.getListItemEntityTypeFullName().then(async (entityTypeFullName) => {
@@ -365,7 +365,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             deleteRegistration: dataToBeDeregistered,
             hideConfirmDialog: false
         });
-        // pnp.sp.web.lists.getById("4E8C33B9-BB1B-4EC4-81E0-52C7EEBEB7F4").items.getById(key).update({
+        // pnp.sp.web.lists.getById(this.props.doctorsAppointments).items.getById(key).update({
         //     TrainerRegistrationStatus: "Cancelled"
         // }).then(result => {
         //     console.log(JSON.stringify(result));
@@ -379,7 +379,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
     }
 
     protected _yesDialogHandler = (): void => {
-        console.log("YES Dialog called!!")
+        console.log("YES Dialog called!!");
         this.setState({
             hideConfirmDialog: true
         });

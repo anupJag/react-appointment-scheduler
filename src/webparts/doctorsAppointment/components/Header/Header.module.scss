@@ -7,7 +7,7 @@
     background: $ms-color-themePrimary;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    position: relative;
     color: #fff;
 
     // .LeftLogo{
@@ -31,7 +31,10 @@
     // }
 
     .HeaderContent{
-        margin: auto;
+        position: absolute;
+        top:50%;
+        left:50%;
+        transform: translate(-50%, -50%);
         font-size: 28px;
         font-weight: bold;
     }
