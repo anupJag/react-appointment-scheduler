@@ -14,6 +14,7 @@ import { IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 import pnp, { Web } from 'sp-pnp-js';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import Aux from './HOC/Auxilliary';
+import TraineeCalendar from './TraineeCalendar/TraineeCalendar';
 
 export interface IDoctorsAppointmentState {
   firstDayOfWeek: Date;
@@ -164,7 +165,18 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
 
   public render(): React.ReactElement<IDoctorsAppointmentProps> {
     const trainingModuleRendering: JSX.Element = this.state.trainingType ?
-      <TrainerCalender
+      // <TrainerCalender
+      //   daysOfWeek={this.daysArray}
+      //   months={this.monthArray}
+      //   trainingType={this.state.trainingType}
+      //   startDate={this.state.firstDayOfWeek}
+      //   endDate={this.state.lastDayOfWeek}
+      //   siteURL={this.props.siteURL}
+      //   trainingSlotsListGUID={this.props.trainingSlots}
+      //   loggedInUser={this.props.loggedInUserName}
+      //   doctorsAppointments={this.props.doctorsAppointments}
+      // />
+      <TraineeCalendar 
         daysOfWeek={this.daysArray}
         months={this.monthArray}
         trainingType={this.state.trainingType}
