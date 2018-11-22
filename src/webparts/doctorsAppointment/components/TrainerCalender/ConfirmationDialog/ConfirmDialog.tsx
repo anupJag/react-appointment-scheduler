@@ -1,27 +1,40 @@
 import * as React from 'react';
-import { Dialog, DialogType, DialogFooter } from 'office-ui-fabric-react/lib/Dialog';
+import { Dialog, DialogType, DialogFooter, IDialogFooterStyleProps, IDialogFooterProps } from 'office-ui-fabric-react/lib/Dialog';
 import { PrimaryButton, DefaultButton } from 'office-ui-fabric-react/lib/Button';
+import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
+import styles from './ConfirmationDialog.module.scss';
 
 export interface IConfirmDialogProps {
     hideDialog: boolean;
     date: string;
     time: string;
+    showSpinner: boolean;
     _yesDialog: () => void;
     _closeDialog: () => void;
 }
 
-const confirmDialog = (props : IConfirmDialogProps) => {
+const confirmDialog = (props: IConfirmDialogProps) => {
+
+    const classToBeAlpplied = props.showSpinner ? `${styles.isFooterClosed}` : `${styles.isFooterVisible}`;
+
+    const hideSpinner: React.CSSProperties = !props.showSpinner ? { display: "none" } : null;
+
     return (
         <Dialog
             hidden={props.hideDialog}
             dialogContentProps={{
                 type: DialogType.largeHeader,
-                title: 'Confirm De-registration',
-                subText: `Click Yes to confirm slot de-registration for ${props.date} on ${props.time}`
+                title: 'Confirm Deregistration',
+                subText: `Click 'YES' if you are sure about deregistering ${props.time} slot on ${props.date} ?`,
+
             }}
+            className={styles.ConfirmationDialog}
         >
-            <DialogFooter>
-                <PrimaryButton onClick={props._yesDialog} text="Yes" />
+            <div className={styles.ShowSpinner} style={hideSpinner}>
+                <Spinner label={"De-registering your request"} size={SpinnerSize.medium} />
+            </div>
+            <DialogFooter className={classToBeAlpplied}>
+                <PrimaryButton onClick={props._yesDialog} text="YES" />
                 <DefaultButton onClick={props._closeDialog} text="Cancel" />
             </DialogFooter>
         </Dialog>

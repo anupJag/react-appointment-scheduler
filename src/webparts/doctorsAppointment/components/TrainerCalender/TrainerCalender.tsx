@@ -29,7 +29,8 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             selectedTraininigSlots: [],
             registeredWeekData: undefined,
             hideConfirmDialog: true,
-            deleteRegistration: undefined
+            deleteRegistration: undefined,
+            showDialogSpinner: false
         };
     }
 
@@ -281,7 +282,6 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         }
     }
 
-
     protected onSessionScheduleChangeEventHandler = (key: any, ev: React.FormEvent<HTMLElement>, isChecked: boolean): void => {
         let tempTrainingSlots: ITrainingSlots[] = [...this.state.trainingSlots];
         let tempSelectedTrainingSlots: string[] = [...this.state.selectedTraininigSlots];
@@ -345,31 +345,31 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
     }
 
     protected onDeRegistrationButtonClickedHandler = async (key: any, event: any) => {
-        console.log("on De reg");
-        const tempRegistrationData : IWeekTrainerData = {...this.state.registeredWeekData};
-        const weekDays : string[] = [...this.props.daysOfWeek];
-        let dataToBeDeregistered : ITrainerRegisteredDataStructure;
+        const tempRegistrationData: IWeekTrainerData = { ...this.state.registeredWeekData };
+        const weekDays: string[] = [...this.props.daysOfWeek];
+        let dataToBeDeregistered: ITrainerRegisteredDataStructure;
 
         for (let index = 0; index < weekDays.length; index++) {
-            let dataForTheWeek : ITrainerRegisteredDataStructure[] = [...tempRegistrationData[weekDays[index]]];
+            let dataForTheWeek: ITrainerRegisteredDataStructure[] = [...tempRegistrationData[weekDays[index]]];
 
             let dataToBeremoved = dataForTheWeek.filter(el => el.Id === key);
 
-            if(dataToBeremoved && dataToBeremoved.length > 0){
-                dataToBeDeregistered = {...dataToBeremoved[0]};
+            if (dataToBeremoved && dataToBeremoved.length > 0) {
+                dataToBeDeregistered = { ...dataToBeremoved[0] };
                 break;
-            }            
+            }
+        }
+
+        if (dataToBeDeregistered) {
+            let dateToBeConstructed: Date = new Date(dataToBeDeregistered["RegistrationDate"]);
+            let dateInString: string = `${this.props.months[dateToBeConstructed.getMonth()]} ${dateToBeConstructed.getDate()}, ${dateToBeConstructed.getFullYear()}`;
+            dataToBeDeregistered["RegistrationDate"] = dateInString;
         }
 
         this.setState({
             deleteRegistration: dataToBeDeregistered,
             hideConfirmDialog: false
         });
-        // pnp.sp.web.lists.getById(this.props.doctorsAppointments).items.getById(key).update({
-        //     TrainerRegistrationStatus: "Cancelled"
-        // }).then(result => {
-        //     console.log(JSON.stringify(result));
-        // });
     }
 
     protected _closeDialogHandler = (): void => {
@@ -378,11 +378,27 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         });
     }
 
-    protected _yesDialogHandler = (): void => {
-        console.log("YES Dialog called!!");
+    protected _yesDialogHandler = async () => {
         this.setState({
-            hideConfirmDialog: true
+            showDialogSpinner: true
         });
+
+        const awaitFunction = async () => {
+            const promise = await pnp.sp.web.lists.getById(this.props.doctorsAppointments).items.getById(this.state.deleteRegistration["Id"]).update({
+                TrainerRegistrationStatus: "Cancelled"
+            }).then(result => {
+                console.log(JSON.stringify(result));
+            });
+
+            console.log(promise);
+        };
+
+        awaitFunction().then(() => {
+            this.setState({
+                hideConfirmDialog: true,
+                showDialogSpinner: false
+            });
+        }).then(() => this.getTrainerRegisteredData());
     }
 
 
@@ -451,11 +467,12 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
 
         const showDialog: JSX.Element = !(this.state.hideConfirmDialog) ?
             <ConfirmDialog
-                time={"9:00 - 09:45"}
-                date={"11/20/2018"}
+                time={this.state.deleteRegistration["RegistrationDate"]}
+                date={this.state.deleteRegistration["SlotTiming"]}
                 hideDialog={this.state.hideConfirmDialog}
                 _closeDialog={this._closeDialogHandler.bind(this)}
                 _yesDialog={this._yesDialogHandler.bind(this)}
+                showSpinner={this.state.showDialogSpinner}
             />
             :
             null;

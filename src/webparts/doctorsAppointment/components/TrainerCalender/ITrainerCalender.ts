@@ -26,6 +26,7 @@ export interface ITrainerCalenderState {
     registeredWeekData: IWeekTrainerData;
     hideConfirmDialog: boolean;
     deleteRegistration: ITrainerRegisteredDataStructure;
+    showDialogSpinner : boolean;
 }
 
 export interface ITrainerData {

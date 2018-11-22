@@ -20,17 +20,18 @@
         flex-direction: row;
 
         .SessionCss{
-            margin-left: 13px;
+            margin-left: 30px;
             white-space: nowrap;
             flex: 1;
             text-overflow: ellipsis;
             overflow: hidden;
-            max-width: 150px;
+            max-width: 160px;
+            width: 150px;
         }
     }
 
     .DoctorDispNameCss {
-        max-width: 150px;
+        max-width: 250px;
         white-space: nowrap;
         flex: 1;
         text-overflow: ellipsis;

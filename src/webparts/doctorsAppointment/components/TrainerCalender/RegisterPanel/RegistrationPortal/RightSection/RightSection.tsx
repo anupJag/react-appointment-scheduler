@@ -16,7 +16,7 @@ const rightSection = (props: IRightSectionProps) => {
             margin: "4px 4px"
         },
         text:{
-            fontWeight: "bold"
+            fontWeight: "500"
         }
     };
 

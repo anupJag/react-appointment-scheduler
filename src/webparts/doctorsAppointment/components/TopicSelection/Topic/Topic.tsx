@@ -20,7 +20,7 @@ const topic = (props: ITopicProps) => {
                     placeHolder={"Select a training"}
                     className={styles.TopicDropDown}
                     onChanged={props.onDropDownChange}
-
+                    
                 />
             </div>
         </div>
