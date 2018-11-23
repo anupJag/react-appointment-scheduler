@@ -20,7 +20,7 @@
     "description": { "default": "Application to allow users to register for the training" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "Doctors Appointment"
+      "currentView": true
     }
   }]
 }

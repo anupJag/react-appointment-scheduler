@@ -16,6 +16,6 @@ const traineeTrainingDay = (props: ITraineeTrainingDayProps) => {
             />
         </div>
     );
-}
+};
 
 export default traineeTrainingDay;

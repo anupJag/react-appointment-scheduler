@@ -4,7 +4,8 @@ import { Version } from '@microsoft/sp-core-library';
 import {
   BaseClientSideWebPart,
   IPropertyPaneConfiguration,
-  PropertyPaneTextField
+  PropertyPaneTextField,
+  PropertyPaneToggle
 } from '@microsoft/sp-webpart-base';
 //IE Fixes
 import 'core-js/es6/number';
@@ -15,10 +16,14 @@ import DoctorsAppointment from './components/DoctorsAppointment';
 import { IDoctorsAppointmentProps } from './components/IDoctorsAppointmentProps';
 import { PropertyFieldListPicker, PropertyFieldListPickerOrderBy } from '@pnp/spfx-property-controls/lib/PropertyFieldListPicker';
 import pnp from "sp-pnp-js";
+
 export interface IDoctorsAppointmentWebPartProps {
   trainingSession: string;
-  trainingSlots : string;
-  doctorsAppointments : string;
+  trainingSlots: string;
+  doctorsAppointments: string;
+  currentView: boolean;
+  //TRUE : Trainer View
+  //FALSE : Trainee View
 }
 
 export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDoctorsAppointmentWebPartProps> {
@@ -26,27 +31,36 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
   public onInit(): Promise<void> {
 
     return super.onInit().then(_ => {
-  
+
       pnp.setup({
         spfxContext: this.context
       });
-      
+
     });
   }
   public render(): void {
 
-    const element: React.ReactElement<IDoctorsAppointmentProps > = React.createElement(
+    const element: React.ReactElement<IDoctorsAppointmentProps> = React.createElement(
       DoctorsAppointment,
       {
         siteURL: this.context.pageContext.web.absoluteUrl,
         trainingSession: this.properties.trainingSession,
-        trainingSlots : this.properties.trainingSlots,
-        doctorsAppointments : this.properties.doctorsAppointments,
-        loggedInUserName: this.context.pageContext.user.displayName       
+        trainingSlots: this.properties.trainingSlots,
+        doctorsAppointments: this.properties.doctorsAppointments,
+        loggedInUserName: this.context.pageContext.user.displayName,
+        currentView: this.properties.currentView
       }
     );
 
     ReactDom.render(element, this.domElement);
+  }
+
+  protected get disableReactivePropertyChanges(): boolean {
+    return true;
+  }
+
+  protected onAfterPropertyPaneChangesApplied(){
+    this.render();
   }
 
   protected onDispose(): void {
@@ -109,6 +123,11 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
                   deferredValidationTime: 0,
                   key: 'doctorsAppointments',
                   baseTemplate: 100
+                }),
+                PropertyPaneToggle('currentView',{
+                  onText: "Trainer View",
+                  offText: "Trainee View",
+                  label: "Select View {For development Purpose Only}"
                 })
               ]
             }
