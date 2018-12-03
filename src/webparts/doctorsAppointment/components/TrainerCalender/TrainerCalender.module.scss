@@ -3,7 +3,11 @@
     height: 56%;
     overflow-y: auto;
     overflow-x: hidden;
+    /* Commented on 27th November 2018 by Snadesh for Trainning Div is not displaying properly in IE browser
     display: flex;
+    Added display block instead of flex
+    */
+    display: block;
     flex-direction: column;
 
     &::-webkit-scrollbar {

@@ -25,7 +25,7 @@ const confirmDialog = (props: IConfirmDialogProps) => {
             dialogContentProps={{
                 type: DialogType.largeHeader,
                 title: 'Confirm Deregistration',
-                subText: `Click 'YES' if you are sure about deregistering ${props.time} slot on ${props.date} ?`,
+                subText: `Click 'YES' if you want to deregister ${props.time} slot on ${props.date}. If a trainee already booked the slot you are about to cancel please inform him/her`,
 
             }}
             className={styles.ConfirmationDialog}
