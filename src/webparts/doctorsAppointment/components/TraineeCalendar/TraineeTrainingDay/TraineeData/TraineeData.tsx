@@ -29,12 +29,11 @@ const trainingData = (props: ITrainingDataProps) => {
                 <div className={styles.SessionCss}>{`${props.session}`}</div>
             </div>
             <div className={styles.DoctorDispNameCss}>{`by ${props.trainer}`}</div>
-            {/* <ActionButton
-                iconProps={{ iconName: "EventDeclined" }}
-                disabled={props.isDeregisterDisabled} 
-                onClick={props.onDeRegistrationButtonClicked}
+            <ActionButton
+                iconProps={{ iconName: "AddEvent" }}
+                disabled={props.isDeregisterDisabled}
             >
-            </ActionButton> */}
+            </ActionButton>
         </div>
     );
 };

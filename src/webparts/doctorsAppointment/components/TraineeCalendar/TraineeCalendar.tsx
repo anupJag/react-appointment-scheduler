@@ -1,7 +1,7 @@
 import * as React from 'react';
 import TraineeTrainingDay from './TraineeTrainingDay/TraineeTrainingDay';
 import styles from './TraineeCalendar.module.scss';
-import { ITrainerCalenderProps, ITrainerCalenderState, ITrainerData, TrainerRegistrationStatus, ITrainingSlots, ITrainerRegisteredDataStructure, IWeekTrainerData } from './ITraineeCalendar';
+import { ITraineeCalendarProps, ITraineeCalendarState, TrainerRegistrationStatus, ITrainingSlots, ITraineeRegisteredDataStructure, IWeekTrainerData } from './ITraineeCalendar';
 import { IDropdownOption } from "office-ui-fabric-react/lib/Dropdown";
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { escape, findIndex, find, assign } from '@microsoft/sp-lodash-subset';
@@ -9,58 +9,33 @@ import pnp, { Web, ItemAddResult } from 'sp-pnp-js';
 import TraineeData from '../TraineeCalendar/TraineeTrainingDay/TraineeData/TraineeData'
 import trainingDay from '../TrainerCalender/TrainingDay/TrainingDay';
 
-export interface ITraineeCalendarProps{
-    startDate: Date;
-    endDate: Date;
-    trainingType: IDropdownOption;
-    daysOfWeek: string[];
-    months: string[];
-    siteURL: string;
-    trainingSlotsListGUID : string;
-    loggedInUser: string;
-    doctorsAppointments: string;
-}
 
-export interface ITraineeCalendarState {
-    startDate: Date;
-    endDate: Date;
-    trainingType: IDropdownOption;
-    // isRegisterPanelOpen: boolean;
-    // registrationDate: string;
-    // showSpinner: boolean;
-    // sessionName: string;
-    // sessionDesc: string;
-        trainingSlots: ITrainingSlots[];
-    // selectedTraininigSlots: string[];
-    registeredWeekData: IWeekTrainerData;
-    // hideConfirmDialog: boolean;
-    // deleteRegistration: ITrainerRegisteredDataStructure;
-    // showDialogSpinner : boolean;
-}
 
 export default class TraineeCalendar extends React.Component<ITraineeCalendarProps, ITraineeCalendarState>{
-    
+
 
     /**
      * Default Constructor
      */
     constructor(props: ITraineeCalendarProps) {
         super(props);
-        this.state={
+        this.state = {
             registeredWeekData: undefined,
-            endDate:props.endDate,
+            endDate: props.endDate,
             startDate: props.startDate,
             trainingType: props.trainingType,
-            trainingSlots: undefined
-            
+            trainingSlots: undefined,
+            showSpinner: true
         };
-        
+
     }
+
     public componentDidMount() {
         this.getTrainingSlots().then(() => {
             this.getTrainerRegisteredData().then(() => console.log('Loading Complete'));
         });
     }
+
     public componentWillReceiveProps(nextProps: ITraineeCalendarProps) {
         let tempStartDate = this.state.startDate;
         let tempEndDate = this.state.endDate;
@@ -82,7 +57,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
             startDate: tempStartDate,
             endDate: tempEndDate,
             trainingType: tempTrainingType
-        });
+        }, this.getTrainerRegisteredData);
     }
 
     protected getTrainingSlots = async () => {
@@ -120,9 +95,10 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
             });
         }
     }
+
     protected getTrainerRegisteredData = async () => {
         this.setState({
-            //showSpinner: true
+            showSpinner: true
         });
         const slotData: ITrainingSlots[] = [...this.state.trainingSlots];
         const doctorBookingListID = this.props.doctorsAppointments;
@@ -133,13 +109,13 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
 
         for (let index = 0; index < daysOfWeek.length; index++) {
 
-            pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate").expand("Author", "SlotTiming", "Category").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + index}T08:00:00Z'`).configure({
+            pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate", "Trainee/Title", "SlotAvailable").expand("Author", "SlotTiming", "Category", "Trainee").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + index}T08:00:00Z'`).configure({
                 headers: {
                     'Accept': 'application/json;odata=nometadata',
                     'odata-version': ''
                 }
             }).inBatch(batch).get().then((p: any) => {
-                let tempData: ITrainerRegisteredDataStructure[] = [];
+                let tempData: ITraineeRegisteredDataStructure[] = [];
                 let tempRegisteredWeekData: IWeekTrainerData = { ...(this.state.registeredWeekData ? this.state.registeredWeekData : null) };
                 if (p && p.length > 0) {
                     p.forEach(element => {
@@ -156,7 +132,8 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                             Author: element["Author"]["Title"],
                             Id: element["Id"],
                             RegistrationDate: element["RegistrationDate"],
-                            DeregisterDisabled: !(element["Author"]["Title"] === this.props.loggedInUser)
+                            Trainee: element["Trainee"] ? element["Trainee"]["Title"] : null,
+                            SlotAvailable: element["SlotAvailable"]
                         });
                     });
                 }
@@ -167,18 +144,21 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                     registeredWeekData: tempRegisteredWeekData
                 });
 
+                console.log(tempRegisteredWeekData);
             }).catch(error => error);
-
         }
 
         await batch.execute().then(d => {
             console.log("Done");
             this.setState({
-                //showSpinner: false
+                showSpinner: false
             });
         });
     }
-    public render() : React.ReactElement<ITraineeCalendarProps>{
+
+    public render(): React.ReactElement<ITraineeCalendarProps> {
+        const showSpinner: JSX.Element = this.state.showSpinner ? <div style={{ height: "100%", width: "100%", display: "flex" }}><Spinner size={SpinnerSize.large} label="Please wait while finish loading..." style={{ margin: "auto" }} /></div> : null;
+
         const trainingData: any = this.props.daysOfWeek.map((day: string, index: number) => {
             let temp = new Date(this.state.startDate.toUTCString());
             let tempVar = new Date(this.state.startDate.toUTCString());
@@ -186,22 +166,22 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
             let date: string = `${this.props.months[tempDateParser.getMonth()]} ${tempDateParser.getDate()}, ${tempDateParser.getFullYear()}`;
             temp = tempVar = null;
 
-             let daysData: ITrainerRegisteredDataStructure[] = this.state.registeredWeekData ?
+            let daysData: ITraineeRegisteredDataStructure[] = this.state.registeredWeekData ?
                 [...(this.state.registeredWeekData[day] ? this.state.registeredWeekData[day] : [])]
                 :
-                 [];
+                [];
 
-             daysData.sort((a: any, b: any) => {
-                 var SlotA = a["SlotTiming"].toUpperCase();
-                 var SlotB = b["SlotTiming"].toUpperCase();
-                 if (SlotA < SlotB) {
+            daysData.sort((a: any, b: any) => {
+                var SlotA = a["SlotTiming"].toUpperCase();
+                var SlotB = b["SlotTiming"].toUpperCase();
+                if (SlotA < SlotB) {
                     return -1;
-                 }
-                 if (SlotA > SlotB) {
-                     return 1;
-                 }
-                 return 0;
-             });
+                }
+                if (SlotA > SlotB) {
+                    return 1;
+                }
+                return 0;
+            });
 
             return (
                 <TraineeTrainingDay
@@ -210,17 +190,20 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                     key={index}
                     trainingDataInfo={daysData}
                     isRegistrationButtonDisabled={false}
-                    // onRegisterButtonClicked={this.onTrainingRegisterClickHandler.bind(this, index)}
-                    // onDeRegistrationButtonClicked={this.onDeRegistrationButtonClickedHandler.bind(this)}
+                // onRegisterButtonClicked={this.onTrainingRegisterClickHandler.bind(this, index)}
+                // onDeRegistrationButtonClicked={this.onDeRegistrationButtonClickedHandler.bind(this)}
 
                 />
-                
+
             );
         });
-        return(
-            
+
+        return (
+
             <div className={styles.TraineeCalender}>
-                {trainingData}
+                {
+                    this.state.showSpinner ? showSpinner : trainingData
+                }
             </div>
         );
     }

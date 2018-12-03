@@ -2,7 +2,7 @@ import * as React from 'react';
 import TrainingInfo from './TrainingInfo/TrainingInfo';
 import styles from './TraineeTrainingDay.module.scss';
 import TraineeData, { ITrainingDataProps } from './TraineeData/TraineeData';
-import { ITrainerRegisteredDataStructure } from '../ITraineeCalendar';
+import { ITraineeRegisteredDataStructure } from '../ITraineeCalendar';
 import TraineeDataInfo from './TraineeDataInfo/TraineeDataInfo';
 import TrainingDataInfo from '../../TrainerCalender/TrainingDay/TrainingDataInfo/TrainingDataInfo';
 
@@ -11,7 +11,7 @@ export interface ITraineeTrainingDayProps {
     day: string;
     key: any;
    // onRegisterButtonClicked: (event, key) => void;
-    trainingDataInfo: ITrainerRegisteredDataStructure[];
+    trainingDataInfo: ITraineeRegisteredDataStructure[];
     isRegistrationButtonDisabled: boolean;
    // onDeRegistrationButtonClicked: (event, key) => void;
 }

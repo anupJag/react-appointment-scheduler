@@ -1,35 +1,35 @@
 import { IDropdownOption } from "office-ui-fabric-react/lib/Dropdown";
 
-export interface ITrainerCalenderProps {
+export interface ITraineeCalendarProps {
     startDate: Date;
     endDate: Date;
     trainingType: IDropdownOption;
     daysOfWeek: string[];
     months: string[];
     siteURL: string;
-    trainingSlotsListGUID : string;
+    trainingSlotsListGUID: string;
     loggedInUser: string;
     doctorsAppointments: string;
 }
 
-export interface ITrainerCalenderState {
+export interface ITraineeCalendarState {
     startDate: Date;
     endDate: Date;
     trainingType: IDropdownOption;
-    isRegisterPanelOpen: boolean;
-    registrationDate: string;
+    // isRegisterPanelOpen: boolean;
+    // registrationDate: string;
     showSpinner: boolean;
-    sessionName: string;
-    sessionDesc: string;
+    // sessionName: string;
+    // sessionDesc: string;
     trainingSlots: ITrainingSlots[];
-    selectedTraininigSlots: string[];
+    // selectedTraininigSlots: string[];
     registeredWeekData: IWeekTrainerData;
-    hideConfirmDialog: boolean;
-    deleteRegistration: ITrainerRegisteredDataStructure;
-    showDialogSpinner : boolean;
+    // hideConfirmDialog: boolean;
+    // deleteRegistration: ITrainerRegisteredDataStructure;
+    // showDialogSpinner : boolean;
 }
 
-export interface ITrainerData {
+export interface ITraineeData {
     Title: string;
     RegistrationDate: string;
     TrainerRegistrationStatus: string;
@@ -50,19 +50,20 @@ export interface ITrainingSlots {
     isDisabled: boolean;
 }
 
-export interface ITrainerRegisteredDataStructure{
+export interface ITraineeRegisteredDataStructure{
     Title: string;
     SlotTiming: string;
     Author: string;
     Id: number;
     RegistrationDate: string;
-    DeregisterDisabled? : boolean;
+    Trainee: string;
+    SlotAvailable: string;
 }
 
 export interface IWeekTrainerData{
-    Monday: ITrainerRegisteredDataStructure[];
-    Tuesday: ITrainerRegisteredDataStructure[];
-    Wednesday: ITrainerRegisteredDataStructure[];
-    Thursday: ITrainerRegisteredDataStructure[];
-    Friday: ITrainerRegisteredDataStructure[];
+    Monday: ITraineeRegisteredDataStructure[];
+    Tuesday: ITraineeRegisteredDataStructure[];
+    Wednesday: ITraineeRegisteredDataStructure[];
+    Thursday: ITraineeRegisteredDataStructure[];
+    Friday: ITraineeRegisteredDataStructure[];
 }
