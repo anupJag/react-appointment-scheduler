@@ -1,22 +1,23 @@
 import * as React from 'react';
 import styles from '../TraineeDataInfo/TraineeDataInfo.module.scss';
 import TrainingData from '../TraineeData/TraineeData';
-import { ITrainerRegisteredDataStructure } from '../../../TrainerCalender/ITrainerCalender';
+import { ITraineeRegisteredDataStructure } from '../../ITraineeCalendar';
 
 export interface ITrainingDataInfoProps {
-    trainingDataInfo: ITrainerRegisteredDataStructure[];
-    //onDeRegistrationButtonClicked:(event, key) => void;
+    traineeDataInfo: ITraineeRegisteredDataStructure[];
+    onRegisterSlotButtonClicked:(event, key) => void;
+    onDeregisterSlotButtonClicked:(event, key) => void;
 }
 
 const trainingDataInfo = (props: ITrainingDataInfoProps) => {
     return (
         <div className={styles.TraineeDataInfo}>
             {
-                props.trainingDataInfo && props.trainingDataInfo.length > 0 ?
-                    props.trainingDataInfo.map((el, index: number) => {
+                props.traineeDataInfo && props.traineeDataInfo.length > 0 ?
+                    props.traineeDataInfo.map((el, index: number) => {
                         let lastElement: boolean = false;
 
-                        if (props.trainingDataInfo.length - 1 === index) {
+                        if (props.traineeDataInfo.length - 1 === index) {
                             lastElement = true;
                         }
 
@@ -27,8 +28,10 @@ const trainingDataInfo = (props: ITrainingDataInfoProps) => {
                                 time={el.SlotTiming}
                                 trainer={el.Author}
                                 isLastElement={lastElement}
-                                isDeregisterDisabled={el.DeregisterDisabled}
-                                
+                                traineeBookingStatus={el.TraineeBookingStatus} 
+                                slotAvailable={el.SlotAvailable}
+                                onRegisterSlotButtonClicked={props.onRegisterSlotButtonClicked.bind(this, el.Id)}
+                                onDeregisterSlotButtonClicked={props.onDeregisterSlotButtonClicked.bind(this, el.Id)}
                             />
                         );
                     }

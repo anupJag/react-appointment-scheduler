@@ -1,41 +1,80 @@
 import * as React from 'react';
 import styles from './TraineeData.module.scss';
-import { ActionButton, IButtonProps } from 'office-ui-fabric-react/lib/Button';
-import { ITrainerRegisteredDataStructure } from '../../../TrainerCalender/ITrainerCalender';
+import { ActionButton, IButtonProps, IButtonStyles } from 'office-ui-fabric-react/lib/Button';
+import { TraineeBookingStatusTypes } from '../../ITraineeCalendar';
 
 
-export interface ITrainingDataProps {
+export interface ITraineeDataProps {
     time: string;
     session: string;
     trainer: string;
     isLastElement: boolean;
-    isDeregisterDisabled: boolean;
-   // onDeRegistrationButtonClicked:() => void;
+    traineeBookingStatus: string;
+    slotAvailable: boolean;
+    onDeregisterSlotButtonClicked:() => void;
+    onRegisterSlotButtonClicked:() => void;
 }
 
-const trainingData = (props: ITrainingDataProps) => {
+const traineeData = (props: ITraineeDataProps) => {
 
-    const styleToBeApplied : React.CSSProperties = {
+    const styleToBeApplied: React.CSSProperties = {
         borderBottom: "none"
     };
-    
+    //#region CSS Styling
+    let styleToApply: string = null;
+    let iconButtonStyle: IButtonStyles;
 
-    const classToBeApplied = props.isDeregisterDisabled ? `${styles.Info} ${styles.OtherUsersDataStyles}` : `${styles.Info} ${styles.CurrLoggedInUserStyles}`;
+    if (props.traineeBookingStatus === TraineeBookingStatusTypes.BookedByMe) {
+        styleToApply = `${styles.Info} ${styles.BookedSlot}`;
+        iconButtonStyle = {
+            icon: {
+                color: 'white'
+            },
+            iconHovered: {
+                color: 'white'
+            }
+        };
+    }
+    else if (props.traineeBookingStatus === TraineeBookingStatusTypes.NotAvailableForMe) {
+        styleToApply = `${styles.Info} ${styles.NotBookedForMe}`;
+    } 
+    else {
+        if(!props.slotAvailable){
+            styleToApply = `${styles.Info} ${styles.NotBookedForMe}`;
+        }
+        else{
+            styleToApply = `${styles.Info} ${styles.AvailableSlot}`;
+        }
+    }
+    //#endregion
 
     return (
-        <div className={classToBeApplied} style={props.isLastElement ? styleToBeApplied : null}>
+        <div className={styleToApply} style={props.isLastElement ? styleToBeApplied : null}>
             <div className={styles.InfoHolder}>
                 <div>{props.time}</div>
                 <div className={styles.SessionCss}>{`${props.session}`}</div>
             </div>
             <div className={styles.DoctorDispNameCss}>{`by ${props.trainer}`}</div>
-            <ActionButton
-                iconProps={{ iconName: "AddEvent" }}
-                disabled={props.isDeregisterDisabled}
-            >
-            </ActionButton>
+            {
+                props.traineeBookingStatus === TraineeBookingStatusTypes.BookedByMe ?
+                    <ActionButton
+                        iconProps={{ iconName: "RemoveEvent" }}
+                        styles={iconButtonStyle}
+                        onClick={props.onDeregisterSlotButtonClicked}
+                    >
+                    </ActionButton>
+                    :
+                    <ActionButton
+                        iconProps={{ iconName: !props.slotAvailable ? "ProtectRestrict" : "AddEvent" }}
+                        styles={iconButtonStyle}
+                        disabled={props.traineeBookingStatus === TraineeBookingStatusTypes.NotAvailableForMe || !props.slotAvailable}
+                        onClick={props.onRegisterSlotButtonClicked}
+                    >
+                    </ActionButton>
+            }
+
         </div>
     );
 };
 
-export default trainingData;
+export default traineeData;

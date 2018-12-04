@@ -39,13 +39,20 @@
     }
 }
 
-.CurrLoggedInUserStyles{
+.BookedSlot{
+    border: 1px solid;
+    background-color:$ms-color-green;
+    color: $ms-color-white;
+    border-radius: 5px;
+}
+
+.AvailableSlot{
     border: 1px solid;
     border-color:$ms-color-themePrimary;
     color: $ms-color-themePrimary;
     border-radius: 5px;
 }
 
-.OtherUsersDataStyles{
+.NotBookedForMe{
     opacity: 0.3;
 }

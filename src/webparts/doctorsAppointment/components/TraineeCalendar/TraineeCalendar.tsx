@@ -1,13 +1,12 @@
 import * as React from 'react';
 import TraineeTrainingDay from './TraineeTrainingDay/TraineeTrainingDay';
 import styles from './TraineeCalendar.module.scss';
-import { ITraineeCalendarProps, ITraineeCalendarState, TrainerRegistrationStatus, ITrainingSlots, ITraineeRegisteredDataStructure, IWeekTrainerData } from './ITraineeCalendar';
+import { ITraineeCalendarProps, ITraineeCalendarState, TraineeBookingStatusTypes, ITrainingSlots, ITraineeRegisteredDataStructure, IWeekTrainerData } from './ITraineeCalendar';
 import { IDropdownOption } from "office-ui-fabric-react/lib/Dropdown";
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { escape, findIndex, find, assign } from '@microsoft/sp-lodash-subset';
 import pnp, { Web, ItemAddResult } from 'sp-pnp-js';
-import TraineeData from '../TraineeCalendar/TraineeTrainingDay/TraineeData/TraineeData'
-import trainingDay from '../TrainerCalender/TrainingDay/TrainingDay';
+import ConfirmationDialog from './ConfirmationDialog/ConfirmationDialog';
 
 
 
@@ -25,7 +24,8 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
             startDate: props.startDate,
             trainingType: props.trainingType,
             trainingSlots: undefined,
-            showSpinner: true
+            showSpinner: true,
+            hideConfirmDialog: true
         };
 
     }
@@ -119,6 +119,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                 let tempRegisteredWeekData: IWeekTrainerData = { ...(this.state.registeredWeekData ? this.state.registeredWeekData : null) };
                 if (p && p.length > 0) {
                     p.forEach(element => {
+
                         let slotTiming = slotData.filter(el => el.Id === element["SlotTiming"]["Id"]);
                         let slotName: string;
 
@@ -133,8 +134,33 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                             Id: element["Id"],
                             RegistrationDate: element["RegistrationDate"],
                             Trainee: element["Trainee"] ? element["Trainee"]["Title"] : null,
-                            SlotAvailable: element["SlotAvailable"]
+                            SlotAvailable: element["SlotAvailable"],
+                            TraineeBookingStatus: TraineeBookingStatusTypes.Available
                         });
+                    });
+                }
+
+                const { loggedInUser } = this.props;
+                let getFilteredDataForLoggedInUser = tempData.filter(el => el.Trainee === loggedInUser);
+                if (getFilteredDataForLoggedInUser && getFilteredDataForLoggedInUser.length > 0) {
+                    getFilteredDataForLoggedInUser.forEach(element => {
+                        const tempTitle = element.Title;
+                        let getSessionInfoFromTitle = tempData.filter(el => el.Title === tempTitle);
+
+                        if (getSessionInfoFromTitle && getSessionInfoFromTitle.length > 0) {
+                            getSessionInfoFromTitle.forEach(element => {
+                                let trainingBookingStatus: string = null;
+                                if (element.SlotAvailable === false && element.Trainee === loggedInUser) {
+                                    trainingBookingStatus = TraineeBookingStatusTypes.BookedByMe;
+                                }
+                                else {
+                                    trainingBookingStatus = TraineeBookingStatusTypes.NotAvailableForMe;
+                                }
+
+                                let index = findIndex(tempData, el => el.Id === element.Id);
+                                tempData[index]["TraineeBookingStatus"] = trainingBookingStatus;
+                            });
+                        }
                     });
                 }
 
@@ -153,6 +179,28 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
             this.setState({
                 showSpinner: false
             });
+        });
+    }
+
+    protected onTraineeRegistrationClickHandler = (index: number): void => {
+        console.log(`Register Slot for ${index}`);
+    }
+
+    protected onTraineeDeregistrationClickHandler = (index: number): void => {
+        this.setState({
+            hideConfirmDialog: false
+        });
+    }
+
+    protected onConfirmCloseDialogClickHandler = (): void => {
+        this.setState({
+            hideConfirmDialog: true
+        });
+    }
+
+    protected onConfirmYesDailogClickHandler = (): void => {
+        this.setState({
+            hideConfirmDialog: true
         });
     }
 
@@ -190,13 +238,21 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                     key={index}
                     trainingDataInfo={daysData}
                     isRegistrationButtonDisabled={false}
-                // onRegisterButtonClicked={this.onTrainingRegisterClickHandler.bind(this, index)}
-                // onDeRegistrationButtonClicked={this.onDeRegistrationButtonClickedHandler.bind(this)}
-
+                    onRegisterButtonClicked={this.onTraineeRegistrationClickHandler.bind(this)}
+                    onDeregistrationButtonClicked={this.onTraineeDeregistrationClickHandler.bind(this)}
                 />
 
             );
         });
+
+        const confirmDialog: JSX.Element = !this.state.hideConfirmDialog ?
+            <ConfirmationDialog
+                hideDialog={this.state.hideConfirmDialog}
+                showSpinner={false}
+                _closeDialog={this.onConfirmCloseDialogClickHandler.bind(this)}
+                _yesDialog={this.onConfirmYesDailogClickHandler.bind(this)}
+            />
+            : null;
 
         return (
 
@@ -204,6 +260,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                 {
                     this.state.showSpinner ? showSpinner : trainingData
                 }
+                {confirmDialog}
             </div>
         );
     }

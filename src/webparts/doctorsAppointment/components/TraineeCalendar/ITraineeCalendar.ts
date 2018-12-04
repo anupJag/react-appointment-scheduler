@@ -24,7 +24,7 @@ export interface ITraineeCalendarState {
     trainingSlots: ITrainingSlots[];
     // selectedTraininigSlots: string[];
     registeredWeekData: IWeekTrainerData;
-    // hideConfirmDialog: boolean;
+    hideConfirmDialog: boolean;
     // deleteRegistration: ITrainerRegisteredDataStructure;
     // showDialogSpinner : boolean;
 }
@@ -38,9 +38,10 @@ export interface ITraineeData {
     SlotTimingId: number;
 }
 
-export enum TrainerRegistrationStatus {
-    Booked = "Booked",
-    Cancelled = "Cancelled"
+export enum TraineeBookingStatusTypes {
+    BookedByMe = "BookedByMe",
+    Available = "Available",
+    NotAvailableForMe = "NotAvailableForMe"
 }
 
 export interface ITrainingSlots {
@@ -57,7 +58,8 @@ export interface ITraineeRegisteredDataStructure{
     Id: number;
     RegistrationDate: string;
     Trainee: string;
-    SlotAvailable: string;
+    SlotAvailable: boolean;
+    TraineeBookingStatus : string;
 }
 
 export interface IWeekTrainerData{

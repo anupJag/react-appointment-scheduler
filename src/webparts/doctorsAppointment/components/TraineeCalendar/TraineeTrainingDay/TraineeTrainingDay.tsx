@@ -1,19 +1,17 @@
 import * as React from 'react';
 import TrainingInfo from './TrainingInfo/TrainingInfo';
 import styles from './TraineeTrainingDay.module.scss';
-import TraineeData, { ITrainingDataProps } from './TraineeData/TraineeData';
 import { ITraineeRegisteredDataStructure } from '../ITraineeCalendar';
 import TraineeDataInfo from './TraineeDataInfo/TraineeDataInfo';
-import TrainingDataInfo from '../../TrainerCalender/TrainingDay/TrainingDataInfo/TrainingDataInfo';
 
 export interface ITraineeTrainingDayProps {
     date: string;
     day: string;
     key: any;
-   // onRegisterButtonClicked: (event, key) => void;
+    onRegisterButtonClicked: (event, key) => void;
     trainingDataInfo: ITraineeRegisteredDataStructure[];
     isRegistrationButtonDisabled: boolean;
-   // onDeRegistrationButtonClicked: (event, key) => void;
+    onDeregistrationButtonClicked: (event, key) => void;
 }
 
 const traineeTrainingDay = (props: ITraineeTrainingDayProps) => {
@@ -24,8 +22,8 @@ const traineeTrainingDay = (props: ITraineeTrainingDayProps) => {
                 day={props.day}
             />
             <TraineeDataInfo
-                trainingDataInfo={props.trainingDataInfo}
-               
+                traineeDataInfo={props.trainingDataInfo}
+                onDeregisterSlotButtonClicked={props.onDeregistrationButtonClicked.bind(this)} onRegisterSlotButtonClicked={props.onRegisterButtonClicked.bind(this)}
             />
         </div>
     );
