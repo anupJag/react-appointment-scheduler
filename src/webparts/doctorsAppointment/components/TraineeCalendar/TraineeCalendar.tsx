@@ -1,17 +1,16 @@
 import * as React from 'react';
 import TraineeTrainingDay from './TraineeTrainingDay/TraineeTrainingDay';
 import styles from './TraineeCalendar.module.scss';
-import { ITraineeCalendarProps, ITraineeCalendarState, TraineeBookingStatusTypes, ITrainingSlots, ITraineeRegisteredDataStructure, IWeekTrainerData } from './ITraineeCalendar';
-import { IDropdownOption } from "office-ui-fabric-react/lib/Dropdown";
+import { ITraineeCalendarProps, ITraineeCalendarState, TraineeBookingStatusTypes, ITrainingSlots, ITraineeRegisteredDataStructure, IWeekTraineeData, ITraineeToolProficency } from './ITraineeCalendar';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { escape, findIndex, find, assign } from '@microsoft/sp-lodash-subset';
 import pnp, { Web, ItemAddResult } from 'sp-pnp-js';
 import ConfirmationDialog from './ConfirmationDialog/ConfirmationDialog';
+import SessionRegistraion from './SessionRegistration/SessionRegistration';
 
 
 
 export default class TraineeCalendar extends React.Component<ITraineeCalendarProps, ITraineeCalendarState>{
-
 
     /**
      * Default Constructor
@@ -25,14 +24,82 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
             trainingType: props.trainingType,
             trainingSlots: undefined,
             showSpinner: true,
-            hideConfirmDialog: true
+            hideConfirmDialog: true,
+            showDialogSpinner: false,
+            deleteRegistration: undefined,
+            isRegisterPanelOpen: false,
+            selectedTraininigSlot: undefined,
+            powerBIProficiency: [
+                {
+                    id: 0,
+                    isChecked: false,
+                    label: "I have no idea what Power BI is"
+                },
+                {
+                    id: 1,
+                    isChecked: false,
+                    label: "I have downloaded a Power BI trial and just started using it"
+                },
+                {
+                    id: 2,
+                    isChecked: false,
+                    label: "I’m already creating and sharing dashboards with a Power BI Pro license"
+                },
+                {
+                    id: 3,
+                    isChecked: false,
+                    label: "I’m creating dashboards on a daily basis and sharing via Mars Power BI Service"
+                },
+                {
+                    id: 4,
+                    isChecked: false,
+                    label: "I’m very proficient and already giving support to my team"
+                },
+            ],
+            tableauProficiency: [
+                {
+                    id: 0,
+                    isChecked: false,
+                    label: "I have no idea what Tableau is"
+                },
+                {
+                    id: 1,
+                    isChecked: false,
+                    label: "I have downloaded a Tableau trial and just started using it"
+                },
+                {
+                    id: 2,
+                    isChecked: false,
+                    label: "I’m already creating and sharing dashboards with a trial version"
+                },
+                {
+                    id: 3,
+                    isChecked: false,
+                    label: "I’m creating dashboards on a daily basis and sharing via Mars Tableau server"
+                },
+                {
+                    id: 4,
+                    isChecked: false,
+                    label: "I’m very proficient and already giving support to my team"
+                },
+            ],
+            traineeShareDashboard: [
+                {
+                   key: 'Yes',
+                   text: 'Yes' 
+                },
+                {
+                    key: 'No',
+                    text: 'No' 
+                 }
+            ]
         };
 
     }
 
     public componentDidMount() {
         this.getTrainingSlots().then(() => {
-            this.getTrainerRegisteredData().then(() => console.log('Loading Complete'));
+            this.getTraineeRegisteredData().then(() => console.log('Loading Complete'));
         });
     }
 
@@ -57,7 +124,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
             startDate: tempStartDate,
             endDate: tempEndDate,
             trainingType: tempTrainingType
-        }, this.getTrainerRegisteredData);
+        }, this.getTraineeRegisteredData);
     }
 
     protected getTrainingSlots = async () => {
@@ -96,7 +163,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
         }
     }
 
-    protected getTrainerRegisteredData = async () => {
+    protected getTraineeRegisteredData = async () => {
         this.setState({
             showSpinner: true
         });
@@ -116,7 +183,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                 }
             }).inBatch(batch).get().then((p: any) => {
                 let tempData: ITraineeRegisteredDataStructure[] = [];
-                let tempRegisteredWeekData: IWeekTrainerData = { ...(this.state.registeredWeekData ? this.state.registeredWeekData : null) };
+                let tempRegisteredWeekData: IWeekTraineeData = { ...(this.state.registeredWeekData ? this.state.registeredWeekData : null) };
                 if (p && p.length > 0) {
                     p.forEach(element => {
 
@@ -148,17 +215,17 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                         let getSessionInfoFromTitle = tempData.filter(el => el.Title === tempTitle);
 
                         if (getSessionInfoFromTitle && getSessionInfoFromTitle.length > 0) {
-                            getSessionInfoFromTitle.forEach(element => {
+                            getSessionInfoFromTitle.forEach(ele => {
                                 let trainingBookingStatus: string = null;
-                                if (element.SlotAvailable === false && element.Trainee === loggedInUser) {
+                                if (ele.SlotAvailable === false && ele.Trainee === loggedInUser) {
                                     trainingBookingStatus = TraineeBookingStatusTypes.BookedByMe;
                                 }
                                 else {
                                     trainingBookingStatus = TraineeBookingStatusTypes.NotAvailableForMe;
                                 }
 
-                                let index = findIndex(tempData, el => el.Id === element.Id);
-                                tempData[index]["TraineeBookingStatus"] = trainingBookingStatus;
+                                let indx = findIndex(tempData, el => el.Id === ele.Id);
+                                tempData[indx]["TraineeBookingStatus"] = trainingBookingStatus;
                             });
                         }
                     });
@@ -182,14 +249,63 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
         });
     }
 
-    protected onTraineeRegistrationClickHandler = (index: number): void => {
-        console.log(`Register Slot for ${index}`);
+    protected onTraineeRegistrationClickHandler = (key: number): void => {
+
+        const tempSessionData: IWeekTraineeData = { ...this.state.registeredWeekData };
+        const weekDays: string[] = [...this.props.daysOfWeek];
+        let dataToBeUpdated: ITraineeRegisteredDataStructure;
+
+        for (let index = 0; index < weekDays.length; index++) {
+            let dataForTheWeek: ITraineeRegisteredDataStructure[] = [...tempSessionData[weekDays[index]]];
+
+            let dataToBeremoved = dataForTheWeek.filter(el => el.Id === key);
+
+            if (dataToBeremoved && dataToBeremoved.length > 0) {
+                dataToBeUpdated = { ...dataToBeremoved[0] };
+                break;
+            }
+        }
+
+        if (dataToBeUpdated) {
+            let dateToBeConstructed: Date = new Date(dataToBeUpdated["RegistrationDate"]);
+            let dateInString: string = `${this.props.months[dateToBeConstructed.getMonth()]} ${dateToBeConstructed.getDate()}, ${dateToBeConstructed.getFullYear()}`;
+            dataToBeUpdated["RegistrationDate"] = dateInString;
+        }
+
+        this.setState({
+            selectedTraininigSlot: dataToBeUpdated,
+            isRegisterPanelOpen: true
+        });
     }
 
-    protected onTraineeDeregistrationClickHandler = (index: number): void => {
+    protected onTraineeDeregistrationClickHandler = (key: number): void => {
+
+        const tempSessionData: IWeekTraineeData = { ...this.state.registeredWeekData };
+        const weekDays: string[] = [...this.props.daysOfWeek];
+        let dataToBeDeregistered: ITraineeRegisteredDataStructure;
+
+        for (let index = 0; index < weekDays.length; index++) {
+            let dataForTheWeek: ITraineeRegisteredDataStructure[] = [...tempSessionData[weekDays[index]]];
+
+            let dataToBeremoved = dataForTheWeek.filter(el => el.Id === key);
+
+            if (dataToBeremoved && dataToBeremoved.length > 0) {
+                dataToBeDeregistered = { ...dataToBeremoved[0] };
+                break;
+            }
+        }
+
+        if (dataToBeDeregistered) {
+            let dateToBeConstructed: Date = new Date(dataToBeDeregistered["RegistrationDate"]);
+            let dateInString: string = `${this.props.months[dateToBeConstructed.getMonth()]} ${dateToBeConstructed.getDate()}, ${dateToBeConstructed.getFullYear()}`;
+            dataToBeDeregistered["RegistrationDate"] = dateInString;
+        }
+
         this.setState({
+            deleteRegistration: dataToBeDeregistered,
             hideConfirmDialog: false
         });
+
     }
 
     protected onConfirmCloseDialogClickHandler = (): void => {
@@ -198,9 +314,83 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
         });
     }
 
-    protected onConfirmYesDailogClickHandler = (): void => {
+    /***
+     * De register Slot
+     */
+    protected onConfirmYesDailogClickHandler = async () => {
         this.setState({
-            hideConfirmDialog: true
+            showDialogSpinner: true
+        });
+
+        const asyncCall = async () => {
+            const promise = await pnp.sp.web.lists.getById(this.props.doctorsAppointments).items.getById(this.state.deleteRegistration["Id"]).update({
+                Questionnaire: "",
+                SlotAvailable: true,
+                TraineeId: 0
+            }).then(data => {
+                console.log(data);
+            });
+
+            console.log(promise);
+        };
+
+
+        asyncCall().then(() => {
+            this.setState({
+                hideConfirmDialog: true,
+                showDialogSpinner: false
+            });
+        }).then(() => this.getTraineeRegisteredData());
+
+
+    }
+
+    protected onCheckboxProficiencyChangeEventHandler = (key: any, ev: React.FormEvent<HTMLElement>, isChecked: boolean): void => {
+        let tempTrainingSlots: ITraineeToolProficency[] = [];
+
+        if (this.state.trainingType.text === "Power BI") {
+            tempTrainingSlots = [...this.state.powerBIProficiency]
+        }
+        else {
+            tempTrainingSlots = [...this.state.tableauProficiency]
+        }
+
+        for (let i = 0; i < tempTrainingSlots.length; i++) {
+            if (tempTrainingSlots[i]["id"] === key) {
+                tempTrainingSlots[i]["isChecked"] = isChecked;
+            }
+        }
+
+        if (this.state.trainingType.text === "Power BI") {
+            this.setState({
+                powerBIProficiency: tempTrainingSlots
+            });
+        }
+        else {
+            this.setState({
+                tableauProficiency: tempTrainingSlots
+            });
+        }
+    }
+
+    protected onDismissClickHandler = (): void => {
+
+        let tempPowerBIProficiency: ITraineeToolProficency[] = [...this.state.powerBIProficiency];
+        let tempTableauProficiency: ITraineeToolProficency[] = [...this.state.tableauProficiency];
+
+        for (let i = 0; i < tempPowerBIProficiency.length; i++) {
+            tempPowerBIProficiency[i]["isChecked"] = false
+        }
+
+        for (let i = 0; i < tempTableauProficiency.length; i++) {
+            tempTableauProficiency[i]["isChecked"] = false
+        }
+
+
+        this.setState({
+            powerBIProficiency: tempPowerBIProficiency,
+            tableauProficiency: tempTableauProficiency,
+            isRegisterPanelOpen: false
         });
     }
 
@@ -248,19 +438,36 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
         const confirmDialog: JSX.Element = !this.state.hideConfirmDialog ?
             <ConfirmationDialog
                 hideDialog={this.state.hideConfirmDialog}
-                showSpinner={false}
+                showSpinner={this.state.showDialogSpinner}
                 _closeDialog={this.onConfirmCloseDialogClickHandler.bind(this)}
                 _yesDialog={this.onConfirmYesDailogClickHandler.bind(this)}
+                sessionName={this.state.deleteRegistration["Title"]}
+                date={this.state.deleteRegistration["RegistrationDate"]}
+                time={this.state.deleteRegistration["SlotTiming"]}
             />
             : null;
 
-        return (
+        const sessionRegistrationPortal: JSX.Element = this.state.isRegisterPanelOpen ?
+            <SessionRegistraion
+                isPanelOpen={this.state.isRegisterPanelOpen}
+                onDismissClick={this.onDismissClickHandler.bind(this)}
+                sessionDate={this.state.selectedTraininigSlot["RegistrationDate"]}
+                sessionSlotTiming={this.state.selectedTraininigSlot["SlotTiming"]}
+                sessionTitle={this.state.selectedTraininigSlot["Title"]}
+                sessionType={this.state.trainingType.text}
+                checkBoxProficiency={this.state.trainingType.text === "Power BI" ? this.state.powerBIProficiency : this.state.tableauProficiency}
+                checkBoxProficiencyChange={this.onCheckboxProficiencyChangeEventHandler.bind(this)}
+            />
+            :
+            null;
 
-            <div className={styles.TraineeCalender}>
+        return (
+            <div className={styles.TraineeCalender} >
                 {
                     this.state.showSpinner ? showSpinner : trainingData
                 }
                 {confirmDialog}
+                {sessionRegistrationPortal}
             </div>
         );
     }

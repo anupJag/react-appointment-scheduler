@@ -16,17 +16,20 @@ export interface ITraineeCalendarState {
     startDate: Date;
     endDate: Date;
     trainingType: IDropdownOption;
-    // isRegisterPanelOpen: boolean;
+    isRegisterPanelOpen: boolean;
     // registrationDate: string;
     showSpinner: boolean;
     // sessionName: string;
     // sessionDesc: string;
     trainingSlots: ITrainingSlots[];
-    // selectedTraininigSlots: string[];
-    registeredWeekData: IWeekTrainerData;
+    selectedTraininigSlot: ITraineeRegisteredDataStructure;
+    registeredWeekData: IWeekTraineeData;
     hideConfirmDialog: boolean;
-    // deleteRegistration: ITrainerRegisteredDataStructure;
-    // showDialogSpinner : boolean;
+    deleteRegistration: ITraineeRegisteredDataStructure;
+    showDialogSpinner: boolean;
+    powerBIProficiency: ITraineeToolProficency[];
+    tableauProficiency: ITraineeToolProficency[];
+    traineeShareDashboard : IDropdownOption[];
 }
 
 export interface ITraineeData {
@@ -51,7 +54,14 @@ export interface ITrainingSlots {
     isDisabled: boolean;
 }
 
-export interface ITraineeRegisteredDataStructure{
+export interface ITraineeToolProficency {
+    isChecked: boolean;
+    label: string;
+    id: number;
+}
+
+
+export interface ITraineeRegisteredDataStructure {
     Title: string;
     SlotTiming: string;
     Author: string;
@@ -59,10 +69,10 @@ export interface ITraineeRegisteredDataStructure{
     RegistrationDate: string;
     Trainee: string;
     SlotAvailable: boolean;
-    TraineeBookingStatus : string;
+    TraineeBookingStatus: string;
 }
 
-export interface IWeekTrainerData{
+export interface IWeekTraineeData {
     Monday: ITraineeRegisteredDataStructure[];
     Tuesday: ITraineeRegisteredDataStructure[];
     Wednesday: ITraineeRegisteredDataStructure[];
