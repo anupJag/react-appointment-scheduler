@@ -21,7 +21,6 @@ export interface ITraineeCalendarState {
     isRegisterPanelOpen: boolean;
     // registrationDate: string;
     showSpinner: boolean;
-    traineeSharedDashboardSelectedKey: string;
     trainingSlots: ITrainingSlots[];
     selectedTraininigSlot: ITraineeRegisteredDataStructure;
     registeredWeekData: IWeekTraineeData;
@@ -30,7 +29,7 @@ export interface ITraineeCalendarState {
     showDialogSpinner: boolean;
     powerBIProficiency: ITraineeToolCheckBox[];
     tableauProficiency: ITraineeToolCheckBox[];
-    traineeShareDashboard: IChoiceGroupOption[];
+    traineeShareDashboard: ITraineeToolCheckBox[];
     powerBIAlreadySharingDashboard: ITraineeToolCheckBox[];
     tableauAlreadySharingDashboard: ITraineeToolCheckBox[];
     traineeToolForUse: ITraineeToolCheckBox[];

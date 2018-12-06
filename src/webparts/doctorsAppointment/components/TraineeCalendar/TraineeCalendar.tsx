@@ -31,7 +31,6 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
             deleteRegistration: undefined,
             isRegisterPanelOpen: false,
             selectedTraininigSlot: undefined,
-            traineeSharedDashboardSelectedKey: 'Yes',
             traineeDataSourceInUse: [
                 {
                     id: 0,
@@ -181,12 +180,14 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
             ],
             traineeShareDashboard: [
                 {
-                    key: 'Yes',
-                    text: 'Yes',
+                    id: 0,
+                    isChecked: false,
+                    label: "Yes"
                 },
                 {
-                    key: 'No',
-                    text: 'No'
+                    id: 1,
+                    isChecked: false,
+                    label: "No"
                 }
             ]
         };
@@ -561,11 +562,18 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
             tempTraineeDataSourceInUse[i]["isChecked"] = false;
         }
 
+        let tempTraineeSharedDashboard: ITraineeToolCheckBox[] = [...this.state.traineeShareDashboard];
+
+        for (let i = 0; i < tempTraineeSharedDashboard.length; i++) {
+            tempTraineeSharedDashboard[i]["isChecked"] = false;
+        }
+
+
 
         this.setState({
             powerBIProficiency: tempPowerBIProficiency,
             tableauProficiency: tempTableauProficiency,
-            traineeSharedDashboardSelectedKey: 'Yes',
+            traineeShareDashboard: tempTraineeSharedDashboard,
             traineeToolForUse: tempTraineeToolForUse,
             powerBIAlreadySharingDashboard: tempPowerBIAlreadyShared,
             tableauAlreadySharingDashboard: tempTableauAlreadyShared,
@@ -582,9 +590,20 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
         });
     }
 
-    protected onTraineeSharedDashboardChangeHandler = (ev: React.SyntheticEvent<HTMLElement>, option: IChoiceGroupOption): void => {
+    protected onTraineeSharedDashboardChangeHandler = (key: any, ev: React.FormEvent<HTMLElement>, isChecked: boolean): void => {
+        let tempTraineeSharedDashboard: ITraineeToolCheckBox[] = [...this.state.traineeShareDashboard];
+
+        for (let i = 0; i < tempTraineeSharedDashboard.length; i++) {
+            if (tempTraineeSharedDashboard[i]["id"] === key) {
+                tempTraineeSharedDashboard[i]["isChecked"] = isChecked;
+            }
+            else {
+                tempTraineeSharedDashboard[i]["isChecked"] = !isChecked;
+            }
+        }
+
         this.setState({
-            traineeSharedDashboardSelectedKey: option.key
+            traineeShareDashboard: tempTraineeSharedDashboard
         });
     }
 
@@ -613,6 +632,8 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
 
         const traineeDataSourceInUse: string = this.state.traineeDataSourceInUse.filter(el => el.isChecked === true).map(el => `<p>${el.label}</p>`).join('');
 
+        const traineeSharedDashboard : string = this.state.traineeShareDashboard.filter(el => el.isChecked === true).map(el => `<p>${el.label}</p>`).join('');
+
         let questionnaireString: string = `
             <div>
                 <div>
@@ -625,7 +646,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                 </div>
                 <div>
                     <p><strong>${ques3}</strong></p>
-                    <p>${this.state.traineeSharedDashboardSelectedKey}</p>
+                    <p>${traineeSharedDashboard}</p>
                 </div>
                 <div>
                     <p><strong>${ques4}</strong></p>
@@ -725,7 +746,6 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                 checkBoxProficiencyChange={this.onCheckboxProficiencyChangeEventHandler.bind(this)}
                 traineeSharedDashboardOptions={this.state.traineeShareDashboard}
                 onTraineeSharedDashboardChange={this.onTraineeSharedDashboardChangeHandler.bind(this)}
-                traineeSharedDashboardSelectedKey={this.state.traineeSharedDashboardSelectedKey}
                 checkBoxAlreadySharingDashBoard={this.state.trainingType.text === "Power BI" ? this.state.powerBIAlreadySharingDashboard : this.state.tableauAlreadySharingDashboard}
                 checkBoxAlreadySharingDashboardChange={this.onCheckboxAlreadySharedDashboardChangeEventHandler.bind(this)}
                 checkboxTraineeToolForUse={this.state.traineeToolForUse}

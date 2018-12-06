@@ -16,9 +16,8 @@ export interface ISessionRegistraionProps {
     sessionSlotTiming: string;
     checkBoxProficiency: ITraineeToolCheckBox[];
     checkBoxProficiencyChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
-    traineeSharedDashboardOptions: IChoiceGroupOption[];
-    onTraineeSharedDashboardChange: (ev: React.SyntheticEvent<HTMLElement>, option: IChoiceGroupOption) => void;
-    traineeSharedDashboardSelectedKey: string;
+    traineeSharedDashboardOptions: ITraineeToolCheckBox[];
+    onTraineeSharedDashboardChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
     checkBoxAlreadySharingDashBoard: ITraineeToolCheckBox[];
     checkBoxAlreadySharingDashboardChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
     checkboxTraineeToolForUse: ITraineeToolCheckBox[];
@@ -122,7 +121,6 @@ export default class SessionRegistraion extends React.Component<ISessionRegistra
                         checkBoxProficiencyChange={this.props.checkBoxProficiencyChange.bind(this)}
                         traineeSharedDashboardOptions={this.props.traineeSharedDashboardOptions}
                         onTraineeSharedDashboardChange={this.props.onTraineeSharedDashboardChange.bind(this)}
-                        traineeSharedDashboardSelectedKey={this.props.traineeSharedDashboardSelectedKey}
                         checkBoxAlreadySharingDashBoard={this.props.checkBoxAlreadySharingDashBoard}
                         checkBoxAlreadySharingDashboardChange={this.props.checkBoxAlreadySharingDashboardChange.bind(this)}
                         checkboxTraineeToolForUse={this.props.checkboxTraineeToolForUse}

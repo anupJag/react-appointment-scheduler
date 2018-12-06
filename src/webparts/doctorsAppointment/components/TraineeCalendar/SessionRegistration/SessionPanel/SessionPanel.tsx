@@ -12,9 +12,8 @@ export interface ISessionPanelProps {
     sessionSlotTiming: string;
     checkBoxProficiency: ITraineeToolCheckBox[];
     checkBoxProficiencyChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
-    traineeSharedDashboardOptions: IChoiceGroupOption[];
-    onTraineeSharedDashboardChange: (ev: React.SyntheticEvent<HTMLElement>, option: IChoiceGroupOption) => void;
-    traineeSharedDashboardSelectedKey: string;
+    traineeSharedDashboardOptions: ITraineeToolCheckBox[];
+    onTraineeSharedDashboardChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
     checkBoxAlreadySharingDashBoard: ITraineeToolCheckBox[];
     checkBoxAlreadySharingDashboardChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
     checkboxTraineeToolForUse: ITraineeToolCheckBox[];
@@ -66,12 +65,17 @@ const sessionPanel = (props: ISessionPanelProps) => {
                 <div>
                     <div>3. Do you have any intention to share your dashboards with other people?</div>
                     <div>
-                        <ChoiceGroup
-                            options={props.traineeSharedDashboardOptions}
-                            onChange={props.onTraineeSharedDashboardChange}
-                            selectedKey={props.traineeSharedDashboardSelectedKey}
-                            disabled={props.forceDisable}
-                        />
+                        {
+                            props.traineeSharedDashboardOptions.map((el: ITraineeToolCheckBox) =>
+                            <Checkbox
+                                label={el.label}
+                                checked={el.isChecked}
+                                key={el.id}
+                                onChange={props.onTraineeSharedDashboardChange.bind(this, el.id)}
+                                disabled={props.forceDisable}
+                            />
+                        )
+                        }
                     </div>
                 </div>
                 <div>
