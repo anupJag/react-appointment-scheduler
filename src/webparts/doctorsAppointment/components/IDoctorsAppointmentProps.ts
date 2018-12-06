@@ -1,3 +1,5 @@
+import { IPropertyFieldGroupOrPerson } from "@pnp/spfx-property-controls/lib/PropertyFieldPeoplePicker";
+
 export interface IDoctorsAppointmentProps {
   siteURL: string;
   trainingSession: string;
@@ -6,4 +8,5 @@ export interface IDoctorsAppointmentProps {
   loggedInUserName: string;
   currentView: boolean;
   loggedInUserEmail: string;
+  userGroup: IPropertyFieldGroupOrPerson[];
 }

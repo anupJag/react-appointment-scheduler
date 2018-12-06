@@ -10,7 +10,7 @@ import {
 //IE Fixes
 import 'core-js/es6/number';
 import 'core-js/es6/array';
-
+import { PropertyFieldPeoplePicker, PrincipalType, IPropertyFieldGroupOrPerson } from '@pnp/spfx-property-controls/lib/PropertyFieldPeoplePicker';
 import * as strings from 'DoctorsAppointmentWebPartStrings';
 import DoctorsAppointment from './components/DoctorsAppointment';
 import { IDoctorsAppointmentProps } from './components/IDoctorsAppointmentProps';
@@ -22,8 +22,7 @@ export interface IDoctorsAppointmentWebPartProps {
   trainingSlots: string;
   doctorsAppointments: string;
   currentView: boolean;
-  //TRUE : Trainer View
-  //FALSE : Trainee View
+  group: IPropertyFieldGroupOrPerson[];
 }
 
 export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDoctorsAppointmentWebPartProps> {
@@ -38,6 +37,7 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
 
     });
   }
+
   public render(): void {
     const element: React.ReactElement<IDoctorsAppointmentProps> = React.createElement(
       DoctorsAppointment,
@@ -48,7 +48,8 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
         doctorsAppointments: this.properties.doctorsAppointments,
         loggedInUserName: this.context.pageContext.user.displayName,
         currentView: this.properties.currentView,
-        loggedInUserEmail : this.context.pageContext.user.email
+        loggedInUserEmail: this.context.pageContext.user.email,
+        userGroup: this.properties.group
       }
     );
 
@@ -59,7 +60,7 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
     return true;
   }
 
-  protected onAfterPropertyPaneChangesApplied(){
+  protected onAfterPropertyPaneChangesApplied() {
     this.render();
   }
 
@@ -124,10 +125,22 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
                   key: 'doctorsAppointments',
                   baseTemplate: 100
                 }),
-                PropertyPaneToggle('currentView',{
+                PropertyPaneToggle('currentView', {
                   onText: "Trainer View",
                   offText: "Trainee View",
                   label: "Select View {For development Purpose Only}"
+                }),
+                PropertyFieldPeoplePicker('group', {
+                  label: "Select Doctor's Group",
+                  initialData: this.properties.group,
+                  allowDuplicate: false,
+                  principalType: [PrincipalType.SharePoint],
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  context: this.context,
+                  properties: this.properties,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'groupFieldID'
                 })
               ]
             }
