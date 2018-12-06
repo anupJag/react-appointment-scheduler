@@ -1,16 +1,29 @@
 import * as React from 'react';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
-import { ITraineeToolProficency } from '../../ITraineeCalendar';
+import { ITraineeToolCheckBox } from '../../ITraineeCalendar';
 import styles from './SessionPanel.module.scss';
+import { ChoiceGroup, IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 
 export interface ISessionPanelProps {
     sessionType: string;
     sessionTitle: string;
     sessionDate: string;
     sessionSlotTiming: string;
-    checkBoxProficiency: ITraineeToolProficency[];
+    checkBoxProficiency: ITraineeToolCheckBox[];
     checkBoxProficiencyChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
+    traineeSharedDashboardOptions: IChoiceGroupOption[];
+    onTraineeSharedDashboardChange: (ev: React.SyntheticEvent<HTMLElement>, option: IChoiceGroupOption) => void;
+    traineeSharedDashboardSelectedKey: string;
+    checkBoxAlreadySharingDashBoard: ITraineeToolCheckBox[];
+    checkBoxAlreadySharingDashboardChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
+    checkboxTraineeToolForUse: ITraineeToolCheckBox[];
+    checkBoxTraineeToolForUseChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
+    checkboxTraineeDataSourceInUse: ITraineeToolCheckBox[];
+    checkboxTraineeDataSourceInUseChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
+    onTraineeIssueDescBlur: (event: any) => void;
+    traineeIssueDesc: string;
+    forceDisable : boolean;
 }
 
 const sessionPanel = (props: ISessionPanelProps) => {
@@ -27,18 +40,24 @@ const sessionPanel = (props: ISessionPanelProps) => {
             <div className={styles.BodyContainer}>
                 <div>
                     <div>1. Can you briefly describe the {props.sessionType} issue you wish us to help you with?</div>
-                    <TextField multiline></TextField>
+                    <TextField
+                        multiline
+                        onBlur={props.onTraineeIssueDescBlur}
+                        value={props.traineeIssueDesc}
+                        disabled={props.forceDisable}
+                    />
                 </div>
                 <div>
-                    <div>2. How would you rate your {props.sessionType} proficiency?  (Please check the appropriate answer)</div>
+                    <div>2. How would you rate your {props.sessionType} proficiency? (Please check the appropriate answer)</div>
                     <div>
                         {
-                            props.checkBoxProficiency.map((el: ITraineeToolProficency) =>
+                            props.checkBoxProficiency.map((el: ITraineeToolCheckBox) =>
                                 <Checkbox
                                     label={el.label}
                                     checked={el.isChecked}
                                     key={el.id}
                                     onChange={props.checkBoxProficiencyChange.bind(this, el.id)}
+                                    disabled={props.forceDisable}
                                 />
                             )
                         }
@@ -46,19 +65,62 @@ const sessionPanel = (props: ISessionPanelProps) => {
                 </div>
                 <div>
                     <div>3. Do you have any intention to share your dashboards with other people?</div>
-
+                    <div>
+                        <ChoiceGroup
+                            options={props.traineeSharedDashboardOptions}
+                            onChange={props.onTraineeSharedDashboardChange}
+                            selectedKey={props.traineeSharedDashboardSelectedKey}
+                            disabled={props.forceDisable}
+                        />
+                    </div>
                 </div>
                 <div>
                     <div>4. If you are already sharing dashboards, how do you share them:</div>
-
+                    <div>
+                        {
+                            props.checkBoxAlreadySharingDashBoard.map((el: ITraineeToolCheckBox) =>
+                                <Checkbox
+                                    label={el.label}
+                                    checked={el.isChecked}
+                                    key={el.id}
+                                    onChange={props.checkBoxAlreadySharingDashboardChange.bind(this, el.id)}
+                                    disabled={props.forceDisable}
+                                />
+                            )
+                        }
+                    </div>
                 </div>
                 <div>
-                    <div>5. Do you use Power BI for:</div>
-
+                    <div>5. Do you use {props.sessionType} for:</div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        {
+                            props.checkboxTraineeToolForUse.map((el: ITraineeToolCheckBox) =>
+                                <Checkbox
+                                    label={el.label}
+                                    checked={el.isChecked}
+                                    key={el.id}
+                                    onChange={props.checkBoxTraineeToolForUseChange.bind(this, el.id)}
+                                    disabled={props.forceDisable}
+                                />
+                            )
+                        }
+                    </div>
                 </div>
                 <div>
                     <div>6. What type of Data Source are you currently using?</div>
-
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        {
+                            props.checkboxTraineeDataSourceInUse.map((el: ITraineeToolCheckBox) =>
+                                <Checkbox
+                                    label={el.label}
+                                    checked={el.isChecked}
+                                    key={el.id}
+                                    onChange={props.checkboxTraineeDataSourceInUseChange.bind(this, el.id)}
+                                    disabled={props.forceDisable}
+                                />
+                            )
+                        }
+                    </div>
                 </div>
 
             </div>

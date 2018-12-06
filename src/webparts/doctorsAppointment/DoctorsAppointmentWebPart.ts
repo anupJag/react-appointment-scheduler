@@ -39,7 +39,6 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
     });
   }
   public render(): void {
-
     const element: React.ReactElement<IDoctorsAppointmentProps> = React.createElement(
       DoctorsAppointment,
       {
@@ -48,7 +47,8 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
         trainingSlots: this.properties.trainingSlots,
         doctorsAppointments: this.properties.doctorsAppointments,
         loggedInUserName: this.context.pageContext.user.displayName,
-        currentView: this.properties.currentView
+        currentView: this.properties.currentView,
+        loggedInUserEmail : this.context.pageContext.user.email
       }
     );
 

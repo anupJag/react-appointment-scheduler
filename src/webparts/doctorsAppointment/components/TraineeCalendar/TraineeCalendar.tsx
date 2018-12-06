@@ -1,12 +1,13 @@
 import * as React from 'react';
 import TraineeTrainingDay from './TraineeTrainingDay/TraineeTrainingDay';
 import styles from './TraineeCalendar.module.scss';
-import { ITraineeCalendarProps, ITraineeCalendarState, TraineeBookingStatusTypes, ITrainingSlots, ITraineeRegisteredDataStructure, IWeekTraineeData, ITraineeToolProficency } from './ITraineeCalendar';
+import { ITraineeCalendarProps, ITraineeCalendarState, TraineeBookingStatusTypes, ITrainingSlots, ITraineeRegisteredDataStructure, IWeekTraineeData, ITraineeToolCheckBox } from './ITraineeCalendar';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { escape, findIndex, find, assign } from '@microsoft/sp-lodash-subset';
 import pnp, { Web, ItemAddResult } from 'sp-pnp-js';
 import ConfirmationDialog from './ConfirmationDialog/ConfirmationDialog';
 import SessionRegistraion from './SessionRegistration/SessionRegistration';
+import { IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 
 
 
@@ -20,6 +21,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
         this.state = {
             registeredWeekData: undefined,
             endDate: props.endDate,
+            traineeIssueDescription: '',
             startDate: props.startDate,
             trainingType: props.trainingType,
             trainingSlots: undefined,
@@ -29,6 +31,100 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
             deleteRegistration: undefined,
             isRegisterPanelOpen: false,
             selectedTraininigSlot: undefined,
+            traineeSharedDashboardSelectedKey: 'Yes',
+            traineeDataSourceInUse: [
+                {
+                    id: 0,
+                    isChecked: false,
+                    label: "Excel"
+                },
+                {
+                    id: 1,
+                    isChecked: false,
+                    label: "CSV"
+                },
+                {
+                    id: 2,
+                    isChecked: false,
+                    label: "Azure"
+                },
+                {
+                    id: 3,
+                    isChecked: false,
+                    label: "SAP"
+                },
+                {
+                    id: 4,
+                    isChecked: false,
+                    label: "SQL"
+                },
+                {
+                    id: 5,
+                    isChecked: false,
+                    label: "Others"
+                },
+            ],
+            traineeToolForUse: [
+                {
+                    id: 0,
+                    isChecked: false,
+                    label: "Creating Reports"
+                },
+                {
+                    id: 1,
+                    isChecked: false,
+                    label: "Ad hoc Analysis"
+                },
+                {
+                    id: 2,
+                    isChecked: false,
+                    label: "I don’t use Power BI"
+                },
+            ],
+            powerBIAlreadySharingDashboard: [
+                {
+                    id: 0,
+                    isChecked: false,
+                    label: "Using Power BI Service"
+                },
+                {
+                    id: 1,
+                    isChecked: false,
+                    label: "Power BI Desktop (pbix) files"
+                },
+                {
+                    id: 2,
+                    isChecked: false,
+                    label: "E-mail"
+                },
+                {
+                    id: 3,
+                    isChecked: false,
+                    label: "None of the above"
+                }
+            ],
+            tableauAlreadySharingDashboard: [
+                {
+                    id: 0,
+                    isChecked: false,
+                    label: "Using Tableau server"
+                },
+                {
+                    id: 1,
+                    isChecked: false,
+                    label: "E-mail"
+                },
+                {
+                    id: 2,
+                    isChecked: false,
+                    label: "Tableau Reader"
+                },
+                {
+                    id: 3,
+                    isChecked: false,
+                    label: "None of the above"
+                }
+            ],
             powerBIProficiency: [
                 {
                     id: 0,
@@ -85,13 +181,13 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
             ],
             traineeShareDashboard: [
                 {
-                   key: 'Yes',
-                   text: 'Yes' 
+                    key: 'Yes',
+                    text: 'Yes',
                 },
                 {
                     key: 'No',
-                    text: 'No' 
-                 }
+                    text: 'No'
+                }
             ]
         };
 
@@ -346,13 +442,13 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
     }
 
     protected onCheckboxProficiencyChangeEventHandler = (key: any, ev: React.FormEvent<HTMLElement>, isChecked: boolean): void => {
-        let tempTrainingSlots: ITraineeToolProficency[] = [];
+        let tempTrainingSlots: ITraineeToolCheckBox[] = [];
 
         if (this.state.trainingType.text === "Power BI") {
-            tempTrainingSlots = [...this.state.powerBIProficiency]
+            tempTrainingSlots = [...this.state.powerBIProficiency];
         }
         else {
-            tempTrainingSlots = [...this.state.tableauProficiency]
+            tempTrainingSlots = [...this.state.tableauProficiency];
         }
 
         for (let i = 0; i < tempTrainingSlots.length; i++) {
@@ -373,25 +469,195 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
         }
     }
 
+    protected onCheckboxAlreadySharedDashboardChangeEventHandler = (key: any, ev: React.FormEvent<HTMLElement>, isChecked: boolean): void => {
+        let tempTrainingSlots: ITraineeToolCheckBox[] = [];
+
+        if (this.state.trainingType.text === "Power BI") {
+            tempTrainingSlots = [...this.state.powerBIAlreadySharingDashboard];
+        }
+        else {
+            tempTrainingSlots = [...this.state.tableauAlreadySharingDashboard];
+        }
+
+        for (let i = 0; i < tempTrainingSlots.length; i++) {
+            if (tempTrainingSlots[i]["id"] === key) {
+                tempTrainingSlots[i]["isChecked"] = isChecked;
+            }
+        }
+
+        if (this.state.trainingType.text === "Power BI") {
+            this.setState({
+                powerBIAlreadySharingDashboard: tempTrainingSlots
+            });
+        }
+        else {
+            this.setState({
+                tableauAlreadySharingDashboard: tempTrainingSlots
+            });
+        }
+    }
+
+    protected onCheckboxTraineeToolForUseChangeEventHandler = (key: any, ev: React.FormEvent<HTMLElement>, isChecked: boolean): void => {
+        let tempTraineeToolForUse: ITraineeToolCheckBox[] = [...this.state.traineeToolForUse];
+
+        for (let i = 0; i < tempTraineeToolForUse.length; i++) {
+            if (tempTraineeToolForUse[i]["id"] === key) {
+                tempTraineeToolForUse[i]["isChecked"] = isChecked;
+            }
+        }
+
+        this.setState({
+            traineeToolForUse: tempTraineeToolForUse
+        });
+    }
+
+    protected onCheckboxTraineeDataSourceInUseChangeEventHandler = (key: any, ev: React.FormEvent<HTMLElement>, isChecked: boolean): void => {
+        let tempTraineeDataSourceInUse: ITraineeToolCheckBox[] = [...this.state.traineeDataSourceInUse];
+
+        for (let i = 0; i < tempTraineeDataSourceInUse.length; i++) {
+            if (tempTraineeDataSourceInUse[i]["id"] === key) {
+                tempTraineeDataSourceInUse[i]["isChecked"] = isChecked;
+            }
+        }
+
+        this.setState({
+            traineeDataSourceInUse: tempTraineeDataSourceInUse
+        });
+    }
+
     protected onDismissClickHandler = (): void => {
 
-        let tempPowerBIProficiency: ITraineeToolProficency[] = [...this.state.powerBIProficiency];
-        let tempTableauProficiency: ITraineeToolProficency[] = [...this.state.tableauProficiency];
+        let tempPowerBIProficiency: ITraineeToolCheckBox[] = [...this.state.powerBIProficiency];
+        let tempTableauProficiency: ITraineeToolCheckBox[] = [...this.state.tableauProficiency];
 
         for (let i = 0; i < tempPowerBIProficiency.length; i++) {
-            tempPowerBIProficiency[i]["isChecked"] = false
+            tempPowerBIProficiency[i]["isChecked"] = false;
         }
 
         for (let i = 0; i < tempTableauProficiency.length; i++) {
-            tempTableauProficiency[i]["isChecked"] = false
+            tempTableauProficiency[i]["isChecked"] = false;
+        }
+
+        let tempPowerBIAlreadyShared: ITraineeToolCheckBox[] = [...this.state.powerBIAlreadySharingDashboard];
+        let tempTableauAlreadyShared: ITraineeToolCheckBox[] = [...this.state.tableauAlreadySharingDashboard];
+
+        for (let i = 0; i < tempPowerBIAlreadyShared.length; i++) {
+            tempPowerBIAlreadyShared[i]["isChecked"] = false;
+        }
+
+        for (let i = 0; i < tempTableauAlreadyShared.length; i++) {
+            tempTableauAlreadyShared[i]["isChecked"] = false;
+        }
+
+        let tempTraineeToolForUse: ITraineeToolCheckBox[] = [...this.state.traineeToolForUse];
+
+        for (let i = 0; i < tempTraineeToolForUse.length; i++) {
+            tempTraineeToolForUse[i]["isChecked"] = false;
+        }
+
+        let tempTraineeDataSourceInUse: ITraineeToolCheckBox[] = [...this.state.traineeDataSourceInUse];
+
+        for (let i = 0; i < tempTraineeDataSourceInUse.length; i++) {
+            tempTraineeDataSourceInUse[i]["isChecked"] = false;
         }
 
 
         this.setState({
             powerBIProficiency: tempPowerBIProficiency,
             tableauProficiency: tempTableauProficiency,
+            traineeSharedDashboardSelectedKey: 'Yes',
+            traineeToolForUse: tempTraineeToolForUse,
+            powerBIAlreadySharingDashboard: tempPowerBIAlreadyShared,
+            tableauAlreadySharingDashboard: tempTableauAlreadyShared,
+            traineeDataSourceInUse: tempTraineeDataSourceInUse,
+            traineeIssueDescription: '',
             isRegisterPanelOpen: false
         });
+    }
+
+    protected onTraineeIssueDescriptionBlurHandler = (event: any): void => {
+        let issueDescData = escape(event.target.value);
+        this.setState({
+            traineeIssueDescription: issueDescData
+        });
+    }
+
+    protected onTraineeSharedDashboardChangeHandler = (ev: React.SyntheticEvent<HTMLElement>, option: IChoiceGroupOption): void => {
+        this.setState({
+            traineeSharedDashboardSelectedKey: option.key
+        });
+    }
+
+    protected traineeBookSlotHandler = async () => {
+        const loggedInUserID = await pnp.sp.web.ensureUser(`i:0#.f|membership|${this.props.loggedInUserEmail}`).then(el => el);
+
+        //#region Questionnaire
+        const ques1: string = `1. Can you briefly describe the ${this.state.trainingType.text} issue you wish us to help you with?`;
+        const ques2: string = `2. How would you rate your ${this.state.trainingType.text} proficiency? (Please check the appropriate answer)`;
+        const ques3: string = `3. Do you have any intention to share your dashboards with other people?`;
+        const ques4: string = `4. If you are already sharing dashboards, how do you share them:`;
+        const ques5: string = `5. Do you use ${this.state.trainingType.text} for:`;
+        const ques6: string = `6. What type of Data Source are you currently using?`;
+
+        const proficiency: string = this.state.trainingType.text.toLowerCase() === "Power BI".toLowerCase() ?
+            this.state.powerBIProficiency.filter(el => el.isChecked === true).map(el => `<p>${el.label}</p>`).join('')
+            :
+            this.state.tableauProficiency.filter(el => el.isChecked === true).map(el => `<p>${el.label}</p>`).join('');
+
+        const alreadySharingDashBoard: string = this.state.trainingType.text.toLowerCase() === "Power BI".toLowerCase() ?
+            this.state.powerBIAlreadySharingDashboard.filter(el => el.isChecked === true).map(el => `<p>${el.label}</p>`).join('')
+            :
+            this.state.tableauAlreadySharingDashboard.filter(el => el.isChecked === true).map(el => `<p>${el.label}</p>`).join('');
+
+        const traineeToolForUse: string = this.state.traineeToolForUse.filter(el => el.isChecked === true).map(el => `<p>${el.label}</p>`).join('');
+
+        const traineeDataSourceInUse: string = this.state.traineeDataSourceInUse.filter(el => el.isChecked === true).map(el => `<p>${el.label}</p>`).join('');
+
+        let questionnaireString: string = `
+            <div>
+                <div>
+                    <p><strong>${ques1}</strong></p>
+                    <p>${this.state.traineeIssueDescription}</p>
+                </div>
+                <div>
+                    <p><strong>${ques2}</strong></p>
+                    <p>${proficiency}</p>
+                </div>
+                <div>
+                    <p><strong>${ques3}</strong></p>
+                    <p>${this.state.traineeSharedDashboardSelectedKey}</p>
+                </div>
+                <div>
+                    <p><strong>${ques4}</strong></p>
+                    <p>${alreadySharingDashBoard}</p>
+                </div>
+                <div>
+                    <p><strong>${ques5}</strong></p>
+                    <p>${traineeToolForUse}</p>
+                </div>
+                <div>
+                    <p><strong>${ques6}</strong></p>
+                    <p>${traineeDataSourceInUse}</p>
+                </div>
+            </div>
+        `;
+
+        //#endregion
+
+        const reserveSlot = async () => {
+            const promise = await pnp.sp.web.lists.getById(this.props.doctorsAppointments).items.getById(this.state.selectedTraininigSlot["Id"]).update({
+                TraineeId: loggedInUserID.data.Id,
+                SlotAvailable: false,
+                Questionnaire: questionnaireString
+            }).then(data => {
+                console.log(data);
+            });
+
+            console.log(promise);
+        };
+
+        reserveSlot().then(() => this.onDismissClickHandler()).then(() => this.getTraineeRegisteredData());
+
     }
 
     public render(): React.ReactElement<ITraineeCalendarProps> {
@@ -457,6 +723,18 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                 sessionType={this.state.trainingType.text}
                 checkBoxProficiency={this.state.trainingType.text === "Power BI" ? this.state.powerBIProficiency : this.state.tableauProficiency}
                 checkBoxProficiencyChange={this.onCheckboxProficiencyChangeEventHandler.bind(this)}
+                traineeSharedDashboardOptions={this.state.traineeShareDashboard}
+                onTraineeSharedDashboardChange={this.onTraineeSharedDashboardChangeHandler.bind(this)}
+                traineeSharedDashboardSelectedKey={this.state.traineeSharedDashboardSelectedKey}
+                checkBoxAlreadySharingDashBoard={this.state.trainingType.text === "Power BI" ? this.state.powerBIAlreadySharingDashboard : this.state.tableauAlreadySharingDashboard}
+                checkBoxAlreadySharingDashboardChange={this.onCheckboxAlreadySharedDashboardChangeEventHandler.bind(this)}
+                checkboxTraineeToolForUse={this.state.traineeToolForUse}
+                checkBoxTraineeToolForUseChange={this.onCheckboxTraineeToolForUseChangeEventHandler.bind(this)}
+                checkboxTraineeDataSourceInUse={this.state.traineeDataSourceInUse}
+                checkboxTraineeDataSourceInUseChange={this.onCheckboxTraineeDataSourceInUseChangeEventHandler.bind(this)}
+                onTraineeIssueDescBlur={this.onTraineeIssueDescriptionBlurHandler.bind(this)}
+                traineeIssueDesc={this.state.traineeIssueDescription}
+                bookSlotHandler={this.traineeBookSlotHandler.bind(this)}
             />
             :
             null;

@@ -3,7 +3,8 @@ import { PrimaryButton, DefaultButton } from 'office-ui-fabric-react/lib/Button'
 import { Panel, PanelType, } from 'office-ui-fabric-react/lib/Panel';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import SessionPanel from './SessionPanel/SessionPanel';
-import { ITraineeToolProficency } from '../ITraineeCalendar';
+import { ITraineeToolCheckBox } from '../ITraineeCalendar';
+import { IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 
 
 export interface ISessionRegistraionProps {
@@ -13,12 +14,25 @@ export interface ISessionRegistraionProps {
     sessionTitle: string;
     sessionDate: string;
     sessionSlotTiming: string;
-    checkBoxProficiency: ITraineeToolProficency[];
+    checkBoxProficiency: ITraineeToolCheckBox[];
     checkBoxProficiencyChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
+    traineeSharedDashboardOptions: IChoiceGroupOption[];
+    onTraineeSharedDashboardChange: (ev: React.SyntheticEvent<HTMLElement>, option: IChoiceGroupOption) => void;
+    traineeSharedDashboardSelectedKey: string;
+    checkBoxAlreadySharingDashBoard: ITraineeToolCheckBox[];
+    checkBoxAlreadySharingDashboardChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
+    checkboxTraineeToolForUse: ITraineeToolCheckBox[];
+    checkBoxTraineeToolForUseChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
+    checkboxTraineeDataSourceInUse: ITraineeToolCheckBox[];
+    checkboxTraineeDataSourceInUseChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
+    onTraineeIssueDescBlur: (event: any) => void;
+    traineeIssueDesc: string;
+    bookSlotHandler: () => void;
 }
 
 export interface ISessionRegistraionState {
     showSpinner: boolean;
+    forceDisable: boolean;
 }
 
 export default class SessionRegistraion extends React.Component<ISessionRegistraionProps, ISessionRegistraionState>{
@@ -29,10 +43,40 @@ export default class SessionRegistraion extends React.Component<ISessionRegistra
     constructor(props: ISessionRegistraionProps) {
         super(props);
         this.state = {
-            showSpinner: false
+            showSpinner: false,
+            forceDisable: false
         };
 
     }
+
+    protected onBookSessionClickHandler = async () => {
+        const disableControl = async () => {
+            const promise = new Promise((resolve, reject) => {
+                this.setState({
+                    forceDisable: true,
+                    showSpinner: true
+                });
+                resolve("State Updated");
+            });
+
+            await promise.then((data) => console.log(data));
+        };
+
+        const timingOut = async () => {
+            let promise = new Promise((resolve, reject) => {
+                setTimeout(() => resolve("Complete"), 2000);
+            });
+
+            let result = await promise;
+            console.log(result);
+        };
+
+        disableControl().then(() => {
+            timingOut().then(this.props.bookSlotHandler);
+        });
+
+    }
+
 
     private _onRenderFooterContent = (): JSX.Element => {
 
@@ -46,10 +90,14 @@ export default class SessionRegistraion extends React.Component<ISessionRegistra
 
         return (
             <div style={{ display: "flex", alignItems: "center" }}>
-                <PrimaryButton style={{ marginRight: '8px' }} disabled={false}>
+                <PrimaryButton
+                    style={{ marginRight: '8px' }}
+                    disabled={this.state.forceDisable}
+                    onClick={this.onBookSessionClickHandler}
+                >
                     Book Session
                 </PrimaryButton>
-                <DefaultButton onClick={this.props.onDismissClick} disabled={false}>Cancel</DefaultButton>
+                <DefaultButton onClick={this.props.onDismissClick} disabled={this.state.forceDisable}>Cancel</DefaultButton>
                 {showSpinner}
             </div>
         );
@@ -65,13 +113,25 @@ export default class SessionRegistraion extends React.Component<ISessionRegistra
                     hasCloseButton={false}
                     onRenderFooterContent={this._onRenderFooterContent}
                 >
-                    <SessionPanel 
+                    <SessionPanel
                         sessionDate={this.props.sessionDate}
                         sessionSlotTiming={this.props.sessionSlotTiming}
                         sessionTitle={this.props.sessionTitle}
                         sessionType={this.props.sessionType}
                         checkBoxProficiency={this.props.checkBoxProficiency}
                         checkBoxProficiencyChange={this.props.checkBoxProficiencyChange.bind(this)}
+                        traineeSharedDashboardOptions={this.props.traineeSharedDashboardOptions}
+                        onTraineeSharedDashboardChange={this.props.onTraineeSharedDashboardChange.bind(this)}
+                        traineeSharedDashboardSelectedKey={this.props.traineeSharedDashboardSelectedKey}
+                        checkBoxAlreadySharingDashBoard={this.props.checkBoxAlreadySharingDashBoard}
+                        checkBoxAlreadySharingDashboardChange={this.props.checkBoxAlreadySharingDashboardChange.bind(this)}
+                        checkboxTraineeToolForUse={this.props.checkboxTraineeToolForUse}
+                        checkBoxTraineeToolForUseChange={this.props.checkBoxTraineeToolForUseChange.bind(this)}
+                        checkboxTraineeDataSourceInUse={this.props.checkboxTraineeDataSourceInUse}
+                        checkboxTraineeDataSourceInUseChange={this.props.checkboxTraineeDataSourceInUseChange.bind(this)}
+                        onTraineeIssueDescBlur={this.props.onTraineeIssueDescBlur.bind(this)}
+                        traineeIssueDesc={this.props.traineeIssueDesc}
+                        forceDisable={this.state.forceDisable}
                     />
                 </Panel>
             </div>

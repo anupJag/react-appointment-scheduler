@@ -1,4 +1,5 @@
 import { IDropdownOption } from "office-ui-fabric-react/lib/Dropdown";
+import { IChoiceGroupOption } from "office-ui-fabric-react/lib/ChoiceGroup";
 
 export interface ITraineeCalendarProps {
     startDate: Date;
@@ -10,6 +11,7 @@ export interface ITraineeCalendarProps {
     trainingSlotsListGUID: string;
     loggedInUser: string;
     doctorsAppointments: string;
+    loggedInUserEmail: string;
 }
 
 export interface ITraineeCalendarState {
@@ -19,17 +21,21 @@ export interface ITraineeCalendarState {
     isRegisterPanelOpen: boolean;
     // registrationDate: string;
     showSpinner: boolean;
-    // sessionName: string;
-    // sessionDesc: string;
+    traineeSharedDashboardSelectedKey: string;
     trainingSlots: ITrainingSlots[];
     selectedTraininigSlot: ITraineeRegisteredDataStructure;
     registeredWeekData: IWeekTraineeData;
     hideConfirmDialog: boolean;
     deleteRegistration: ITraineeRegisteredDataStructure;
     showDialogSpinner: boolean;
-    powerBIProficiency: ITraineeToolProficency[];
-    tableauProficiency: ITraineeToolProficency[];
-    traineeShareDashboard : IDropdownOption[];
+    powerBIProficiency: ITraineeToolCheckBox[];
+    tableauProficiency: ITraineeToolCheckBox[];
+    traineeShareDashboard: IChoiceGroupOption[];
+    powerBIAlreadySharingDashboard: ITraineeToolCheckBox[];
+    tableauAlreadySharingDashboard: ITraineeToolCheckBox[];
+    traineeToolForUse: ITraineeToolCheckBox[];
+    traineeDataSourceInUse: ITraineeToolCheckBox[];
+    traineeIssueDescription: string;
 }
 
 export interface ITraineeData {
@@ -54,7 +60,7 @@ export interface ITrainingSlots {
     isDisabled: boolean;
 }
 
-export interface ITraineeToolProficency {
+export interface ITraineeToolCheckBox {
     isChecked: boolean;
     label: string;
     id: number;

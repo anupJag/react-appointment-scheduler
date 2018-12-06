@@ -5,4 +5,5 @@ export interface IDoctorsAppointmentProps {
   doctorsAppointments: string;
   loggedInUserName: string;
   currentView: boolean;
+  loggedInUserEmail: string;
 }

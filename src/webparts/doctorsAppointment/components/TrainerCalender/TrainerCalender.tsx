@@ -211,7 +211,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
 
         this.reserveTrainerSlots(data).then(async () => {
             let promise = new Promise((resolve, reject) => {
-                setTimeout(() => resolve("Time Out on Save Click Handler Completed"), 5000);
+                setTimeout(() => resolve("Time Out on Save Click Handler Completed"), 2000);
             });
 
             let result = await promise;
