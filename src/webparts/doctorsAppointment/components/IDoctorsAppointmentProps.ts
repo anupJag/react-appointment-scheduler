@@ -6,7 +6,6 @@ export interface IDoctorsAppointmentProps {
   trainingSlots: string;
   doctorsAppointments: string;
   loggedInUserName: string;
-  currentView: boolean;
   loggedInUserEmail: string;
   userGroup: IPropertyFieldGroupOrPerson[];
 }

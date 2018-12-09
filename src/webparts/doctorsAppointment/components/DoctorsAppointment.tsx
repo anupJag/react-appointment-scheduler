@@ -22,6 +22,7 @@ export interface IDoctorsAppointmentState {
   trainingType: IDropdownOption;
   trainingTypes: IDropdownOption[];
   showSpinner: boolean;
+  trainerViewToBeLoaded : boolean;
 }
 
 export default class DoctorsAppointment extends React.Component<IDoctorsAppointmentProps, IDoctorsAppointmentState> {
@@ -38,18 +39,20 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
       lastDayOfWeek: undefined,
       trainingType: undefined,
       trainingTypes: undefined,
-      showSpinner: true
+      showSpinner: true,
+      trainerViewToBeLoaded: false
     };
   }
 
   // tslint:disable-next-line:member-access
   componentDidMount() {
     this.getCurrentWeekData();
-    this.getTrainingType().then(() => {
+    this.checkIfUserIsPartOfDoctorGroup().then(() => this.getTrainingType()).then(() => {
       this.setState({
-        showSpinner : false
+        showSpinner: false
       });
     });
+    
   }
 
 
@@ -148,48 +151,70 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
   }
 
   /**
+   * Check User Group to load the required view
+   */
+  protected checkIfUserIsPartOfDoctorGroup = async () => {
+
+    const groupName: string = this.props.userGroup && this.props.userGroup.length > 0 ? this.props.userGroup[0].fullName : null;
+    if (!groupName) {
+      return;
+    }
+
+    const loggedInUserID = await pnp.sp.web.ensureUser(`i:0#.f|membership|${this.props.loggedInUserEmail}`)
+    .then(el => el);
+
+    const checkUserInGroup = await pnp.sp.web.siteGroups.getByName(groupName).users.filter(`Id eq ${loggedInUserID.data.Id}`).get().then(el => el);
+
+    if(checkUserInGroup && checkUserInGroup.length > 0){
+      this.setState({
+        trainerViewToBeLoaded : true
+      });
+    }
+  }
+
+  /**
    * Method which handles change in Training Option Selection
    */
   protected getTopicSelectionDropDownChangeHandler = (item: IDropdownOption) => {
     let selectedKey = item.key;
-    let temptrainingTypes : IDropdownOption[] = [...this.state.trainingTypes];
+    let temptrainingTypes: IDropdownOption[] = [...this.state.trainingTypes];
 
     let conditionCheck = temptrainingTypes.filter(el => el.key === selectedKey);
 
-    if(conditionCheck && conditionCheck.length > 0){
+    if (conditionCheck && conditionCheck.length > 0) {
       this.setState({
         trainingType: conditionCheck[0]
       });
-    }    
+    }
   }
 
   public render(): React.ReactElement<IDoctorsAppointmentProps> {
     const trainingModuleRendering: JSX.Element = this.state.trainingType ?
-      this.props.currentView ? 
-      <TrainerCalender
-        daysOfWeek={this.daysArray}
-        months={this.monthArray}
-        trainingType={this.state.trainingType}
-        startDate={this.state.firstDayOfWeek}
-        endDate={this.state.lastDayOfWeek}
-        siteURL={this.props.siteURL}
-        trainingSlotsListGUID={this.props.trainingSlots}
-        loggedInUser={this.props.loggedInUserName}
-        doctorsAppointments={this.props.doctorsAppointments}
-      />
-      :
-      <TraineeCalendar 
-        daysOfWeek={this.daysArray}
-        months={this.monthArray}
-        trainingType={this.state.trainingType}
-        startDate={this.state.firstDayOfWeek}
-        endDate={this.state.lastDayOfWeek}
-        siteURL={this.props.siteURL}
-        trainingSlotsListGUID={this.props.trainingSlots}
-        loggedInUser={this.props.loggedInUserName}
-        doctorsAppointments={this.props.doctorsAppointments}
-        loggedInUserEmail={this.props.loggedInUserEmail}
-      />
+      this.state.trainerViewToBeLoaded ?
+        <TrainerCalender
+          daysOfWeek={this.daysArray}
+          months={this.monthArray}
+          trainingType={this.state.trainingType}
+          startDate={this.state.firstDayOfWeek}
+          endDate={this.state.lastDayOfWeek}
+          siteURL={this.props.siteURL}
+          trainingSlotsListGUID={this.props.trainingSlots}
+          loggedInUser={this.props.loggedInUserName}
+          doctorsAppointments={this.props.doctorsAppointments}
+        />
+        :
+        <TraineeCalendar
+          daysOfWeek={this.daysArray}
+          months={this.monthArray}
+          trainingType={this.state.trainingType}
+          startDate={this.state.firstDayOfWeek}
+          endDate={this.state.lastDayOfWeek}
+          siteURL={this.props.siteURL}
+          trainingSlotsListGUID={this.props.trainingSlots}
+          loggedInUser={this.props.loggedInUserName}
+          doctorsAppointments={this.props.doctorsAppointments}
+          loggedInUserEmail={this.props.loggedInUserEmail}
+        />
       :
       <TrainingSelection />;
 
@@ -222,7 +247,7 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
       currentWeekStringValue = "";
     }
 
-    const showSpinner: JSX.Element = this.state.showSpinner ? <div style={{ height: "100%", width: "100%", display: "flex"}}><Spinner size={SpinnerSize.large} label="Please wait while finish loading..." style={{ margin: "auto" }} /></div> :
+    const showSpinner: JSX.Element = this.state.showSpinner ? <div style={{ height: "100%", width: "100%", display: "flex" }}><Spinner size={SpinnerSize.large} label="Please wait while finish loading..." style={{ margin: "auto" }} /></div> :
       <Aux className={styles.doctorsAppointment}>
         <Header />
         <TopicSelection
@@ -241,7 +266,7 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
       ;
 
     return (
-      <div style={{width: "100%", height: "100vh"} }>
+      <div style={{ width: "100%", height: "100vh" }}>
         {showSpinner}
       </div>
     );

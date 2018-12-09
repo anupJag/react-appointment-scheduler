@@ -21,7 +21,6 @@ export interface IDoctorsAppointmentWebPartProps {
   trainingSession: string;
   trainingSlots: string;
   doctorsAppointments: string;
-  currentView: boolean;
   group: IPropertyFieldGroupOrPerson[];
 }
 
@@ -47,7 +46,6 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
         trainingSlots: this.properties.trainingSlots,
         doctorsAppointments: this.properties.doctorsAppointments,
         loggedInUserName: this.context.pageContext.user.displayName,
-        currentView: this.properties.currentView,
         loggedInUserEmail: this.context.pageContext.user.email,
         userGroup: this.properties.group
       }
@@ -125,11 +123,6 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
                   key: 'doctorsAppointments',
                   baseTemplate: 100
                 }),
-                PropertyPaneToggle('currentView', {
-                  onText: "Trainer View",
-                  offText: "Trainee View",
-                  label: "Select View {For development Purpose Only}"
-                }),
                 PropertyFieldPeoplePicker('group', {
                   label: "Select Doctor's Group",
                   initialData: this.properties.group,
@@ -140,7 +133,8 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
                   properties: this.properties,
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
-                  key: 'groupFieldID'
+                  key: 'groupFieldID',
+                  multiSelect: false
                 })
               ]
             }

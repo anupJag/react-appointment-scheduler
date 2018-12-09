@@ -22,7 +22,7 @@ export interface ISessionPanelProps {
     checkboxTraineeDataSourceInUseChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
     onTraineeIssueDescBlur: (event: any) => void;
     traineeIssueDesc: string;
-    forceDisable : boolean;
+    forceDisable: boolean;
 }
 
 const sessionPanel = (props: ISessionPanelProps) => {
@@ -37,96 +37,98 @@ const sessionPanel = (props: ISessionPanelProps) => {
                 </div>
             </header>
             <div className={styles.BodyContainer}>
-                <div>
-                    <div>1. Can you briefly describe the {props.sessionType} issue you wish us to help you with?</div>
-                    <TextField
-                        multiline
-                        onBlur={props.onTraineeIssueDescBlur}
-                        value={props.traineeIssueDesc}
-                        disabled={props.forceDisable}
-                    />
-                </div>
-                <div>
-                    <div>2. How would you rate your {props.sessionType} proficiency? (Please check the appropriate answer)</div>
-                    <div>
-                        {
-                            props.checkBoxProficiency.map((el: ITraineeToolCheckBox) =>
-                                <Checkbox
-                                    label={el.label}
-                                    checked={el.isChecked}
-                                    key={el.id}
-                                    onChange={props.checkBoxProficiencyChange.bind(this, el.id)}
-                                    disabled={props.forceDisable}
-                                />
-                            )
-                        }
+                <div className={styles.InnerBody}>
+                    <div className={styles.Questionnaire}>
+                        <div className={styles.Question}>1. Can you briefly describe the {props.sessionType} issue you wish us to help you with?</div>
+                        <TextField
+                            multiline
+                            onBlur={props.onTraineeIssueDescBlur}
+                            value={props.traineeIssueDesc}
+                            disabled={props.forceDisable}
+                        />
                     </div>
-                </div>
-                <div>
-                    <div>3. Do you have any intention to share your dashboards with other people?</div>
-                    <div>
-                        {
-                            props.traineeSharedDashboardOptions.map((el: ITraineeToolCheckBox) =>
-                            <Checkbox
-                                label={el.label}
-                                checked={el.isChecked}
-                                key={el.id}
-                                onChange={props.onTraineeSharedDashboardChange.bind(this, el.id)}
-                                disabled={props.forceDisable}
-                            />
-                        )
-                        }
+                    <div className={styles.Questionnaire}>
+                        <div className={styles.Question}>2. How would you rate your {props.sessionType} proficiency? (Please check the appropriate answer)</div>
+                        <div>
+                            {
+                                props.checkBoxProficiency.map((el: ITraineeToolCheckBox) =>
+                                    <Checkbox
+                                        label={el.label}
+                                        checked={el.isChecked}
+                                        key={el.id}
+                                        onChange={props.checkBoxProficiencyChange.bind(this, el.id)}
+                                        disabled={props.forceDisable}
+                                    />
+                                )
+                            }
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <div>4. If you are already sharing dashboards, how do you share them:</div>
-                    <div>
-                        {
-                            props.checkBoxAlreadySharingDashBoard.map((el: ITraineeToolCheckBox) =>
-                                <Checkbox
-                                    label={el.label}
-                                    checked={el.isChecked}
-                                    key={el.id}
-                                    onChange={props.checkBoxAlreadySharingDashboardChange.bind(this, el.id)}
-                                    disabled={props.forceDisable}
-                                />
-                            )
-                        }
+                    <div className={styles.Questionnaire}>
+                        <div className={styles.Question}>3. Do you have any intention to share your dashboards with other people?</div>
+                        <div>
+                            {
+                                props.traineeSharedDashboardOptions.map((el: ITraineeToolCheckBox) =>
+                                    <Checkbox
+                                        label={el.label}
+                                        checked={el.isChecked}
+                                        key={el.id}
+                                        onChange={props.onTraineeSharedDashboardChange.bind(this, el.id)}
+                                        disabled={props.forceDisable}
+                                    />
+                                )
+                            }
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <div>5. Do you use {props.sessionType} for:</div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        {
-                            props.checkboxTraineeToolForUse.map((el: ITraineeToolCheckBox) =>
-                                <Checkbox
-                                    label={el.label}
-                                    checked={el.isChecked}
-                                    key={el.id}
-                                    onChange={props.checkBoxTraineeToolForUseChange.bind(this, el.id)}
-                                    disabled={props.forceDisable}
-                                />
-                            )
-                        }
+                    <div className={styles.Questionnaire}>
+                        <div className={styles.Question}>4. If you are already sharing dashboards, how do you share them:</div>
+                        <div>
+                            {
+                                props.checkBoxAlreadySharingDashBoard.map((el: ITraineeToolCheckBox) =>
+                                    <Checkbox
+                                        label={el.label}
+                                        checked={el.isChecked}
+                                        key={el.id}
+                                        onChange={props.checkBoxAlreadySharingDashboardChange.bind(this, el.id)}
+                                        disabled={props.forceDisable}
+                                    />
+                                )
+                            }
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <div>6. What type of Data Source are you currently using?</div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        {
-                            props.checkboxTraineeDataSourceInUse.map((el: ITraineeToolCheckBox) =>
-                                <Checkbox
-                                    label={el.label}
-                                    checked={el.isChecked}
-                                    key={el.id}
-                                    onChange={props.checkboxTraineeDataSourceInUseChange.bind(this, el.id)}
-                                    disabled={props.forceDisable}
-                                />
-                            )
-                        }
+                    <div className={styles.Questionnaire}>
+                        <div className={styles.Question}>5. Do you use {props.sessionType} for:</div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            {
+                                props.checkboxTraineeToolForUse.map((el: ITraineeToolCheckBox) =>
+                                    <Checkbox
+                                        label={el.label}
+                                        checked={el.isChecked}
+                                        key={el.id}
+                                        onChange={props.checkBoxTraineeToolForUseChange.bind(this, el.id)}
+                                        disabled={props.forceDisable}
+                                    />
+                                )
+                            }
+                        </div>
                     </div>
-                </div>
+                    <div className={styles.Questionnaire}>
+                        <div className={styles.Question}>6. What type of Data Source are you currently using?</div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            {
+                                props.checkboxTraineeDataSourceInUse.map((el: ITraineeToolCheckBox) =>
+                                    <Checkbox
+                                        label={el.label}
+                                        checked={el.isChecked}
+                                        key={el.id}
+                                        onChange={props.checkboxTraineeDataSourceInUseChange.bind(this, el.id)}
+                                        disabled={props.forceDisable}
+                                    />
+                                )
+                            }
+                        </div>
+                    </div>
 
+                </div>
             </div>
         </div>
     );
