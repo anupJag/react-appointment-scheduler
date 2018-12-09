@@ -11,6 +11,7 @@ export interface ITraineeDataProps {
     isLastElement: boolean;
     traineeBookingStatus: string;
     slotAvailable: boolean;
+    
     onDeregisterSlotButtonClicked:() => void;
     onRegisterSlotButtonClicked:() => void;
 }

@@ -23,7 +23,8 @@ const traineeTrainingDay = (props: ITraineeTrainingDayProps) => {
             />
             <TraineeDataInfo
                 traineeDataInfo={props.trainingDataInfo}
-                onDeregisterSlotButtonClicked={props.onDeregistrationButtonClicked.bind(this)} onRegisterSlotButtonClicked={props.onRegisterButtonClicked.bind(this)}
+                onDeregisterSlotButtonClicked={props.onDeregistrationButtonClicked.bind(this)}
+                onRegisterSlotButtonClicked={props.onRegisterButtonClicked.bind(this)}
             />
         </div>
     );

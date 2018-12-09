@@ -686,10 +686,13 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
 
         const trainingData: any = this.props.daysOfWeek.map((day: string, index: number) => {
             let temp = new Date(this.state.startDate.toUTCString());
+            const todayDate = new Date();
             let tempVar = new Date(this.state.startDate.toUTCString());
             const tempDateParser = new Date(temp.setDate(tempVar.getDate() + index));
             let date: string = `${this.props.months[tempDateParser.getMonth()]} ${tempDateParser.getDate()}, ${tempDateParser.getFullYear()}`;
             temp = tempVar = null;
+
+            const checkIfRegIsDisabled: boolean = new Date(Date.UTC(tempDateParser.getFullYear(), tempDateParser.getMonth(), tempDateParser.getDate(), 0, 0, 0, 0)) >= new Date(Date.UTC(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate(), 0, 0, 0, 0)) ? false : true;
 
             let daysData: ITraineeRegisteredDataStructure[] = this.state.registeredWeekData ?
                 [...(this.state.registeredWeekData[day] ? this.state.registeredWeekData[day] : [])]
@@ -714,7 +717,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                     date={date}
                     key={index}
                     trainingDataInfo={daysData}
-                    isRegistrationButtonDisabled={false}
+                    isRegistrationButtonDisabled={checkIfRegIsDisabled}
                     onRegisterButtonClicked={this.onTraineeRegistrationClickHandler.bind(this)}
                     onDeregistrationButtonClicked={this.onTraineeDeregistrationClickHandler.bind(this)}
                 />

@@ -97,7 +97,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         let batch = pnp.sp.createBatch();
 
         for (let index = 0; index < daysOfWeek.length; index++) {
-            
+
             pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate").expand("Author", "SlotTiming", "Category").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + index}T08:00:00Z'`).configure({
                 headers: {
                     'Accept': 'application/json;odata=nometadata',
@@ -111,6 +111,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                         let slotTiming = slotData.filter(el => el.Id === element["SlotTiming"]["Id"]);
                         let slotName: string;
                         let tempDateToBeQueried: Date = new Date(element["RegistrationDate"]);
+                        const checkIfRegIsDisabled: boolean = new Date(Date.UTC(tempDateToBeQueried.getFullYear(), tempDateToBeQueried.getMonth(), tempDateToBeQueried.getDate(), 0, 0, 0, 0)) >= new Date(Date.UTC(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate(), 0, 0, 0, 0)) ? false : true;
                         if (slotTiming && slotTiming.length > 0) {
                             slotName = slotTiming[0]["Label"];
                         }
@@ -121,7 +122,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                             Author: element["Author"]["Title"],
                             Id: element["Id"],
                             RegistrationDate: element["RegistrationDate"],
-                            DeregisterDisabled: !(element["Author"]["Title"] === this.props.loggedInUser) || !(tempDateToBeQueried >= todayDate)
+                            DeregisterDisabled: !(element["Author"]["Title"] === this.props.loggedInUser) || (checkIfRegIsDisabled)
                         });
                     });
                 }
@@ -415,7 +416,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             let date: string = `${this.props.months[tempDateParser.getMonth()]} ${tempDateParser.getDate()}, ${tempDateParser.getFullYear()}`;
             temp = tempVar = null;
 
-            const checkIfRegIsDisabled: boolean = tempDateParser >= todayDate ? false : true;
+            const checkIfRegIsDisabled: boolean = new Date(Date.UTC(tempDateParser.getFullYear(), tempDateParser.getMonth(), tempDateParser.getDate(), 0, 0, 0, 0)) >= new Date(Date.UTC(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate(), 0, 0, 0, 0)) ? false : true;
 
             let daysData: ITrainerRegisteredDataStructure[] = this.state.registeredWeekData ?
                 [...(this.state.registeredWeekData[day] ? this.state.registeredWeekData[day] : [])]
