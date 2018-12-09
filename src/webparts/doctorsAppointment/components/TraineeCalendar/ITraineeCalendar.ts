@@ -75,6 +75,7 @@ export interface ITraineeRegisteredDataStructure {
     Trainee: string;
     SlotAvailable: boolean;
     TraineeBookingStatus: string;
+    TrainingInfo: string;
 }
 
 export interface IWeekTraineeData {

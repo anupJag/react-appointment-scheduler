@@ -93,10 +93,11 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         const startDate: Date = new Date(this.state.startDate.toUTCString());
         const trainingType: number = parseInt(this.state.trainingType.key.toString(), 0);
         const daysOfWeek: string[] = [...this.props.daysOfWeek];
+        const todayDate: Date = new Date();
         let batch = pnp.sp.createBatch();
 
         for (let index = 0; index < daysOfWeek.length; index++) {
-
+            
             pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate").expand("Author", "SlotTiming", "Category").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + index}T08:00:00Z'`).configure({
                 headers: {
                     'Accept': 'application/json;odata=nometadata',
@@ -109,7 +110,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                     p.forEach(element => {
                         let slotTiming = slotData.filter(el => el.Id === element["SlotTiming"]["Id"]);
                         let slotName: string;
-
+                        let tempDateToBeQueried: Date = new Date(element["RegistrationDate"]);
                         if (slotTiming && slotTiming.length > 0) {
                             slotName = slotTiming[0]["Label"];
                         }
@@ -120,7 +121,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                             Author: element["Author"]["Title"],
                             Id: element["Id"],
                             RegistrationDate: element["RegistrationDate"],
-                            DeregisterDisabled: !(element["Author"]["Title"] === this.props.loggedInUser)
+                            DeregisterDisabled: !(element["Author"]["Title"] === this.props.loggedInUser) || !(tempDateToBeQueried >= todayDate)
                         });
                     });
                 }
@@ -241,6 +242,8 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
 
     protected sessionDescOnBlurHandler = (event: any): void => {
         let tempSessionDesc: string = escape(event.target.value).trim();
+        //tempSessionDesc = tempSessionDesc.replace(/\n/g, "<br />");
+
         this.setState({
             sessionDesc: tempSessionDesc
         });
@@ -412,6 +415,8 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             let date: string = `${this.props.months[tempDateParser.getMonth()]} ${tempDateParser.getDate()}, ${tempDateParser.getFullYear()}`;
             temp = tempVar = null;
 
+            const checkIfRegIsDisabled: boolean = tempDateParser >= todayDate ? false : true;
+
             let daysData: ITrainerRegisteredDataStructure[] = this.state.registeredWeekData ?
                 [...(this.state.registeredWeekData[day] ? this.state.registeredWeekData[day] : [])]
                 :
@@ -434,7 +439,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                     day={day}
                     date={date}
                     key={index}
-                    isRegistrationButtonDisabled={false}
+                    isRegistrationButtonDisabled={checkIfRegIsDisabled}
                     onRegisterButtonClicked={this.onTrainingRegisterClickHandler.bind(this, index)}
                     trainingDataInfo={daysData}
                     onDeRegistrationButtonClicked={this.onDeRegistrationButtonClickedHandler.bind(this)}
@@ -442,7 +447,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             );
         });
 
-        const showSpinner: JSX.Element = this.state.showSpinner ? <Spinner size={SpinnerSize.large} label="Please wait while we get data.." style={{ margin: "auto" }} /> : <div />;
+        const showSpinner: JSX.Element = this.state.showSpinner ? <div style={{ height: "100%", width: "100%", display: "flex" }}><Spinner size={SpinnerSize.large} label="Please wait while finish loading..." style={{ margin: "auto" }} /></div> : null;
 
         const tempSelectedDate: Date = new Date(this.state.registrationDate);
         let selectedDate: string = `${this.props.months[tempSelectedDate.getMonth()]} ${tempSelectedDate.getDate()}, ${tempSelectedDate.getFullYear()}`;

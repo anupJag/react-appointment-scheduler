@@ -10,7 +10,6 @@ import SessionRegistraion from './SessionRegistration/SessionRegistration';
 import { IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
 
 
-
 export default class TraineeCalendar extends React.Component<ITraineeCalendarProps, ITraineeCalendarState>{
 
     /**
@@ -273,7 +272,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
 
         for (let index = 0; index < daysOfWeek.length; index++) {
 
-            pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate", "Trainee/Title", "SlotAvailable").expand("Author", "SlotTiming", "Category", "Trainee").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + index}T08:00:00Z'`).configure({
+            pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "TrainingInfo" , "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate", "Trainee/Title", "SlotAvailable").expand("Author", "SlotTiming", "Category", "Trainee").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + index}T08:00:00Z'`).configure({
                 headers: {
                     'Accept': 'application/json;odata=nometadata',
                     'odata-version': ''
@@ -299,7 +298,8 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                             RegistrationDate: element["RegistrationDate"],
                             Trainee: element["Trainee"] ? element["Trainee"]["Title"] : null,
                             SlotAvailable: element["SlotAvailable"],
-                            TraineeBookingStatus: TraineeBookingStatusTypes.Available
+                            TraineeBookingStatus: TraineeBookingStatusTypes.Available,
+                            TrainingInfo: element["TrainingInfo"]
                         });
                     });
                 }
@@ -741,6 +741,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                 sessionDate={this.state.selectedTraininigSlot["RegistrationDate"]}
                 sessionSlotTiming={this.state.selectedTraininigSlot["SlotTiming"]}
                 sessionTitle={this.state.selectedTraininigSlot["Title"]}
+                sessionInfo={this.state.selectedTraininigSlot["TrainingInfo"]}
                 sessionType={this.state.trainingType.text}
                 checkBoxProficiency={this.state.trainingType.text === "Power BI" ? this.state.powerBIProficiency : this.state.tableauProficiency}
                 checkBoxProficiencyChange={this.onCheckboxProficiencyChangeEventHandler.bind(this)}

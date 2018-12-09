@@ -4,11 +4,13 @@ import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
 import { ITraineeToolCheckBox } from '../../ITraineeCalendar';
 import styles from './SessionPanel.module.scss';
 import { ChoiceGroup, IChoiceGroupOption } from 'office-ui-fabric-react/lib/ChoiceGroup';
+import SessionDetail from './SessionDetails/SessionDetails';
 
 export interface ISessionPanelProps {
     sessionType: string;
     sessionTitle: string;
     sessionDate: string;
+    sessionInfo: string;
     sessionSlotTiming: string;
     checkBoxProficiency: ITraineeToolCheckBox[];
     checkBoxProficiencyChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
@@ -30,7 +32,15 @@ const sessionPanel = (props: ISessionPanelProps) => {
         <div className={styles.SessionPanel}>
             <header className={styles.HeaderContainer}>
                 <div className={styles.Header}>
-                    Thank you! For choosing {props.sessionType} session - {props.sessionTitle} on {props.sessionDate} at {props.sessionSlotTiming}.
+                    Thank you! For choosing session on {props.sessionType}
+                </div>
+                <div className={styles.SessionDetail}>
+                    <SessionDetail
+                        sessionDate={props.sessionDate}
+                        sessionInfo={props.sessionInfo}
+                        sessionSlotTiming={props.sessionSlotTiming}
+                        sessionTitle={props.sessionTitle}
+                    />
                 </div>
                 <div className={styles.SubHeader}>
                     Inorder to complete your registraion, you are requested to complete the below questionnaire.
