@@ -18,6 +18,7 @@
     .InfoHolder{
         display: flex;
         flex-direction: row;
+        width: 100% !important;
 
         .SessionCss{
             margin-left: 30px;
@@ -31,7 +32,8 @@
     }
 
     .DoctorDispNameCss {
-        max-width: 250px;
+        /*max-width: 250px;*/
+        width: 100% !important;
         white-space: nowrap;
         flex: 1;
         text-overflow: ellipsis;
