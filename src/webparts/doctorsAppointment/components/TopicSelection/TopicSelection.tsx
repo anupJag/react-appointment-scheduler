@@ -4,21 +4,24 @@ import TopicLabel from './TopicSelectionLabel/TopicSelectionLabel';
 import styles from './TopicSelection.module.scss';
 import { IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 
-export interface ITopicSelectionProps{
+export interface ITopicSelectionProps {
     onDropDownChange: (item: IDropdownOption) => void;
     topicLabel: string;
-    topicDropDownOptions : IDropdownOption[];
+    labelSelection: string;
+    topicDropDownOptions: IDropdownOption[];
 }
 
-const topicSelection = (props : ITopicSelectionProps) => {
-    return(
+const topicSelection = (props: ITopicSelectionProps) => {
+    return (
         <div className={styles.Topic}>
-            <Topic 
+            <Topic
                 topicLabel={props.topicLabel}
                 onDropDownChange={props.onDropDownChange.bind(this)}
                 topicDropDownOptions={props.topicDropDownOptions}
             />
-            <TopicLabel />
+            <TopicLabel
+                labelSelection={props.labelSelection}
+            />
         </div>
     );
 };

@@ -5,6 +5,12 @@ declare interface IDoctorsAppointmentWebPartStrings {
 
   TopicSelectionHeaderTrainer : string;
   TopicSelectionHeaderTrainee : string;
+
+  TopicSelectionLabelTrainer : string;
+  TopicSelectionLabelTrainee : string;
+
+  Error400: string;
+  Error401: string;
 }
 
 declare module 'DoctorsAppointmentWebPartStrings' {

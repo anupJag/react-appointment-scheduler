@@ -30,7 +30,7 @@ const trainingInfo = (props: ITrainingInfoProps) => {
                     ariaLabel="Register Availability"
                     title="Register Availabilty"
                     iconProps={{ iconName: "Calendar" }}
-                    text="Register Availability"
+                    text="Choose Time"
                     styles={registerButtonStyle}
                     onClick={props.onRegisterButtonClicked}
                     disabled={props.isRegistrationButtonDisabled}

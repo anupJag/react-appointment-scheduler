@@ -15,6 +15,8 @@ import pnp, { Web } from 'sp-pnp-js';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import Aux from './HOC/Auxilliary';
 import TraineeCalendar from './TraineeCalendar/TraineeCalendar';
+import MessageHandler from './MessageHandler/MessageHandler';
+import { MessageBarType } from 'office-ui-fabric-react/lib/MessageBar';
 
 export interface IDoctorsAppointmentState {
   firstDayOfWeek: Date;
@@ -22,7 +24,10 @@ export interface IDoctorsAppointmentState {
   trainingType: IDropdownOption;
   trainingTypes: IDropdownOption[];
   showSpinner: boolean;
-  trainerViewToBeLoaded : boolean;
+  showMessageHandler: boolean;
+  trainerViewToBeLoaded: boolean;
+  messageToBeDisplayed: string;
+  messageBarType: MessageBarType;
 }
 
 export default class DoctorsAppointment extends React.Component<IDoctorsAppointmentProps, IDoctorsAppointmentState> {
@@ -40,7 +45,10 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
       trainingType: undefined,
       trainingTypes: undefined,
       showSpinner: true,
-      trainerViewToBeLoaded: false
+      trainerViewToBeLoaded: false,
+      showMessageHandler: false,
+      messageToBeDisplayed: '',
+      messageBarType: 0
     };
   }
 
@@ -52,7 +60,7 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
         showSpinner: false
       });
     });
-    
+
   }
 
 
@@ -84,7 +92,32 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
           });
         }
         else {
-          //Error occured ... Handle the required error
+          let errorMessage: string;
+          let tempMessageBarType: any;
+
+          switch (data.status) {
+            case 400:
+              errorMessage = `${strings.Error400} Error At: GettingTrainingType`;
+              tempMessageBarType = MessageBarType.error;
+              break;
+
+            case 401:
+              errorMessage = `${strings.Error401} Error At: GettingTrainingType`;
+              tempMessageBarType = MessageBarType.error;
+              break;
+
+            default:
+              errorMessage = data.message;
+              tempMessageBarType = MessageBarType.error;
+              break;
+          }
+
+          this.setState({
+            messageToBeDisplayed: errorMessage,
+            showMessageHandler: true,
+            messageBarType: tempMessageBarType
+          });
+
         }
       }
 
@@ -161,13 +194,13 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
     }
 
     const loggedInUserID = await pnp.sp.web.ensureUser(`i:0#.f|membership|${this.props.loggedInUserEmail}`)
-    .then(el => el);
+      .then(el => el);
 
     const checkUserInGroup = await pnp.sp.web.siteGroups.getByName(groupName).users.filter(`Id eq ${loggedInUserID.data.Id}`).get().then(el => el);
 
-    if(checkUserInGroup && checkUserInGroup.length > 0){
+    if (checkUserInGroup && checkUserInGroup.length > 0) {
       this.setState({
-        trainerViewToBeLoaded : true
+        trainerViewToBeLoaded: true
       });
     }
   }
@@ -186,6 +219,14 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
         trainingType: conditionCheck[0]
       });
     }
+  }
+
+  protected messageBarDismissHandler = (): void => {
+    this.setState({
+      messageToBeDisplayed: '',
+      showMessageHandler: false,
+      messageBarType: MessageBarType.info
+    });
   }
 
   public render(): React.ReactElement<IDoctorsAppointmentProps> {
@@ -247,12 +288,13 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
       currentWeekStringValue = "";
     }
 
-    const showSpinner: JSX.Element = this.state.showSpinner ? <div style={{ height: "100%", width: "100%", display: "flex" }}><Spinner size={SpinnerSize.large} label="Please wait while finish loading..." style={{ margin: "auto" }} /></div> :
+    const showSpinner: JSX.Element = this.state.showSpinner ? <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}><Spinner size={SpinnerSize.large} label="Please wait while finish loading..." style={{ margin: "auto" }} /></div> :
       <Aux className={styles.doctorsAppointment}>
         <Header />
         <TopicSelection
           onDropDownChange={this.getTopicSelectionDropDownChangeHandler.bind(this)}
-          topicLabel={strings.TopicSelectionHeaderTrainer}
+          topicLabel={this.state.trainerViewToBeLoaded ? strings.TopicSelectionHeaderTrainer : strings.TopicSelectionHeaderTrainee}
+          labelSelection={this.state.trainerViewToBeLoaded ? strings.TopicSelectionLabelTrainer : strings.TopicSelectionLabelTrainee}
           topicDropDownOptions={this.state.trainingTypes && this.state.trainingTypes.length > 0 ? this.state.trainingTypes : []}
         />
         <DaysOfWeek
@@ -265,8 +307,16 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
       </Aux>
       ;
 
+    const messageHandler: JSX.Element = this.state.showMessageHandler ?
+      <MessageHandler
+        message={this.state.messageToBeDisplayed}
+        messageBarType={this.state.messageBarType}
+        messageBarDismiss={this.messageBarDismissHandler.bind(this)}
+      /> : null;
+
     return (
-      <div style={{ width: "100%", height: "100vh" }}>
+      <div style={{ width: "100%", height: "100vh", position: 'relative' }}>
+        {messageHandler}
         {showSpinner}
       </div>
     );

@@ -682,7 +682,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
     }
 
     public render(): React.ReactElement<ITraineeCalendarProps> {
-        const showSpinner: JSX.Element = this.state.showSpinner ? <div style={{ height: "100%", width: "100%", display: "flex" }}><Spinner size={SpinnerSize.large} label="Please wait while finish loading..." style={{ margin: "auto" }} /></div> : null;
+        const showSpinner: JSX.Element = this.state.showSpinner ? <div style={{ position: 'absolute', left: '50%', top: '50%', transform : 'translate(-50%, -50%)' }}><Spinner size={SpinnerSize.large} label="Please wait while finish loading..." style={{ margin: "auto" }} /></div> : null;
 
         const trainingData: any = this.props.daysOfWeek.map((day: string, index: number) => {
             let temp = new Date(this.state.startDate.toUTCString());

@@ -9,6 +9,7 @@
     */
     display: block;
     flex-direction: column;
+    position : relative;
 
     &::-webkit-scrollbar {
         width: 5px;

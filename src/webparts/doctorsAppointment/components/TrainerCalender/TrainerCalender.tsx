@@ -448,7 +448,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             );
         });
 
-        const showSpinner: JSX.Element = this.state.showSpinner ? <div style={{ height: "100%", width: "100%", display: "flex" }}><Spinner size={SpinnerSize.large} label="Please wait while finish loading..." style={{ margin: "auto" }} /></div> : null;
+        const showSpinner: JSX.Element = this.state.showSpinner ? <div style={{ position: 'absolute', left: '50%', top: '50%', transform : 'translate(-50%, -50%)' }}><Spinner size={SpinnerSize.large} label="Please wait while finish loading..." style={{ margin: "auto" }} /></div> : null;
 
         const tempSelectedDate: Date = new Date(this.state.registrationDate);
         let selectedDate: string = `${this.props.months[tempSelectedDate.getMonth()]} ${tempSelectedDate.getDate()}, ${tempSelectedDate.getFullYear()}`;
@@ -465,7 +465,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                 sessionNameFieldOnBlur={this.sessionNameOnBlurHandler.bind(this)}
                 onCheckboxChangeEvent={this.onSessionScheduleChangeEventHandler.bind(this)}
                 onSaveClick={this.onSaveClickHandler.bind(this)}
-                primaryButtonText={this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 1 ? "Reserve Slots" : "Reserve Slot"}
+                primaryButtonText={'Post Availability'}
                 isReserveSlotsDisabled={!(this.state.sessionName && this.state.sessionName.length > 0 && this.state.sessionDesc && this.state.sessionDesc.length > 0 && this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 0)}
             />
             :

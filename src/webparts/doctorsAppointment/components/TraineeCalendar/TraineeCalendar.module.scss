@@ -3,8 +3,9 @@
     height: 56%;
     overflow-y: auto;
     overflow-x: hidden;
-    display: flex;
+    display: block;
     flex-direction: column;
+    position: relative;
 
     &::-webkit-scrollbar {
         width: 5px;
