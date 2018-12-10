@@ -32,8 +32,9 @@
     }
 
     .DoctorDispNameCss {
-        width: 100% !important;
-        /*max-width: 250px;*/
+        // width: 100% !important;
+        min-width: 550px;
+        // max-width: 551px;
         white-space: nowrap;
         flex: 1;
         text-overflow: ellipsis;
