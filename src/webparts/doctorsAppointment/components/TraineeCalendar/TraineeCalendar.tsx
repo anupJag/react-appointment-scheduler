@@ -268,6 +268,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
         const startDate: Date = new Date(this.state.startDate.toUTCString());
         const trainingType: number = parseInt(this.state.trainingType.key.toString(), 0);
         const daysOfWeek: string[] = [...this.props.daysOfWeek];
+        const todayDate = new Date();
         let batch = pnp.sp.createBatch();
 
         for (let index = 0; index < daysOfWeek.length; index++) {
@@ -285,7 +286,8 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
 
                         let slotTiming = slotData.filter(el => el.Id === element["SlotTiming"]["Id"]);
                         let slotName: string;
-
+                        let tempDateToBeQueried: Date = new Date(element["RegistrationDate"]);
+                        const checkIfRegIsDisabled: boolean = new Date(Date.UTC(tempDateToBeQueried.getFullYear(), tempDateToBeQueried.getMonth(), tempDateToBeQueried.getDate(), 0, 0, 0, 0)) >= new Date(Date.UTC(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate(), 0, 0, 0, 0)) ? false : true;
                         if (slotTiming && slotTiming.length > 0) {
                             slotName = slotTiming[0]["Label"];
                         }
@@ -299,7 +301,8 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                             Trainee: element["Trainee"] ? element["Trainee"]["Title"] : null,
                             SlotAvailable: element["SlotAvailable"],
                             TraineeBookingStatus: TraineeBookingStatusTypes.Available,
-                            TrainingInfo: element["TrainingInfo"]
+                            TrainingInfo: element["TrainingInfo"],
+                            DisablePrevDay: checkIfRegIsDisabled
                         });
                     });
                 }
@@ -717,7 +720,6 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                     date={date}
                     key={index}
                     trainingDataInfo={daysData}
-                    isRegistrationButtonDisabled={checkIfRegIsDisabled}
                     onRegisterButtonClicked={this.onTraineeRegistrationClickHandler.bind(this)}
                     onDeregistrationButtonClicked={this.onTraineeDeregistrationClickHandler.bind(this)}
                 />

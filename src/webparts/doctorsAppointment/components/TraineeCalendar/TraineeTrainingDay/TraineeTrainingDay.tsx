@@ -10,7 +10,6 @@ export interface ITraineeTrainingDayProps {
     key: any;
     onRegisterButtonClicked: (event, key) => void;
     trainingDataInfo: ITraineeRegisteredDataStructure[];
-    isRegistrationButtonDisabled: boolean;
     onDeregistrationButtonClicked: (event, key) => void;
 }
 

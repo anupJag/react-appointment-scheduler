@@ -11,7 +11,7 @@ export interface ITraineeDataProps {
     isLastElement: boolean;
     traineeBookingStatus: string;
     slotAvailable: boolean;
-    
+    disablePreviousDayRegDeregBUtton: boolean;
     onDeregisterSlotButtonClicked:() => void;
     onRegisterSlotButtonClicked:() => void;
 }
@@ -62,13 +62,14 @@ const traineeData = (props: ITraineeDataProps) => {
                         iconProps={{ iconName: "RemoveEvent" }}
                         styles={iconButtonStyle}
                         onClick={props.onDeregisterSlotButtonClicked}
+                        disabled={props.disablePreviousDayRegDeregBUtton}
                     >
                     </ActionButton>
                     :
                     <ActionButton
                         iconProps={{ iconName: !props.slotAvailable ? "ProtectRestrict" : "AddEvent" }}
                         styles={iconButtonStyle}
-                        disabled={props.traineeBookingStatus === TraineeBookingStatusTypes.NotAvailableForMe || !props.slotAvailable}
+                        disabled={props.traineeBookingStatus === TraineeBookingStatusTypes.NotAvailableForMe || !props.slotAvailable || props.disablePreviousDayRegDeregBUtton}
                         onClick={props.onRegisterSlotButtonClicked}
                     >
                     </ActionButton>

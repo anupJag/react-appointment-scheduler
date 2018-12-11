@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styles from '../TraineeDataInfo/TraineeDataInfo.module.scss';
-import TrainingData from '../TraineeData/TraineeData';
+import TraineeData from '../TraineeData/TraineeData';
 import { ITraineeRegisteredDataStructure } from '../../ITraineeCalendar';
 
 export interface ITrainingDataInfoProps {
@@ -22,7 +22,7 @@ const trainingDataInfo = (props: ITrainingDataInfoProps) => {
                         }
 
                         return (
-                            <TrainingData
+                            <TraineeData
                                 session={el.Title}
                                 key={el.Id}
                                 time={el.SlotTiming}
@@ -32,6 +32,7 @@ const trainingDataInfo = (props: ITrainingDataInfoProps) => {
                                 slotAvailable={el.SlotAvailable}
                                 onRegisterSlotButtonClicked={props.onRegisterSlotButtonClicked.bind(this, el.Id)}
                                 onDeregisterSlotButtonClicked={props.onDeregisterSlotButtonClicked.bind(this, el.Id)}
+                                disablePreviousDayRegDeregBUtton={el.DisablePrevDay}
                             />
                         );
                     }
