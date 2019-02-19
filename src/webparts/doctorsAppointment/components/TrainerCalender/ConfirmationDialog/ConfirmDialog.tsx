@@ -25,7 +25,7 @@ const confirmDialog = (props: IConfirmDialogProps) => {
             dialogContentProps={{
                 type: DialogType.largeHeader,
                 title: 'Cancel Session',
-                subText: `Click "yes" to cancel session on ${props.date} at ${props.time}. Be sure to inform any trainees registered for this time of the cancellation.`,
+                subText: `Click "Yes" to cancel the session at ${props.date} on ${props.time}. Be sure to inform any trainees registered for this time that the session is cancelled. `,
             }}
             className={styles.ConfirmationDialog}
         >
@@ -33,7 +33,7 @@ const confirmDialog = (props: IConfirmDialogProps) => {
                 <Spinner label={"De-registering your request"} size={SpinnerSize.medium} />
             </div>
             <DialogFooter className={classToBeAlpplied}>
-                <PrimaryButton onClick={props._yesDialog} text="YES" />
+                <PrimaryButton onClick={props._yesDialog} text="Yes" />
                 <DefaultButton onClick={props._closeDialog} text="Cancel" />
             </DialogFooter>
         </Dialog>

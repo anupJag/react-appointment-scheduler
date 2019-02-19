@@ -34,7 +34,7 @@ const confirmDialog = (props: IConfirmDialogProps) => {
                 <Spinner label={"Cancelling your request"} size={SpinnerSize.medium} />
             </div>
             <DialogFooter className={classToBeAlpplied}>
-                <PrimaryButton onClick={props._yesDialog} text="YES" />
+                <PrimaryButton onClick={props._yesDialog} text="Yes" />
                 <DefaultButton onClick={props._closeDialog} text="Cancel" />
             </DialogFooter>
         </Dialog>
