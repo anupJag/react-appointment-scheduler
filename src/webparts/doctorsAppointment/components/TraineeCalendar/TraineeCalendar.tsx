@@ -680,8 +680,21 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
             console.log(promise);
         };
 
-        reserveSlot().then(() => this.onDismissClickHandler()).then(() => this.getTraineeRegisteredData());
+        reserveSlot().then(() => this.onDismissClickHandler()).then(() => this.getTraineeRegisteredData()).then(() => this.sendEmail());
 
+    }
+
+    protected sendEmail = async () => {
+        const idInJSON = {
+            "id" : this.state.selectedTraininigSlot["Id"]
+        };
+        const uri : string = "https://prod-79.westus.logic.azure.com:443/workflows/0b6bea8a4d1c4528a9f3f20929657bab/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=wrnWuFxieMgI4ubZjxl3UxgA5ptXnzPgHo0haHmKa74";
+        let request = new XMLHttpRequest();
+        request.open('POST', uri);
+        request.setRequestHeader("Content-Type", "application/json");
+        const response = await request.send(JSON.stringify(idInJSON));
+
+        console.log(response);
     }
 
     public render(): React.ReactElement<ITraineeCalendarProps> {
