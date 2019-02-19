@@ -67,11 +67,19 @@ const traineeData = (props: ITraineeDataProps) => {
                     </ActionButton>
                     :
                     <ActionButton
-                        iconProps={{ iconName: !props.slotAvailable ? "ProtectRestrict" : "AddEvent" }}
+                        iconProps={{ iconName: !props.slotAvailable ? "ProtectRestrict" : null }}
                         styles={iconButtonStyle}
                         disabled={props.traineeBookingStatus === TraineeBookingStatusTypes.NotAvailableForMe || !props.slotAvailable || props.disablePreviousDayRegDeregBUtton}
                         onClick={props.onRegisterSlotButtonClicked}
                     >
+                    {
+                        !(!props.slotAvailable) ? 
+                        <div className={styles.contianer}>
+                            <div className={styles.innerContainer}>Book</div>
+                        </div> 
+                        : 
+                        null
+                    }
                     </ActionButton>
             }
 

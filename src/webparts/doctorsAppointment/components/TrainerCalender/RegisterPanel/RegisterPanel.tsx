@@ -119,6 +119,7 @@ export default class registerPanel extends React.Component<IRegisterPanelProps, 
                         sessionNameFieldOnBlur={this.props.sessionNameFieldOnBlur.bind(this)}
                         sessionDate={this.props.sessionDate}
                         sessionName={this.props.sessionName}
+                        defaultValueForSessionName={`${this.props.sessionName} doctor session`}
                         isSessionDescDisabled={this.state.isSessionDescDisabled}
                         isSessionNameDisabled={this.state.isSessionNameDisabled}
                         onCheckboxChangeEvent={this.props.onCheckboxChangeEvent.bind(this)}

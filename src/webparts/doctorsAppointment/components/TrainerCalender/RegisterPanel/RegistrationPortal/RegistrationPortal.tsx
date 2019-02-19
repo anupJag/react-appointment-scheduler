@@ -16,6 +16,7 @@ export interface IRegistrationPortalProps {
     isSessionNameDisabled: boolean;
     isSessionDescDisabled: boolean;
     forceDisable: boolean;
+    defaultValueForSessionName: string;
 }
 
 const registrationPortal = (props: IRegistrationPortalProps) => {
@@ -38,6 +39,7 @@ const registrationPortal = (props: IRegistrationPortalProps) => {
                         sessionDescFieldOnBlur={props.sessionDescFieldOnBlur.bind(this)}
                         isSessionDescDisabled={props.isSessionDescDisabled}
                         isSessionNameDisabled={props.isSessionNameDisabled}
+                        defaultValueForSessionName={props.defaultValueForSessionName}
                     />
                 </div>
                 <div className={styles.RightContainer}>

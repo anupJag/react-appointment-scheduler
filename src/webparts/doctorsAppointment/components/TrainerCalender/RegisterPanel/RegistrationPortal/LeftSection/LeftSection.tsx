@@ -7,6 +7,7 @@ export interface ILeftSectionProps {
     sessionDescFieldOnBlur: (event: any) => void;
     isSessionNameDisabled: boolean;
     isSessionDescDisabled: boolean;
+    defaultValueForSessionName : string;
 }
 
 const leftSection = (props: ILeftSectionProps) => {
@@ -19,6 +20,7 @@ const leftSection = (props: ILeftSectionProps) => {
                     required={true}
                     disabled={props.isSessionNameDisabled}
                     onBlur={props.sessionNameFieldOnBlur}
+                    defaultValue={props.defaultValueForSessionName}
                 />
             </div>
             <div className={styles.TextMultiLineFieldSection}>
