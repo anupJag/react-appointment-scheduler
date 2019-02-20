@@ -24,7 +24,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             registrationDate: "",
             showSpinner: true,
             sessionName: "",
-            sessionDesc: "",
+            //sessionDesc: "",
             trainingSlots: undefined,
             selectedTraininigSlots: [],
             registeredWeekData: undefined,
@@ -98,7 +98,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
 
         for (let index = 0; index < daysOfWeek.length; index++) {
 
-            pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate").expand("Author", "SlotTiming", "Category").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + index}T08:00:00Z'`).configure({
+            pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate").expand("Author", "SlotTiming", "Category").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + index}T00:00:00Z'`).configure({
                 headers: {
                     'Accept': 'application/json;odata=nometadata',
                     'odata-version': ''
@@ -188,18 +188,18 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         const sessionName = this.state.sessionName;
         const tempSelectedDate: Date = new Date(this.state.registrationDate);
         let registrationDate = `${tempSelectedDate.getFullYear()}-${tempSelectedDate.getMonth() + 1}-${tempSelectedDate.getDate()}`;
-        const sessionDesc = this.state.sessionDesc;
+        //const sessionDesc = this.state.sessionDesc;
         const key = this.state.trainingType.key;
         const trainingTypeAsNumber: number = parseInt(key as string, 0);
 
         tempSelectedData.forEach((el: string) => {
             postBody.push({
                 Title: sessionName,
-                TrainingInfo: sessionDesc,
+                //TrainingInfo: sessionDesc,
                 TrainerRegistrationStatus: TrainerRegistrationStatus.Booked,
                 RegistrationDate: registrationDate,
                 CategoryId: trainingTypeAsNumber,
-                SlotTimingId: parseInt(el as string, 0)
+                SlotTimingId: parseInt(el as string, 10)
             });
         });
 
@@ -241,14 +241,15 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         });
     }
 
-    protected sessionDescOnBlurHandler = (event: any): void => {
-        let tempSessionDesc: string = escape(event.target.value).trim();
-        //tempSessionDesc = tempSessionDesc.replace(/\n/g, "<br />");
+    // Training Session Information
+    // protected sessionDescOnBlurHandler = (event: any): void => {
+    //     let tempSessionDesc: string = escape(event.target.value).trim();
+    //     //tempSessionDesc = tempSessionDesc.replace(/\n/g, "<br />");
 
-        this.setState({
-            sessionDesc: tempSessionDesc
-        });
-    }
+    //     this.setState({
+    //         sessionDesc: tempSessionDesc
+    //     });
+    // }
 
     protected getTrainingSlots = async () => {
         let web = new Web(this.props.siteURL);
@@ -461,12 +462,13 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                 timeOfDay={this.state.trainingSlots}
                 sessionName={this.state.trainingType.text}
                 sessionDate={selectedDate}
-                sessionDescFieldOnBlur={this.sessionDescOnBlurHandler.bind(this)}
+                //sessionDescFieldOnBlur={this.sessionDescOnBlurHandler.bind(this)}
                 sessionNameFieldOnBlur={this.sessionNameOnBlurHandler.bind(this)}
                 onCheckboxChangeEvent={this.onSessionScheduleChangeEventHandler.bind(this)}
                 onSaveClick={this.onSaveClickHandler.bind(this)}
                 primaryButtonText={'Post Availability'}
-                isReserveSlotsDisabled={!(this.state.sessionName && this.state.sessionName.length > 0 && this.state.sessionDesc && this.state.sessionDesc.length > 0 && this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 0)}
+                //isReserveSlotsDisabled={!(this.state.sessionName && this.state.sessionName.length > 0 && this.state.sessionDesc && this.state.sessionDesc.length > 0 && this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 0)}
+                isReserveSlotsDisabled={!(this.state.sessionName && this.state.sessionName.length > 0 &&  this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 0)}
             />
             :
             null;

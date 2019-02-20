@@ -4,9 +4,9 @@ import styles from './LeftSection.module.scss';
 
 export interface ILeftSectionProps {
     sessionNameFieldOnBlur: (event: any) => void;
-    sessionDescFieldOnBlur: (event: any) => void;
+    //sessionDescFieldOnBlur: (event: any) => void;
     isSessionNameDisabled: boolean;
-    isSessionDescDisabled: boolean;
+    //isSessionDescDisabled: boolean;
     defaultValueForSessionName : string;
 }
 
@@ -23,7 +23,7 @@ const leftSection = (props: ILeftSectionProps) => {
                     defaultValue={props.defaultValueForSessionName}
                 />
             </div>
-            <div className={styles.TextMultiLineFieldSection}>
+            {/* <div className={styles.TextMultiLineFieldSection}>
                 <TextField
                     label={"Session Information"}
                     ariaLabel={"Session Name"}
@@ -33,7 +33,7 @@ const leftSection = (props: ILeftSectionProps) => {
                     disabled={props.isSessionDescDisabled}
                     onBlur={props.sessionDescFieldOnBlur}
                 />
-            </div>
+            </div> */}
         </div>
     );
 };

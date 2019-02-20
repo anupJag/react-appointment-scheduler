@@ -13,7 +13,7 @@ export interface ISessionRegistraionProps {
     sessionType: string;
     sessionTitle: string;
     sessionDate: string;
-    sessionInfo: string;
+    //sessionInfo: string;
     sessionSlotTiming: string;
     checkBoxProficiency: ITraineeToolCheckBox[];
     checkBoxProficiencyChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
@@ -117,7 +117,7 @@ export default class SessionRegistraion extends React.Component<ISessionRegistra
                         sessionDate={this.props.sessionDate}
                         sessionSlotTiming={this.props.sessionSlotTiming}
                         sessionTitle={this.props.sessionTitle}
-                        sessionInfo={this.props.sessionInfo}
+                        //sessionInfo={this.props.sessionInfo}
                         sessionType={this.props.sessionType}
                         checkBoxProficiency={this.props.checkBoxProficiency}
                         checkBoxProficiencyChange={this.props.checkBoxProficiencyChange.bind(this)}

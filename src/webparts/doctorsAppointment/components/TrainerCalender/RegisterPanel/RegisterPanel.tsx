@@ -11,7 +11,7 @@ export interface IRegisterPanelProps {
     registrationDate: string;
     timeOfDay: ITrainingSlots[];
     sessionNameFieldOnBlur: (event: any) => void;
-    sessionDescFieldOnBlur: (event: any) => void;
+    //sessionDescFieldOnBlur: (event: any) => void;
     sessionName: string;
     sessionDate: string;
     onCheckboxChangeEvent: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
@@ -23,10 +23,10 @@ export interface IRegisterPanelProps {
 export interface IRegisterPanelState {
     showSpinner: boolean;
     isSessionNameDisabled: boolean;
-    isSessionDescDisabled: boolean;
+    //isSessionDescDisabled: boolean;
     isReserveSlotsDisabled: boolean;
     isCancelDisabled: boolean;
-    isTrainingSlotsDisabled : boolean;
+    isTrainingSlotsDisabled: boolean;
 }
 
 export default class registerPanel extends React.Component<IRegisterPanelProps, IRegisterPanelState>{
@@ -38,7 +38,7 @@ export default class registerPanel extends React.Component<IRegisterPanelProps, 
         super(props);
         this.state = {
             showSpinner: false,
-            isSessionDescDisabled: false,
+            //isSessionDescDisabled: false,
             isSessionNameDisabled: false,
             isReserveSlotsDisabled: false,
             isCancelDisabled: false,
@@ -53,7 +53,7 @@ export default class registerPanel extends React.Component<IRegisterPanelProps, 
                 this.setState({
                     showSpinner: true,
                     isReserveSlotsDisabled: true,
-                    isSessionDescDisabled: true,
+                    //isSessionDescDisabled: true,
                     isSessionNameDisabled: true,
                     isCancelDisabled: true,
                     isTrainingSlotsDisabled: true
@@ -113,7 +113,7 @@ export default class registerPanel extends React.Component<IRegisterPanelProps, 
                     hasCloseButton={false}
                     onRenderFooterContent={this._onRenderFooterContent}
                 >
-                    <RegistrationPortal
+                    {/* Training Session Disabled <RegistrationPortal
                         timeOfDay={this.props.timeOfDay}
                         sessionDescFieldOnBlur={this.props.sessionDescFieldOnBlur.bind(this)}
                         sessionNameFieldOnBlur={this.props.sessionNameFieldOnBlur.bind(this)}
@@ -121,6 +121,16 @@ export default class registerPanel extends React.Component<IRegisterPanelProps, 
                         sessionName={this.props.sessionName}
                         defaultValueForSessionName={`${this.props.sessionName} doctor session`}
                         isSessionDescDisabled={this.state.isSessionDescDisabled}
+                        isSessionNameDisabled={this.state.isSessionNameDisabled}
+                        onCheckboxChangeEvent={this.props.onCheckboxChangeEvent.bind(this)}
+                        forceDisable={this.state.isTrainingSlotsDisabled}
+                    /> */}
+                    <RegistrationPortal
+                        timeOfDay={this.props.timeOfDay}
+                        sessionNameFieldOnBlur={this.props.sessionNameFieldOnBlur.bind(this)}
+                        sessionDate={this.props.sessionDate}
+                        sessionName={this.props.sessionName}
+                        defaultValueForSessionName={`${this.props.sessionName} doctor session`}
                         isSessionNameDisabled={this.state.isSessionNameDisabled}
                         onCheckboxChangeEvent={this.props.onCheckboxChangeEvent.bind(this)}
                         forceDisable={this.state.isTrainingSlotsDisabled}

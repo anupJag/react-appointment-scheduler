@@ -10,7 +10,7 @@ export interface ISessionPanelProps {
     sessionType: string;
     sessionTitle: string;
     sessionDate: string;
-    sessionInfo: string;
+    //sessionInfo: string;
     sessionSlotTiming: string;
     checkBoxProficiency: ITraineeToolCheckBox[];
     checkBoxProficiencyChange: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
@@ -37,7 +37,7 @@ const sessionPanel = (props: ISessionPanelProps) => {
                 <div className={styles.SessionDetail}>
                     <SessionDetail
                         sessionDate={props.sessionDate}
-                        sessionInfo={props.sessionInfo}
+                        //sessionInfo={props.sessionInfo}
                         sessionSlotTiming={props.sessionSlotTiming}
                         sessionTitle={props.sessionTitle}
                     />

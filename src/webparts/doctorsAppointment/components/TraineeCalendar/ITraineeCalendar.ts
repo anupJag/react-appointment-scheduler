@@ -42,7 +42,7 @@ export interface ITraineeData {
     RegistrationDate: string;
     TrainerRegistrationStatus: string;
     CategoryId: number;
-    TrainingInfo: string;
+    //TrainingInfo: string;
     SlotTimingId: number;
 }
 
@@ -75,7 +75,7 @@ export interface ITraineeRegisteredDataStructure {
     Trainee: string;
     SlotAvailable: boolean;
     TraineeBookingStatus: string;
-    TrainingInfo: string;
+    //TrainingInfo: string;
     DisablePrevDay: boolean;
 }
 

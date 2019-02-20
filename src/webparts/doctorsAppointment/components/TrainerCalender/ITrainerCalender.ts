@@ -20,7 +20,7 @@ export interface ITrainerCalenderState {
     registrationDate: string;
     showSpinner: boolean;
     sessionName: string;
-    sessionDesc: string;
+    //sessionDesc: string;
     trainingSlots: ITrainingSlots[];
     selectedTraininigSlots: string[];
     registeredWeekData: IWeekTrainerData;
@@ -34,7 +34,7 @@ export interface ITrainerData {
     RegistrationDate: string;
     TrainerRegistrationStatus: string;
     CategoryId: number;
-    TrainingInfo: string;
+    //TrainingInfo: string;
     SlotTimingId: number;
 }
 

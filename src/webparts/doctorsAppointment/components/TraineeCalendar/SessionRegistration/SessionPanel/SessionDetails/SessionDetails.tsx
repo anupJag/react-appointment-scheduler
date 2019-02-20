@@ -3,7 +3,6 @@ import styles from './SessionDetail.module.scss';
 
 export interface ISessionDetailsProps{
     sessionTitle : string;
-    sessionInfo : string;
     sessionDate : string;
     sessionSlotTiming : string;
 }
@@ -16,10 +15,10 @@ const sessionDetails = (props : ISessionDetailsProps) => {
                 <div className={styles.SessionTitle}>Session Title</div>
                 <div className={styles.Title}>{props.sessionTitle}</div>
             </div>
-            <div className={styles.SessionOfferingContainer}>
+            {/* <div className={styles.SessionOfferingContainer}>
                 <div className={styles.SessionOffering}>Session Offering</div>
                 <div className={styles.Offering}>{props.sessionInfo}</div>
-            </div>
+            </div> */}
             <div className={styles.Details}>
                 <div className={styles.SessionDateContainer}>
                     <div className={styles.SessionDate}>Session Date</div>

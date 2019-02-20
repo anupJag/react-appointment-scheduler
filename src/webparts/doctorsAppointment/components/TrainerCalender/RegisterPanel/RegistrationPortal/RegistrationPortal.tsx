@@ -11,10 +11,10 @@ export interface IRegistrationPortalProps {
     sessionName: string;
     sessionDate: string;
     sessionNameFieldOnBlur: (event: any) => void;
-    sessionDescFieldOnBlur: (event: any) => void;
+    //sessionDescFieldOnBlur: (event: any) => void;
     onCheckboxChangeEvent: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
     isSessionNameDisabled: boolean;
-    isSessionDescDisabled: boolean;
+    //isSessionDescDisabled: boolean;
     forceDisable: boolean;
     defaultValueForSessionName: string;
 }
@@ -34,10 +34,15 @@ const registrationPortal = (props: IRegistrationPortalProps) => {
             </div>
             <div className={styles.BodyContainer}>
                 <div className={styles.LeftContainer}>
-                    <LeftSection 
+                    {/* Training Session Details Disabled <LeftSection 
                         sessionNameFieldOnBlur={props.sessionNameFieldOnBlur.bind(this)}
                         sessionDescFieldOnBlur={props.sessionDescFieldOnBlur.bind(this)}
                         isSessionDescDisabled={props.isSessionDescDisabled}
+                        isSessionNameDisabled={props.isSessionNameDisabled}
+                        defaultValueForSessionName={props.defaultValueForSessionName}
+                    /> */}
+                    <LeftSection 
+                        sessionNameFieldOnBlur={props.sessionNameFieldOnBlur.bind(this)}
                         isSessionNameDisabled={props.isSessionNameDisabled}
                         defaultValueForSessionName={props.defaultValueForSessionName}
                     />
