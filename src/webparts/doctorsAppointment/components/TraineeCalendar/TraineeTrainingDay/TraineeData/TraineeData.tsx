@@ -25,6 +25,8 @@ const traineeData = (props: ITraineeDataProps) => {
     let styleToApply: string = null;
     let iconButtonStyle: IButtonStyles;
 
+    const isDisabled :  boolean = props.traineeBookingStatus === TraineeBookingStatusTypes.NotAvailableForMe || !props.slotAvailable || props.disablePreviousDayRegDeregBUtton;
+
     if (props.traineeBookingStatus === TraineeBookingStatusTypes.BookedByMe) {
         styleToApply = `${styles.Info} ${styles.BookedSlot}`;
         iconButtonStyle = {
@@ -69,12 +71,12 @@ const traineeData = (props: ITraineeDataProps) => {
                     <ActionButton
                         iconProps={{ iconName: !props.slotAvailable ? "ProtectRestrict" : null }}
                         styles={iconButtonStyle}
-                        disabled={props.traineeBookingStatus === TraineeBookingStatusTypes.NotAvailableForMe || !props.slotAvailable || props.disablePreviousDayRegDeregBUtton}
+                        disabled={isDisabled}
                         onClick={props.onRegisterSlotButtonClicked}
                     >
                     {
                         !(!props.slotAvailable) ? 
-                        <div className={styles.contianer}>
+                        <div className={styles.contianer} style={isDisabled ? {backgroundColor : "grey", color : "white"} : null}>
                             <div className={styles.innerContainer}>Book</div>
                         </div> 
                         : 
