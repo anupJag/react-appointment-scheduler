@@ -168,7 +168,8 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         let doctorBookingListID = this.props.doctorsAppointments;
         let list = await pnp.sp.web.lists.getById(doctorBookingListID);
 
-        list.getListItemEntityTypeFullName().then(async (entityTypeFullName) => {
+        let entityTypeFullName = await list.getListItemEntityTypeFullName()
+        .then(async (entityTypeFullName) => {
 
             let batch = pnp.sp.createBatch();
 
