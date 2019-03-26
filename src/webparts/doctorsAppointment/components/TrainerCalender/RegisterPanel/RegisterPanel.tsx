@@ -4,6 +4,7 @@ import { Panel, PanelType, } from 'office-ui-fabric-react/lib/Panel';
 import RegistrationPortal from './RegistrationPortal/RegistrationPortal';
 import { ITrainingSlots } from '../ITrainerCalender';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
+import { IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 
 export interface IRegisterPanelProps {
     isPanelOpen: boolean;
@@ -18,6 +19,7 @@ export interface IRegisterPanelProps {
     primaryButtonText: string;
     onSaveClick: () => void;
     isReserveSlotsDisabled: boolean;
+    timezoneData: IDropdownOption[];
 }
 
 export interface IRegisterPanelState {
@@ -134,6 +136,7 @@ export default class registerPanel extends React.Component<IRegisterPanelProps, 
                         isSessionNameDisabled={this.state.isSessionNameDisabled}
                         onCheckboxChangeEvent={this.props.onCheckboxChangeEvent.bind(this)}
                         forceDisable={this.state.isTrainingSlotsDisabled}
+                        timezoneData={this.props.timezoneData}
                     />
                 </Panel>
             </div>

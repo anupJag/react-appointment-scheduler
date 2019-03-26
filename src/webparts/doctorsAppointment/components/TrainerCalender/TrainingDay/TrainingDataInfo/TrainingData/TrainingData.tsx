@@ -14,7 +14,7 @@ export interface ITrainingDataProps {
 const trainingData = (props: ITrainingDataProps) => {
 
     const styleToBeApplied : React.CSSProperties = {
-        borderBottom: "none"
+        marginBottom: "0"
     };
 
     const classToBeApplied = props.isDeregisterDisabled ? `${styles.Info} ${styles.OtherUsersDataStyles}` : `${styles.Info} ${styles.CurrLoggedInUserStyles}`;

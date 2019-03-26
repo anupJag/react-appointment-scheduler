@@ -7,5 +7,6 @@ export interface IDoctorsAppointmentProps {
   doctorsAppointments: string;
   loggedInUserName: string;
   loggedInUserEmail: string;
+  timeZone: string;
   userGroup: IPropertyFieldGroupOrPerson[];
 }

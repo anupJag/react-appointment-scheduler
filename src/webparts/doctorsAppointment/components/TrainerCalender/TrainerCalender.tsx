@@ -7,6 +7,7 @@ import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import { escape, findIndex, find, assign } from '@microsoft/sp-lodash-subset';
 import pnp, { Web, ItemAddResult } from 'sp-pnp-js';
 import ConfirmDialog from './ConfirmationDialog/ConfirmDialog';
+import { IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 
 export default class TrainerCalender extends React.Component<ITrainerCalenderProps, ITrainerCalenderState>{
 
@@ -30,12 +31,13 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             registeredWeekData: undefined,
             hideConfirmDialog: true,
             deleteRegistration: undefined,
-            showDialogSpinner: false
+            showDialogSpinner: false,
+            timezoneData:[]
         };
     }
 
     public componentDidMount() {
-        this.getTrainingSlots().then(() => {
+        this.getConfigurationData().then(() => {
             this.getTrainerRegisteredData().then(() => console.log('Loading Complete'));
         });
     }
@@ -145,42 +147,21 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         });
     }
 
-    // protected createItemCreationDataStructure = async () => {
-    //     alert("entered in main function");
-    //     debugger;
-    //     let web = new Web(this.props.siteURL);
-    //     let doctorBookingListID: string = "4E8C33B9-BB1B-4EC4-81E0-52C7EEBEB7F4";
-    //     // add an item to the list
-    //     pnp.sp.web.lists.getById(doctorBookingListID).items.add({
-    //         Title: "Title added from PNP",
-    //         RegistrationDate:"2018-11-14",
-    //         TrainerRegistrationStatus:"Booked",
-    //         CategoryId:2,
-    //         TrainingInfo:"iosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?",
-    //         SlotTimingId: 2    
-    //     }).then((iar: ItemAddResult) => {
-    //         console.log(iar);
-    //     });
-    // }
-
     protected reserveTrainerSlots = async (data: ITrainerData[]) => {
         //let web = new Web(this.props.siteURL);
         let doctorBookingListID = this.props.doctorsAppointments;
         let list = await pnp.sp.web.lists.getById(doctorBookingListID);
 
-        let entityTypeFullName = await list.getListItemEntityTypeFullName()
-        .then(async (entityTypeFullName) => {
+        let entityTypeFullName = await list.getListItemEntityTypeFullName();
+        let batch = pnp.sp.createBatch();
 
-            let batch = pnp.sp.createBatch();
+        for (let dt = 0; dt < data.length; dt++) {
+            list.items.inBatch(batch).add(data[dt], entityTypeFullName).then(b => {
+                console.log(b);
+            });
+        }
 
-            for (let dt = 0; dt < data.length; dt++) {
-                list.items.inBatch(batch).add(data[dt], entityTypeFullName).then(b => {
-                    console.log(b);
-                });
-            }
-
-            await batch.execute().then(d => console.log("Done"));
-        });
+        await batch.execute().then(d => console.log("Done"));
     }
 
     protected createItemCreationDataStructure = (): ITrainerData[] => {
@@ -188,7 +169,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         let postBody: ITrainerData[] = [];
         const sessionName = this.state.sessionName;
         const tempSelectedDate: Date = new Date(this.state.registrationDate);
-        let registrationDate = `${tempSelectedDate.getFullYear()}-${tempSelectedDate.getMonth() + 1}-${tempSelectedDate.getDate()}`;
+        let registrationDate = `${tempSelectedDate.getFullYear()}-${tempSelectedDate.getMonth() + 1}-${tempSelectedDate.getDate()}T00:00:00Z`;
         //const sessionDesc = this.state.sessionDesc;
         const key = this.state.trainingType.key;
         const trainingTypeAsNumber: number = parseInt(key as string, 0);
@@ -209,29 +190,12 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
 
     protected onSaveClickHandler = async () => {
         console.log("Data needs to be saved here");
-        debugger;
         let data: ITrainerData[] = this.createItemCreationDataStructure();
 
-        this.reserveTrainerSlots(data).then(async () => {
-            let promise = new Promise((resolve, reject) => {
-                setTimeout(() => resolve("Time Out on Save Click Handler Completed"), 2000);
-            });
-
-            let result = await promise;
-            console.log(result);
-        }).then(async () => {
-            let promise = new Promise((resolve, reject) => {
-                this.setState({
-                    isRegisterPanelOpen: false,
-                });
-
-                resolve("Registraion Panel Closed");
-            });
-
-            await promise.then(() => {
-                this.getTrainerRegisteredData();
-            });
-
+        this.reserveTrainerSlots(data).then(() => {
+            this.setState({
+                isRegisterPanelOpen: false
+            }, this.getTrainerRegisteredData);
         });
     }
 
@@ -242,6 +206,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         });
     }
 
+    //#region Session Info If required in future
     // Training Session Information
     // protected sessionDescOnBlurHandler = (event: any): void => {
     //     let tempSessionDesc: string = escape(event.target.value).trim();
@@ -251,41 +216,64 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
     //         sessionDesc: tempSessionDesc
     //     });
     // }
+    //#endregion
 
-    protected getTrainingSlots = async () => {
-        let web = new Web(this.props.siteURL);
-        let trainingSlotsGUID: string = this.props.trainingSlotsListGUID;
-        let trainingSlotsCollection: ITrainingSlots[] = [];
+    protected getConfigurationData = async () => {
 
-        if (web && trainingSlotsGUID) {
-            const data = await web.lists.getById(trainingSlotsGUID).items.select("Id", "Title").usingCaching({
-                expiration: pnp.util.dateAdd(new Date, "minute", 60),
-                key: trainingSlotsGUID,
-                storeName: "local"
-            }).configure({
-                headers: {
-                    'Accept': 'application/json;odata=nometadata',
-                    'odata-version': ''
-                }
-            }).get().then(p => p).catch((error: any) => error);
+        let batch = pnp.sp.createBatch();
 
-            if (data) {
-                if (!data.status) {
-                    data.forEach(element => {
-                        trainingSlotsCollection.push({
-                            Id: element["Id"],
-                            Label: element["Title"],
-                            isChecked: false,
-                            isDisabled: false
-                        });
-                    });
-                }
+        //Training Slots
+        pnp.sp.web.lists.getById(this.props.trainingSlotsListGUID).items.select("Id", "Title").usingCaching({
+            expiration: pnp.util.dateAdd(new Date, "minute", 60),
+            key: this.props.trainingSlotsListGUID,
+            storeName: "local"
+        }).configure({
+            headers: {
+                'Accept': 'application/json;odata=nometadata',
+                'odata-version': ''
             }
+        }).inBatch(batch).get().then(data => {
+            let trainingSlotsCollection: ITrainingSlots[] = [];
+            data.forEach(element => {
+                trainingSlotsCollection.push({
+                    Id: element["Id"],
+                    Label: element["Title"],
+                    isChecked: false,
+                    isDisabled: false
+                });
+            });
 
             this.setState({
                 trainingSlots: trainingSlotsCollection
             });
-        }
+        });
+
+        //Timezone
+        pnp.sp.web.lists.getById(this.props.timeZoneListGUID).items.select("Id", "Title").filter(`Enabled eq 1`).orderBy("Id").usingCaching({
+            expiration: pnp.util.dateAdd(new Date, "minute", 60),
+            key: this.props.timeZoneListGUID,
+            storeName: "local"
+        }).configure({
+            headers: {
+                'Accept': 'application/json;odata=nometadata',
+                'odata-version': ''
+            }
+        }).inBatch(batch).get().then(data => {
+            let tempTimeZoneData : IDropdownOption[] = [];
+            data.forEach(element => {
+                tempTimeZoneData.push({
+                    key: element["Id"],
+                    text: element["Title"]
+                });
+            });
+
+            this.setState({
+                timezoneData: tempTimeZoneData
+            });
+        });
+
+        await batch.execute();
+        console.log("Configuration Loaded");
     }
 
     protected onSessionScheduleChangeEventHandler = (key: any, ev: React.FormEvent<HTMLElement>, isChecked: boolean): void => {
@@ -450,7 +438,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             );
         });
 
-        const showSpinner: JSX.Element = this.state.showSpinner ? <div style={{ position: 'absolute', left: '50%', top: '50%', transform : 'translate(-50%, -50%)' }}><Spinner size={SpinnerSize.large} label="Please wait while finish loading..." style={{ margin: "auto" }} /></div> : null;
+        const showSpinner: JSX.Element = this.state.showSpinner ? <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}><Spinner size={SpinnerSize.large} label="Please wait while finish loading..." style={{ margin: "auto" }} /></div> : null;
 
         const tempSelectedDate: Date = new Date(this.state.registrationDate);
         let selectedDate: string = `${this.props.months[tempSelectedDate.getMonth()]} ${tempSelectedDate.getDate()}, ${tempSelectedDate.getFullYear()}`;
@@ -469,7 +457,8 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                 onSaveClick={this.onSaveClickHandler.bind(this)}
                 primaryButtonText={'Post Availability'}
                 //isReserveSlotsDisabled={!(this.state.sessionName && this.state.sessionName.length > 0 && this.state.sessionDesc && this.state.sessionDesc.length > 0 && this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 0)}
-                isReserveSlotsDisabled={!(this.state.sessionName && this.state.sessionName.length > 0 &&  this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 0)}
+                isReserveSlotsDisabled={!(this.state.sessionName && this.state.sessionName.length > 0 && this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 0)}
+                timezoneData={this.state.timezoneData}
             />
             :
             null;

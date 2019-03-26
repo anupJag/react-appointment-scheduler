@@ -242,6 +242,7 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
           trainingSlotsListGUID={this.props.trainingSlots}
           loggedInUser={this.props.loggedInUserName}
           doctorsAppointments={this.props.doctorsAppointments}
+          timeZoneListGUID={this.props.timeZone}
         />
         :
         <TraineeCalendar

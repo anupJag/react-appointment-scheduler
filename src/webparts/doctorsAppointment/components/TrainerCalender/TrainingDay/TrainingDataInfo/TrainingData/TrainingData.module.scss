@@ -1,44 +1,38 @@
 @import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
 .Info{
-    display: flex;
-    width: 100% !important;    
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: 1.5fr 2fr 1fr;
+    grid-column-gap: 1rem;  
+    justify-items: self-end;
     align-items: center;
     border-bottom: 1px solid #ccc;
-    flex-direction: row;
-    height: 40px;
-    justify-content: space-between;
-    align-items: center;
+    height: 45px;
     padding: 0 12px;
     box-sizing: border-box;
-    padding-right: 17px;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 5px;
     
     .InfoHolder{
         display: flex;
-        flex-direction: row;
-        width: 100% !important;
+        flex-direction: column;
+        width: 100%;
+        justify-self: self-start;
 
         .SessionCss{
-            margin-left: 30px;
             white-space: nowrap;
-            flex: 1;
             text-overflow: ellipsis;
             overflow: hidden;
-            max-width: 160px;
-            width: 150px;
         }
     }
 
     .DoctorDispNameCss {
-        // width: 100% !important;
-        min-width: 550px;
-        // max-width: 551px;
         white-space: nowrap;
-        flex: 1;
         text-overflow: ellipsis;
         overflow: hidden;
+        justify-self: center;
+        max-width: calc(100% + 1em);
     }
 }
 

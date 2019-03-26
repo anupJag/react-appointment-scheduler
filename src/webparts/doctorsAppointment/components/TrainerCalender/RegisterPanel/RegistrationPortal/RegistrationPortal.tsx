@@ -4,6 +4,7 @@ import styles from './RegistrationPortal.module.scss';
 import LeftSection from './LeftSection/LeftSection';
 import RightSection from './RightSection/RightSection';
 import { ITrainingSlots } from '../../ITrainerCalender';
+import { IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 
 
 export interface IRegistrationPortalProps {
@@ -17,6 +18,7 @@ export interface IRegistrationPortalProps {
     //isSessionDescDisabled: boolean;
     forceDisable: boolean;
     defaultValueForSessionName: string;
+    timezoneData: IDropdownOption[];
 }
 
 const registrationPortal = (props: IRegistrationPortalProps) => {
@@ -45,6 +47,7 @@ const registrationPortal = (props: IRegistrationPortalProps) => {
                         sessionNameFieldOnBlur={props.sessionNameFieldOnBlur.bind(this)}
                         isSessionNameDisabled={props.isSessionNameDisabled}
                         defaultValueForSessionName={props.defaultValueForSessionName}
+                        timezoneData={props.timezoneData}
                     />
                 </div>
                 <div className={styles.RightContainer}>

@@ -10,12 +10,14 @@ export interface ITrainerCalenderProps {
     trainingSlotsListGUID : string;
     loggedInUser: string;
     doctorsAppointments: string;
+    timeZoneListGUID: string;
 }
 
 export interface ITrainerCalenderState {
     startDate: Date;
     endDate: Date;
     trainingType: IDropdownOption;
+    timezoneData: IDropdownOption[];
     isRegisterPanelOpen: boolean;
     registrationDate: string;
     showSpinner: boolean;
@@ -36,6 +38,7 @@ export interface ITrainerData {
     CategoryId: number;
     //TrainingInfo: string;
     SlotTimingId: number;
+
 }
 
 export enum TrainerRegistrationStatus {

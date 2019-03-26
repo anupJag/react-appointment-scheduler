@@ -21,6 +21,7 @@ export interface IDoctorsAppointmentWebPartProps {
   trainingSession: string;
   trainingSlots: string;
   doctorsAppointments: string;
+  timeZone: string;
   group: IPropertyFieldGroupOrPerson[];
 }
 
@@ -47,7 +48,8 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
         doctorsAppointments: this.properties.doctorsAppointments,
         loggedInUserName: this.context.pageContext.user.displayName,
         loggedInUserEmail: this.context.pageContext.user.email,
-        userGroup: this.properties.group
+        userGroup: this.properties.group,
+        timeZone: this.properties.timeZone
       }
     );
 
@@ -121,6 +123,20 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
                   onGetErrorMessage: null,
                   deferredValidationTime: 0,
                   key: 'doctorsAppointments',
+                  baseTemplate: 100
+                }),
+                PropertyFieldListPicker('timeZone', {
+                  label: 'Select list to populate Timezone Data',
+                  selectedList: this.properties.timeZone,
+                  includeHidden: false,
+                  orderBy: PropertyFieldListPickerOrderBy.Title,
+                  disabled: false,
+                  onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
+                  properties: this.properties,
+                  context: this.context,
+                  onGetErrorMessage: null,
+                  deferredValidationTime: 0,
+                  key: 'timeZone',
                   baseTemplate: 100
                 }),
                 PropertyFieldPeoplePicker('group', {

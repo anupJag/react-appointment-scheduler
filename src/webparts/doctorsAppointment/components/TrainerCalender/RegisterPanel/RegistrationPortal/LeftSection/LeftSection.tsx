@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import styles from './LeftSection.module.scss';
+import { Dropdown, IDropdownOption } from 'office-ui-fabric-react/lib/Dropdown';
 
 export interface ILeftSectionProps {
     sessionNameFieldOnBlur: (event: any) => void;
@@ -8,6 +9,7 @@ export interface ILeftSectionProps {
     isSessionNameDisabled: boolean;
     //isSessionDescDisabled: boolean;
     defaultValueForSessionName : string;
+    timezoneData : IDropdownOption[];
 }
 
 const leftSection = (props: ILeftSectionProps) => {
@@ -34,6 +36,14 @@ const leftSection = (props: ILeftSectionProps) => {
                     onBlur={props.sessionDescFieldOnBlur}
                 />
             </div> */}
+            <div className={styles.DropDownSelectionSection}>
+                <Dropdown 
+                    placeHolder={"Select a Timezone"}
+                    label={"Timezone"}
+                    required={true}
+                    options={props.timezoneData}
+                />
+            </div>
         </div>
     );
 };
