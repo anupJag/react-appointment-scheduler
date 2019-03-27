@@ -19,6 +19,7 @@ export interface IRegistrationPortalProps {
     forceDisable: boolean;
     defaultValueForSessionName: string;
     timezoneData: IDropdownOption[];
+    onTimezoneDropDownChanged : (item : IDropdownOption) => void;
 }
 
 const registrationPortal = (props: IRegistrationPortalProps) => {
@@ -48,6 +49,7 @@ const registrationPortal = (props: IRegistrationPortalProps) => {
                         isSessionNameDisabled={props.isSessionNameDisabled}
                         defaultValueForSessionName={props.defaultValueForSessionName}
                         timezoneData={props.timezoneData}
+                        onTimezoneDropDownChanged={props.onTimezoneDropDownChanged}
                     />
                 </div>
                 <div className={styles.RightContainer}>

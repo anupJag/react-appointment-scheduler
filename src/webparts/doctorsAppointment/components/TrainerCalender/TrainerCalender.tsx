@@ -26,20 +26,21 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             showSpinner: true,
             sessionName: "",
             //sessionDesc: "",
-            trainingSlots: undefined,
+            trainingSlots: null,
             selectedTraininigSlots: [],
-            registeredWeekData: undefined,
+            registeredWeekData: null,
             hideConfirmDialog: true,
-            deleteRegistration: undefined,
+            deleteRegistration: null,
             showDialogSpinner: false,
-            timezoneData:[]
+            timezoneData:[],
+            timezoneSelected: null
         };
     }
 
-    public componentDidMount() {
-        this.getConfigurationData().then(() => {
-            this.getTrainerRegisteredData().then(() => console.log('Loading Complete'));
-        });
+    public async componentDidMount() {
+        await this.getConfigurationData();
+        await this.getTrainerRegisteredData();
+        console.log("Loading Completed");
     }
 
     public componentWillReceiveProps(nextProps: ITrainerCalenderProps) {
@@ -395,7 +396,11 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         }).then(() => this.getTrainerRegisteredData());
     }
 
-
+    protected onTimezoneDropDownChangedHandler = (item : IDropdownOption) : void => {
+        this.setState({
+            timezoneSelected : item
+        });
+    }
 
     public render(): React.ReactElement<ITrainerCalenderProps> {
         const trainingData: any = this.props.daysOfWeek.map((day: string, index: number) => {
@@ -457,8 +462,9 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                 onSaveClick={this.onSaveClickHandler.bind(this)}
                 primaryButtonText={'Post Availability'}
                 //isReserveSlotsDisabled={!(this.state.sessionName && this.state.sessionName.length > 0 && this.state.sessionDesc && this.state.sessionDesc.length > 0 && this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 0)}
-                isReserveSlotsDisabled={!(this.state.sessionName && this.state.sessionName.length > 0 && this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 0)}
+                isReserveSlotsDisabled={!(this.state.sessionName && this.state.sessionName.length > 0 && this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 0) && this.state.timezoneSelected && this.state.timezoneSelected["key"] !== null}
                 timezoneData={this.state.timezoneData}
+                onTimezoneDropDownChanged={this.onTimezoneDropDownChangedHandler.bind(this)}
             />
             :
             null;

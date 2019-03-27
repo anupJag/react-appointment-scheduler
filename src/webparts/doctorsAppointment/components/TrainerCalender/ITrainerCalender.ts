@@ -17,6 +17,7 @@ export interface ITrainerCalenderState {
     startDate: Date;
     endDate: Date;
     trainingType: IDropdownOption;
+    timezoneSelected: IDropdownOption;
     timezoneData: IDropdownOption[];
     isRegisterPanelOpen: boolean;
     registrationDate: string;

@@ -20,6 +20,7 @@ export interface IRegisterPanelProps {
     onSaveClick: () => void;
     isReserveSlotsDisabled: boolean;
     timezoneData: IDropdownOption[];
+    onTimezoneDropDownChanged : (item : IDropdownOption) => void;
 }
 
 export interface IRegisterPanelState {
@@ -137,6 +138,7 @@ export default class registerPanel extends React.Component<IRegisterPanelProps, 
                         onCheckboxChangeEvent={this.props.onCheckboxChangeEvent.bind(this)}
                         forceDisable={this.state.isTrainingSlotsDisabled}
                         timezoneData={this.props.timezoneData}
+                        onTimezoneDropDownChanged={this.props.onTimezoneDropDownChanged}
                     />
                 </Panel>
             </div>

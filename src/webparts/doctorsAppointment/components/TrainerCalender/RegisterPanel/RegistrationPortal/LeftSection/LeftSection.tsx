@@ -10,6 +10,7 @@ export interface ILeftSectionProps {
     //isSessionDescDisabled: boolean;
     defaultValueForSessionName : string;
     timezoneData : IDropdownOption[];
+    onTimezoneDropDownChanged: (item: IDropdownOption) => void;
 }
 
 const leftSection = (props: ILeftSectionProps) => {
@@ -42,6 +43,7 @@ const leftSection = (props: ILeftSectionProps) => {
                     label={"Timezone"}
                     required={true}
                     options={props.timezoneData}
+                    onChanged={props.onTimezoneDropDownChanged}
                 />
             </div>
         </div>
