@@ -30,6 +30,7 @@ export interface IRegisterPanelState {
     isReserveSlotsDisabled: boolean;
     isCancelDisabled: boolean;
     isTrainingSlotsDisabled: boolean;
+    isTrainerTimezoneDisabled: boolean;
 }
 
 export default class registerPanel extends React.Component<IRegisterPanelProps, IRegisterPanelState>{
@@ -45,7 +46,8 @@ export default class registerPanel extends React.Component<IRegisterPanelProps, 
             isSessionNameDisabled: false,
             isReserveSlotsDisabled: false,
             isCancelDisabled: false,
-            isTrainingSlotsDisabled: false
+            isTrainingSlotsDisabled: false,
+            isTrainerTimezoneDisabled: false
         };
     }
 
@@ -59,7 +61,8 @@ export default class registerPanel extends React.Component<IRegisterPanelProps, 
                     //isSessionDescDisabled: true,
                     isSessionNameDisabled: true,
                     isCancelDisabled: true,
-                    isTrainingSlotsDisabled: true
+                    isTrainingSlotsDisabled: true,
+                    isTrainerTimezoneDisabled: true
                 });
                 resolve("State Updated");
             });
@@ -139,6 +142,7 @@ export default class registerPanel extends React.Component<IRegisterPanelProps, 
                         forceDisable={this.state.isTrainingSlotsDisabled}
                         timezoneData={this.props.timezoneData}
                         onTimezoneDropDownChanged={this.props.onTimezoneDropDownChanged}
+                        isTimezoneDisabled={this.state.isTrainerTimezoneDisabled}
                     />
                 </Panel>
             </div>

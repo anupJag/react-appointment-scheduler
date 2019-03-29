@@ -76,6 +76,7 @@ export interface ITraineeRegisteredDataStructure {
     SlotAvailable: boolean;
     TraineeBookingStatus: string;
     //TrainingInfo: string;
+    DoctorTimeZone : string;
     DisablePrevDay: boolean;
 }
 

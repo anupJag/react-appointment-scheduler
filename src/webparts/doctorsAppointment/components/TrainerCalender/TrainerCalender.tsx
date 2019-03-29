@@ -32,7 +32,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
             hideConfirmDialog: true,
             deleteRegistration: null,
             showDialogSpinner: false,
-            timezoneData:[],
+            timezoneData: [],
             timezoneSelected: null
         };
     }
@@ -169,6 +169,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         let tempSelectedData = [...this.state.selectedTraininigSlots];
         let postBody: ITrainerData[] = [];
         const sessionName = this.state.sessionName;
+        const timezoneSelected = { ...this.state.timezoneSelected };
         const tempSelectedDate: Date = new Date(this.state.registrationDate);
         let registrationDate = `${tempSelectedDate.getFullYear()}-${tempSelectedDate.getMonth() + 1}-${tempSelectedDate.getDate()}T00:00:00Z`;
         //const sessionDesc = this.state.sessionDesc;
@@ -182,7 +183,8 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                 TrainerRegistrationStatus: TrainerRegistrationStatus.Booked,
                 RegistrationDate: registrationDate,
                 CategoryId: trainingTypeAsNumber,
-                SlotTimingId: parseInt(el as string, 10)
+                SlotTimingId: parseInt(el as string, 10),
+                DoctorTimeZoneId: parseInt(timezoneSelected.key as string, 10)
             });
         });
 
@@ -260,7 +262,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                 'odata-version': ''
             }
         }).inBatch(batch).get().then(data => {
-            let tempTimeZoneData : IDropdownOption[] = [];
+            let tempTimeZoneData: IDropdownOption[] = [];
             data.forEach(element => {
                 tempTimeZoneData.push({
                     key: element["Id"],
@@ -396,9 +398,11 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         }).then(() => this.getTrainerRegisteredData());
     }
 
-    protected onTimezoneDropDownChangedHandler = (item : IDropdownOption) : void => {
+    protected onTimezoneDropDownChangedHandler = (item: IDropdownOption): void => {
+        let tempTimeZoneSelected: IDropdownOption = item;
+
         this.setState({
-            timezoneSelected : item
+            timezoneSelected: tempTimeZoneSelected
         });
     }
 

@@ -28,6 +28,7 @@ export interface ISessionRegistraionProps {
     onTraineeIssueDescBlur: (event: any) => void;
     traineeIssueDesc: string;
     bookSlotHandler: () => void;
+    sessionTimezone: string;
 }
 
 export interface ISessionRegistraionState {
@@ -132,6 +133,7 @@ export default class SessionRegistraion extends React.Component<ISessionRegistra
                         onTraineeIssueDescBlur={this.props.onTraineeIssueDescBlur.bind(this)}
                         traineeIssueDesc={this.props.traineeIssueDesc}
                         forceDisable={this.state.forceDisable}
+                        sessionTimezone={this.props.sessionTimezone}
                     />
                 </Panel>
             </div>

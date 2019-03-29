@@ -77,11 +77,11 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
       pages: [
         {
           header: {
-            description: strings.PropertyPaneDescription
+            description: 'Webpart configuration pane'
           },
           groups: [
             {
-              groupName: strings.BasicGroupName,
+              groupName: '',
               groupFields: [
                 PropertyFieldListPicker('trainingSession', {
                   label: 'Select list to populate Training Type',

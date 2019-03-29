@@ -25,6 +25,7 @@ export interface ISessionPanelProps {
     onTraineeIssueDescBlur: (event: any) => void;
     traineeIssueDesc: string;
     forceDisable: boolean;
+    sessionTimezone: string;
 }
 
 const sessionPanel = (props: ISessionPanelProps) => {
@@ -40,6 +41,7 @@ const sessionPanel = (props: ISessionPanelProps) => {
                         //sessionInfo={props.sessionInfo}
                         sessionSlotTiming={props.sessionSlotTiming}
                         sessionTitle={props.sessionTitle}
+                        sessionTimezone={props.sessionTimezone}
                     />
                 </div>
                 <div className={styles.SubHeader}>

@@ -1,13 +1,14 @@
 import * as React from 'react';
 import styles from './SessionDetail.module.scss';
 
-export interface ISessionDetailsProps{
-    sessionTitle : string;
-    sessionDate : string;
-    sessionSlotTiming : string;
+export interface ISessionDetailsProps {
+    sessionTitle: string;
+    sessionDate: string;
+    sessionSlotTiming: string;
+    sessionTimezone: string;
 }
 
-const sessionDetails = (props : ISessionDetailsProps) => {
+const sessionDetails = (props: ISessionDetailsProps) => {
     return (
         <div className={styles.SessionDetail}>
             <div className={styles.Session}>Session Details</div>
@@ -19,6 +20,10 @@ const sessionDetails = (props : ISessionDetailsProps) => {
                 <div className={styles.SessionOffering}>Session Offering</div>
                 <div className={styles.Offering}>{props.sessionInfo}</div>
             </div> */}
+            <div className={styles.SessionOfferingContainer}>
+                <div className={styles.SessionOffering}>Session Timezone</div>
+                <div className={styles.Offering}>{props.sessionTimezone}</div>
+            </div>
             <div className={styles.Details}>
                 <div className={styles.SessionDateContainer}>
                     <div className={styles.SessionDate}>Session Date</div>

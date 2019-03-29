@@ -15,6 +15,7 @@ export interface IRegistrationPortalProps {
     //sessionDescFieldOnBlur: (event: any) => void;
     onCheckboxChangeEvent: (ev: React.FormEvent<HTMLElement>, isChecked: boolean, index: number) => void;
     isSessionNameDisabled: boolean;
+    isTimezoneDisabled: boolean;
     //isSessionDescDisabled: boolean;
     forceDisable: boolean;
     defaultValueForSessionName: string;
@@ -49,6 +50,7 @@ const registrationPortal = (props: IRegistrationPortalProps) => {
                         isSessionNameDisabled={props.isSessionNameDisabled}
                         defaultValueForSessionName={props.defaultValueForSessionName}
                         timezoneData={props.timezoneData}
+                        isTimezoneDisabled={props.isTimezoneDisabled}
                         onTimezoneDropDownChanged={props.onTimezoneDropDownChanged}
                     />
                 </div>

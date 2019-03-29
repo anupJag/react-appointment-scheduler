@@ -273,7 +273,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
 
         for (let index = 0; index < daysOfWeek.length; index++) {
 
-            pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "TrainingInfo" , "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate", "Trainee/Title", "SlotAvailable").expand("Author", "SlotTiming", "Category", "Trainee").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + index}T00:00:00Z'`).configure({
+            pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "DoctorTimeZone/Title" , "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate", "Trainee/Title", "SlotAvailable").expand("Author", "SlotTiming", "Category", "Trainee", "DoctorTimeZone").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + index}T00:00:00Z'`).configure({
                 headers: {
                     'Accept': 'application/json;odata=nometadata',
                     'odata-version': ''
@@ -302,6 +302,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                             SlotAvailable: element["SlotAvailable"],
                             TraineeBookingStatus: TraineeBookingStatusTypes.Available,
                             //TrainingInfo: element["TrainingInfo"],
+                            DoctorTimeZone: element["DoctorTimeZone"]["Title"],
                             DisablePrevDay: checkIfRegIsDisabled
                         });
                     });
@@ -774,6 +775,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                 onTraineeIssueDescBlur={this.onTraineeIssueDescriptionBlurHandler.bind(this)}
                 traineeIssueDesc={this.state.traineeIssueDescription}
                 bookSlotHandler={this.traineeBookSlotHandler.bind(this)}
+                sessionTimezone={this.state.selectedTraininigSlot["DoctorTimeZone"]}
             />
             :
             null;

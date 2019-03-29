@@ -39,6 +39,7 @@ export interface ITrainerData {
     CategoryId: number;
     //TrainingInfo: string;
     SlotTimingId: number;
+    DoctorTimeZoneId: number;
 
 }
 
