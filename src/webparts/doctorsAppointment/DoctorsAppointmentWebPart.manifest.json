@@ -16,7 +16,8 @@
     "description": { "default": "Application to allow users to register for the training" },
     "officeFabricIconFontName": "PlannerLogo",
     "properties": {
-      "currentView": true
+      "currentView": true,
+      "contractorEnabled" : true
     }
   }]
 }

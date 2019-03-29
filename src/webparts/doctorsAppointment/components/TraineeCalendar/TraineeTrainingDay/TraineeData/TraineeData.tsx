@@ -12,20 +12,20 @@ export interface ITraineeDataProps {
     traineeBookingStatus: string;
     slotAvailable: boolean;
     disablePreviousDayRegDeregBUtton: boolean;
-    onDeregisterSlotButtonClicked:() => void;
-    onRegisterSlotButtonClicked:() => void;
+    onDeregisterSlotButtonClicked: () => void;
+    onRegisterSlotButtonClicked: () => void;
 }
 
 const traineeData = (props: ITraineeDataProps) => {
 
     const styleToBeApplied: React.CSSProperties = {
-        borderBottom: "none"
+        marginBottom: "0"
     };
     //#region CSS Styling
     let styleToApply: string = null;
     let iconButtonStyle: IButtonStyles;
 
-    const isDisabled :  boolean = props.traineeBookingStatus === TraineeBookingStatusTypes.NotAvailableForMe || !props.slotAvailable || props.disablePreviousDayRegDeregBUtton;
+    const isDisabled: boolean = props.traineeBookingStatus === TraineeBookingStatusTypes.NotAvailableForMe || !props.slotAvailable || props.disablePreviousDayRegDeregBUtton;
 
     if (props.traineeBookingStatus === TraineeBookingStatusTypes.BookedByMe) {
         styleToApply = `${styles.Info} ${styles.BookedSlot}`;
@@ -40,12 +40,12 @@ const traineeData = (props: ITraineeDataProps) => {
     }
     else if (props.traineeBookingStatus === TraineeBookingStatusTypes.NotAvailableForMe) {
         styleToApply = `${styles.Info} ${styles.NotBookedForMe}`;
-    } 
+    }
     else {
-        if(!props.slotAvailable){
+        if (!props.slotAvailable) {
             styleToApply = `${styles.Info} ${styles.NotBookedForMe}`;
         }
-        else{
+        else {
             styleToApply = `${styles.Info} ${styles.AvailableSlot}`;
         }
     }
@@ -68,21 +68,35 @@ const traineeData = (props: ITraineeDataProps) => {
                     >
                     </ActionButton>
                     :
-                    <ActionButton
-                        iconProps={{ iconName: !props.slotAvailable ? "ProtectRestrict" : null }}
-                        styles={iconButtonStyle}
-                        disabled={isDisabled}
-                        onClick={props.onRegisterSlotButtonClicked}
-                    >
-                    {
-                        !(!props.slotAvailable) ? 
-                        <div className={styles.contianer} style={isDisabled ? {backgroundColor : "grey", color : "white"} : null}>
-                            <div className={styles.innerContainer}>Book</div>
-                        </div> 
-                        : 
-                        null
-                    }
-                    </ActionButton>
+
+                    !props.slotAvailable ?
+                        <ActionButton
+                            iconProps={{ iconName: "ProtectRestrict" }}
+                            styles={iconButtonStyle}
+                            disabled={isDisabled}
+                            onClick={props.onRegisterSlotButtonClicked}
+                        />
+                        :
+                        <button 
+                            onClick={props.onRegisterSlotButtonClicked}
+                            disabled={isDisabled}
+                        />
+
+                    // <ActionButton
+                    //     iconProps={{ iconName: !props.slotAvailable ? "ProtectRestrict" : null }}
+                    //     styles={iconButtonStyle}
+                    //     disabled={isDisabled}
+                    //     onClick={props.onRegisterSlotButtonClicked}
+                    // >
+                    // {
+                    //     !(!props.slotAvailable) ? 
+                    //     <div className={styles.contianer} style={isDisabled ? {backgroundColor : "grey", color : "white"} : null}>
+                    //         <div className={styles.innerContainer}>Book</div>
+                    //     </div> 
+                    //     : 
+                    //     null
+                    // }
+                    // </ActionButton>
             }
 
         </div>

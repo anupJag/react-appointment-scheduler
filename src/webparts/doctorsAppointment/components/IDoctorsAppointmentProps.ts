@@ -9,4 +9,5 @@ export interface IDoctorsAppointmentProps {
   loggedInUserEmail: string;
   timeZone: string;
   userGroup: IPropertyFieldGroupOrPerson[];
+  isTrainingEnabledForContractors : boolean;
 }

@@ -5,6 +5,7 @@ import { IDoctorsAppointmentProps } from './IDoctorsAppointmentProps';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { CommandBarButton, IButtonProps } from 'office-ui-fabric-react/lib/Button';
 import Header from './Header/Header';
+import ContractorsNotAllowed from './ContractorsNotAllowed/ContractorsNotAllowed';
 import TopicSelection from './TopicSelection/TopicSelection';
 import Footer from './Footer/Footer';
 import DaysOfWeek from './DaysOfWeek/DaysOfWeek';
@@ -53,12 +54,12 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
   }
 
   // tslint:disable-next-line:member-access
-  componentDidMount() {
+  async componentDidMount() {
     this.getCurrentWeekData();
-    this.checkIfUserIsPartOfDoctorGroup().then(() => this.getTrainingType()).then(() => {
-      this.setState({
-        showSpinner: false
-      });
+    await this.checkIfUserIsPartOfDoctorGroup();
+    await this.getTrainingType();
+    this.setState({
+      showSpinner: false
     });
 
   }
@@ -230,35 +231,82 @@ export default class DoctorsAppointment extends React.Component<IDoctorsAppointm
   }
 
   public render(): React.ReactElement<IDoctorsAppointmentProps> {
-    const trainingModuleRendering: JSX.Element = this.state.trainingType ?
-      this.state.trainerViewToBeLoaded ?
-        <TrainerCalender
-          daysOfWeek={this.daysArray}
-          months={this.monthArray}
-          trainingType={this.state.trainingType}
-          startDate={this.state.firstDayOfWeek}
-          endDate={this.state.lastDayOfWeek}
-          siteURL={this.props.siteURL}
-          trainingSlotsListGUID={this.props.trainingSlots}
-          loggedInUser={this.props.loggedInUserName}
-          doctorsAppointments={this.props.doctorsAppointments}
-          timeZoneListGUID={this.props.timeZone}
-        />
+    let trainingModuleRendering: JSX.Element;
+
+    if (this.props.isTrainingEnabledForContractors) {
+      trainingModuleRendering = this.state.trainingType ?
+        this.state.trainerViewToBeLoaded ?
+          <TrainerCalender
+            daysOfWeek={this.daysArray}
+            months={this.monthArray}
+            trainingType={this.state.trainingType}
+            startDate={this.state.firstDayOfWeek}
+            endDate={this.state.lastDayOfWeek}
+            siteURL={this.props.siteURL}
+            trainingSlotsListGUID={this.props.trainingSlots}
+            loggedInUser={this.props.loggedInUserName}
+            doctorsAppointments={this.props.doctorsAppointments}
+            timeZoneListGUID={this.props.timeZone}
+          />
+          :
+          <TraineeCalendar
+            daysOfWeek={this.daysArray}
+            months={this.monthArray}
+            trainingType={this.state.trainingType}
+            startDate={this.state.firstDayOfWeek}
+            endDate={this.state.lastDayOfWeek}
+            siteURL={this.props.siteURL}
+            trainingSlotsListGUID={this.props.trainingSlots}
+            loggedInUser={this.props.loggedInUserName}
+            doctorsAppointments={this.props.doctorsAppointments}
+            loggedInUserEmail={this.props.loggedInUserEmail}
+          />
         :
-        <TraineeCalendar
-          daysOfWeek={this.daysArray}
-          months={this.monthArray}
-          trainingType={this.state.trainingType}
-          startDate={this.state.firstDayOfWeek}
-          endDate={this.state.lastDayOfWeek}
-          siteURL={this.props.siteURL}
-          trainingSlotsListGUID={this.props.trainingSlots}
-          loggedInUser={this.props.loggedInUserName}
-          doctorsAppointments={this.props.doctorsAppointments}
-          loggedInUserEmail={this.props.loggedInUserEmail}
-        />
-      :
-      <TrainingSelection />;
+        <TrainingSelection />;
+    }
+    else {
+      if (!this.state.trainerViewToBeLoaded) {
+        if (this.props.loggedInUserName.toLowerCase().indexOf("(Contractor)".toLowerCase()) >= 0) {
+          trainingModuleRendering = <ContractorsNotAllowed />;
+        }
+        else {
+          trainingModuleRendering = this.state.trainingType ?
+            <TraineeCalendar
+              daysOfWeek={this.daysArray}
+              months={this.monthArray}
+              trainingType={this.state.trainingType}
+              startDate={this.state.firstDayOfWeek}
+              endDate={this.state.lastDayOfWeek}
+              siteURL={this.props.siteURL}
+              trainingSlotsListGUID={this.props.trainingSlots}
+              loggedInUser={this.props.loggedInUserName}
+              doctorsAppointments={this.props.doctorsAppointments}
+              loggedInUserEmail={this.props.loggedInUserEmail}
+            />
+            :
+            <TrainingSelection />;
+        }
+      }
+      else {
+        trainingModuleRendering = this.state.trainingType ?
+          <TrainerCalender
+            daysOfWeek={this.daysArray}
+            months={this.monthArray}
+            trainingType={this.state.trainingType}
+            startDate={this.state.firstDayOfWeek}
+            endDate={this.state.lastDayOfWeek}
+            siteURL={this.props.siteURL}
+            trainingSlotsListGUID={this.props.trainingSlots}
+            loggedInUser={this.props.loggedInUserName}
+            doctorsAppointments={this.props.doctorsAppointments}
+            timeZoneListGUID={this.props.timeZone}
+          />
+          :
+          <TrainingSelection />;
+      }
+    }
+
+
 
     let currentWeekStringValue: string;
 

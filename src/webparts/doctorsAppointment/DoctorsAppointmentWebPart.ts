@@ -23,6 +23,7 @@ export interface IDoctorsAppointmentWebPartProps {
   doctorsAppointments: string;
   timeZone: string;
   group: IPropertyFieldGroupOrPerson[];
+  contractorEnabled: boolean;
 }
 
 export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDoctorsAppointmentWebPartProps> {
@@ -39,6 +40,11 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
   }
 
   public render(): void {
+    
+    if(this.properties.contractorEnabled === null){
+      this.properties.contractorEnabled = true;
+    }
+    
     const element: React.ReactElement<IDoctorsAppointmentProps> = React.createElement(
       DoctorsAppointment,
       {
@@ -49,7 +55,8 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
         loggedInUserName: this.context.pageContext.user.displayName,
         loggedInUserEmail: this.context.pageContext.user.email,
         userGroup: this.properties.group,
-        timeZone: this.properties.timeZone
+        timeZone: this.properties.timeZone,
+        isTrainingEnabledForContractors: this.properties.contractorEnabled
       }
     );
 
@@ -151,6 +158,10 @@ export default class DoctorsAppointmentWebPart extends BaseClientSideWebPart<IDo
                   deferredValidationTime: 0,
                   key: 'groupFieldID',
                   multiSelect: false
+                }),
+                PropertyPaneToggle('contractorEnabled', {
+                  label: "Can Contractors avail Training?",
+                  checked: true
                 })
               ]
             }
