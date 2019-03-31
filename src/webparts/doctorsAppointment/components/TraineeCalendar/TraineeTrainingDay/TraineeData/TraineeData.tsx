@@ -2,6 +2,7 @@ import * as React from 'react';
 import styles from './TraineeData.module.scss';
 import { ActionButton, IButtonProps, IButtonStyles } from 'office-ui-fabric-react/lib/Button';
 import { TraineeBookingStatusTypes } from '../../ITraineeCalendar';
+import { UrlException } from 'sp-pnp-js';
 
 
 export interface ITraineeDataProps {
@@ -77,26 +78,39 @@ const traineeData = (props: ITraineeDataProps) => {
                             onClick={props.onRegisterSlotButtonClicked}
                         />
                         :
-                        <button 
+                        <button
                             onClick={props.onRegisterSlotButtonClicked}
                             disabled={isDisabled}
+                            className={styles.ButtonStyling}
+                            style={
+                                {
+                                    background: !isDisabled ? `url('https://team.effem.com/sites/MarsISApps/SiteAssets/Images/Book.png')`
+                                        :
+                                        `url('https://team.effem.com/sites/MarsISApps/SiteAssets/Images/BookDisable.png')`,
+                                    backgroundPosition: "center",
+                                    backgroundRepeat: "no-repeat",
+                                    backgroundColor: "transparent",
+                                    backgroundSize: "contain",
+                                    cursor: !isDisabled ? "pointer" : "default"
+                                }
+                            }
                         />
 
-                    // <ActionButton
-                    //     iconProps={{ iconName: !props.slotAvailable ? "ProtectRestrict" : null }}
-                    //     styles={iconButtonStyle}
-                    //     disabled={isDisabled}
-                    //     onClick={props.onRegisterSlotButtonClicked}
-                    // >
-                    // {
-                    //     !(!props.slotAvailable) ? 
-                    //     <div className={styles.contianer} style={isDisabled ? {backgroundColor : "grey", color : "white"} : null}>
-                    //         <div className={styles.innerContainer}>Book</div>
-                    //     </div> 
-                    //     : 
-                    //     null
-                    // }
-                    // </ActionButton>
+                // <ActionButton
+                //     iconProps={{ iconName: !props.slotAvailable ? "ProtectRestrict" : null }}
+                //     styles={iconButtonStyle}
+                //     disabled={isDisabled}
+                //     onClick={props.onRegisterSlotButtonClicked}
+                // >
+                // {
+                //     !(!props.slotAvailable) ? 
+                //     <div className={styles.contianer} style={isDisabled ? {backgroundColor : "grey", color : "white"} : null}>
+                //         <div className={styles.innerContainer}>Book</div>
+                //     </div> 
+                //     : 
+                //     null
+                // }
+                // </ActionButton>
             }
 
         </div>
