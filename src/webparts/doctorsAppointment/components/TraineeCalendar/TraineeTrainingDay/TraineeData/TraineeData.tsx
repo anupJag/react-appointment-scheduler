@@ -59,60 +59,45 @@ const traineeData = (props: ITraineeDataProps) => {
                 <div className={styles.SessionCss}>{`${props.session}`}</div>
             </div>
             <div className={styles.DoctorDispNameCss}>{`by ${props.trainer}`}</div>
-            {
-                props.traineeBookingStatus === TraineeBookingStatusTypes.BookedByMe ?
-                    <ActionButton
-                        iconProps={{ iconName: "RemoveEvent" }}
-                        styles={iconButtonStyle}
-                        onClick={props.onDeregisterSlotButtonClicked}
-                        disabled={props.disablePreviousDayRegDeregBUtton}
-                    >
-                    </ActionButton>
-                    :
-
-                    !props.slotAvailable ?
+            <div className={styles.ButtonStyle}>
+                {
+                    props.traineeBookingStatus === TraineeBookingStatusTypes.BookedByMe ?
                         <ActionButton
-                            iconProps={{ iconName: "ProtectRestrict" }}
+                            iconProps={{ iconName: "RemoveEvent" }}
                             styles={iconButtonStyle}
-                            disabled={isDisabled}
-                            onClick={props.onRegisterSlotButtonClicked}
-                        />
+                            onClick={props.onDeregisterSlotButtonClicked}
+                            disabled={props.disablePreviousDayRegDeregBUtton}
+                        >
+                        </ActionButton>
                         :
-                        <button
-                            onClick={props.onRegisterSlotButtonClicked}
-                            disabled={isDisabled}
-                            className={styles.ButtonStyling}
-                            style={
-                                {
-                                    background: !isDisabled ? `url('https://team.effem.com/sites/MarsISApps/SiteAssets/Images/Book.png')`
-                                        :
-                                        `url('https://team.effem.com/sites/MarsISApps/SiteAssets/Images/BookDisable.png')`,
-                                    backgroundPosition: "center",
-                                    backgroundRepeat: "no-repeat",
-                                    backgroundColor: "transparent",
-                                    backgroundSize: "contain",
-                                    cursor: !isDisabled ? "pointer" : "default"
+
+                        !props.slotAvailable ?
+                            <ActionButton
+                                iconProps={{ iconName: "ProtectRestrict" }}
+                                styles={iconButtonStyle}
+                                disabled={isDisabled}
+                                onClick={props.onRegisterSlotButtonClicked}
+                            />
+                            :
+                            <button
+                                onClick={props.onRegisterSlotButtonClicked}
+                                disabled={isDisabled}
+                                className={styles.ButtonStyling}
+                                style={
+                                    {
+                                        background: !isDisabled ? `url('https://team.effem.com/sites/MarsISApps/SiteAssets/Images/Book.png')`
+                                            :
+                                            `url('https://team.effem.com/sites/MarsISApps/SiteAssets/Images/BookDisable.png')`,
+                                        backgroundPosition: "center",
+                                        backgroundRepeat: "no-repeat",
+                                        backgroundColor: "transparent",
+                                        backgroundSize: "contain",
+                                        cursor: !isDisabled ? "pointer" : "not-allowed"
+                                    }
                                 }
-                            }
-                        />
-
-                // <ActionButton
-                //     iconProps={{ iconName: !props.slotAvailable ? "ProtectRestrict" : null }}
-                //     styles={iconButtonStyle}
-                //     disabled={isDisabled}
-                //     onClick={props.onRegisterSlotButtonClicked}
-                // >
-                // {
-                //     !(!props.slotAvailable) ? 
-                //     <div className={styles.contianer} style={isDisabled ? {backgroundColor : "grey", color : "white"} : null}>
-                //         <div className={styles.innerContainer}>Book</div>
-                //     </div> 
-                //     : 
-                //     null
-                // }
-                // </ActionButton>
-            }
-
+                            />
+                }
+            </div>
         </div>
     );
 };

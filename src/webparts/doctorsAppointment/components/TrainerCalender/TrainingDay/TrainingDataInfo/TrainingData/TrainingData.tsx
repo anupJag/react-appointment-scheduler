@@ -8,12 +8,12 @@ export interface ITrainingDataProps {
     trainer: string;
     isLastElement: boolean;
     isDeregisterDisabled: boolean;
-    onDeRegistrationButtonClicked:() => void;
+    onDeRegistrationButtonClicked: () => void;
 }
 
 const trainingData = (props: ITrainingDataProps) => {
 
-    const styleToBeApplied : React.CSSProperties = {
+    const styleToBeApplied: React.CSSProperties = {
         marginBottom: "0"
     };
 
@@ -26,12 +26,14 @@ const trainingData = (props: ITrainingDataProps) => {
                 <div className={styles.SessionCss}>{`${props.session}`}</div>
             </div>
             <div className={styles.DoctorDispNameCss}>{`by ${props.trainer}`}</div>
-            <ActionButton
-                iconProps={{ iconName: "EventDeclined" }}
-                disabled={props.isDeregisterDisabled} 
-                onClick={props.onDeRegistrationButtonClicked}
-            >
-            </ActionButton>
+            <div className={styles.ButtonStyle}>
+                <ActionButton
+                    iconProps={{ iconName: "EventDeclined" }}
+                    disabled={props.isDeregisterDisabled}
+                    onClick={props.onDeRegistrationButtonClicked}
+                >
+                </ActionButton>
+            </div>
         </div>
     );
 };

@@ -1,9 +1,7 @@
 @import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
 .Info{
-    display: grid;
-    grid-template-columns: 1.5fr 2fr 1fr;
-    grid-column-gap: 1rem;  
+    display: flex; 
     justify-items: self-end;
     align-items: center;
     border-bottom: 1px solid #ccc;
@@ -13,11 +11,13 @@
     font-weight: 600;
     font-size: 0.95rem;
     margin-bottom: 5px;
+    width: 100%;
+    justify-content: space-between;
     
     .InfoHolder{
         display: flex;
         flex-direction: column;
-        width: 100%;
+        width: 38%;
         justify-self: self-start;
 
         .SessionCss{
@@ -31,8 +31,14 @@
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
-        justify-self: center;
-        max-width: calc(100% + 1em);
+        width: 45%;
+        text-align: center;
+    }
+
+    .ButtonStyle{
+        width: 10%;
+        display: flex;
+        justify-content: flex-end;
     }
 }
 
