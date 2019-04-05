@@ -273,7 +273,7 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
 
         for (let index = 0; index < daysOfWeek.length; index++) {
 
-            pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "DoctorTimeZone/Title" , "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate", "Trainee/Title", "SlotAvailable").expand("Author", "SlotTiming", "Category", "Trainee", "DoctorTimeZone").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + index}T00:00:00Z'`).configure({
+            pnp.sp.web.lists.getById(doctorBookingListID).items.select("Title", "DoctorTimeZone/Title", "SessionId" , "SlotTiming/Id", "Id", "Author/Title", "TrainerRegistrationStatus", "Category/Id", "RegistrationDate", "Trainee/Title", "SlotAvailable").expand("Author", "SlotTiming", "Category", "Trainee", "DoctorTimeZone").filter(`TrainerRegistrationStatus eq 'Booked' and Category eq ${trainingType} and RegistrationDate eq '${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate() + index}T00:00:00Z'`).configure({
                 headers: {
                     'Accept': 'application/json;odata=nometadata',
                     'odata-version': ''
@@ -303,7 +303,8 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                             TraineeBookingStatus: TraineeBookingStatusTypes.Available,
                             //TrainingInfo: element["TrainingInfo"],
                             DoctorTimeZone: element["DoctorTimeZone"]["Title"],
-                            DisablePrevDay: checkIfRegIsDisabled
+                            DisablePrevDay: checkIfRegIsDisabled,
+                            SessionId: element["SessionId"]
                         });
                     });
                 }
@@ -312,8 +313,8 @@ export default class TraineeCalendar extends React.Component<ITraineeCalendarPro
                 let getFilteredDataForLoggedInUser = tempData.filter(el => el.Trainee === loggedInUser);
                 if (getFilteredDataForLoggedInUser && getFilteredDataForLoggedInUser.length > 0) {
                     getFilteredDataForLoggedInUser.forEach(element => {
-                        const tempTitle = element.Title;
-                        let getSessionInfoFromTitle = tempData.filter(el => el.Title === tempTitle);
+                        const tempTitle = element.SessionId;
+                        let getSessionInfoFromTitle = tempData.filter(el => el.SessionId === tempTitle);
 
                         if (getSessionInfoFromTitle && getSessionInfoFromTitle.length > 0) {
                             getSessionInfoFromTitle.forEach(ele => {

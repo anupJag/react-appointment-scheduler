@@ -21,6 +21,12 @@
         width: 38%;
         justify-self: self-start;
 
+        .SessionInfo{
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
 
         .SessionCss{
             white-space: nowrap;

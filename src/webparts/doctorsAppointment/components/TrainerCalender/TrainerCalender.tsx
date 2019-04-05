@@ -165,6 +165,14 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         await batch.execute().then(d => console.log("Done"));
     }
 
+    protected guidGenerator = (): string => {
+        return (this.S4() + this.S4() + "-" + this.S4() + "-4" + this.S4().substr(0, 3) + "-" + this.S4() + "-" + this.S4() + this.S4() + this.S4()).toLowerCase();
+    }
+
+    protected S4 = (): string => {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    }
+
     protected createItemCreationDataStructure = (): ITrainerData[] => {
         let tempSelectedData = [...this.state.selectedTraininigSlots];
         let postBody: ITrainerData[] = [];
@@ -175,6 +183,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
         //const sessionDesc = this.state.sessionDesc;
         const key = this.state.trainingType.key;
         const trainingTypeAsNumber: number = parseInt(key as string, 0);
+        const getSessionID: string = this.guidGenerator();
 
         tempSelectedData.forEach((el: string) => {
             postBody.push({
@@ -184,7 +193,8 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                 RegistrationDate: registrationDate,
                 CategoryId: trainingTypeAsNumber,
                 SlotTimingId: parseInt(el as string, 10),
-                DoctorTimeZoneId: parseInt(timezoneSelected.key as string, 10)
+                DoctorTimeZoneId: parseInt(timezoneSelected.key as string, 10),
+                SessionId: getSessionID
             });
         });
 
@@ -270,8 +280,22 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                 });
             });
 
+            let timeZoneSlectedTemp: IDropdownOption = null;
+
+            if (tempTimeZoneData && tempTimeZoneData.length > 0) {
+                let tempData = tempTimeZoneData.filter(el => el.key === 48);
+
+                if (tempData && tempData.length > 0) {
+                    timeZoneSlectedTemp = {
+                        key: tempData[0].key,
+                        text: tempData[0].text
+                    };
+                }
+            }
+
             this.setState({
-                timezoneData: tempTimeZoneData
+                timezoneData: tempTimeZoneData,
+                timezoneSelected: timeZoneSlectedTemp
             });
         });
 
@@ -466,7 +490,7 @@ export default class TrainerCalender extends React.Component<ITrainerCalenderPro
                 onSaveClick={this.onSaveClickHandler.bind(this)}
                 primaryButtonText={'Post Availability'}
                 //isReserveSlotsDisabled={!(this.state.sessionName && this.state.sessionName.length > 0 && this.state.sessionDesc && this.state.sessionDesc.length > 0 && this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 0)}
-                isReserveSlotsDisabled={!(this.state.sessionName && this.state.sessionName.length > 0 && this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 0) && this.state.timezoneSelected && this.state.timezoneSelected["key"] !== null}
+                isReserveSlotsDisabled={!(this.state.sessionName && this.state.sessionName.length > 0 && this.state.selectedTraininigSlots && this.state.selectedTraininigSlots.length > 0 && this.state.timezoneSelected && this.state.timezoneSelected["key"] !== null)}
                 timezoneData={this.state.timezoneData}
                 onTimezoneDropDownChanged={this.onTimezoneDropDownChangedHandler.bind(this)}
             />

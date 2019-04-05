@@ -33,6 +33,7 @@ const trainingDataInfo = (props: ITrainingDataInfoProps) => {
                                 onRegisterSlotButtonClicked={props.onRegisterSlotButtonClicked.bind(this, el.Id)}
                                 onDeregisterSlotButtonClicked={props.onDeregisterSlotButtonClicked.bind(this, el.Id)}
                                 disablePreviousDayRegDeregBUtton={el.DisablePrevDay}
+                                timezone={el.DoctorTimeZone}
                             />
                         );
                     }

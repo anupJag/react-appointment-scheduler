@@ -15,6 +15,7 @@ export interface ITraineeDataProps {
     disablePreviousDayRegDeregBUtton: boolean;
     onDeregisterSlotButtonClicked: () => void;
     onRegisterSlotButtonClicked: () => void;
+    timezone: string;
 }
 
 const traineeData = (props: ITraineeDataProps) => {
@@ -55,7 +56,7 @@ const traineeData = (props: ITraineeDataProps) => {
     return (
         <div className={styleToApply} style={props.isLastElement ? styleToBeApplied : null}>
             <div className={styles.InfoHolder}>
-                <div>{props.time}</div>
+                <div className={styles.SessionInfo}>{props.time} {props.timezone}</div>
                 <div className={styles.SessionCss}>{`${props.session}`}</div>
             </div>
             <div className={styles.DoctorDispNameCss}>{`by ${props.trainer}`}</div>

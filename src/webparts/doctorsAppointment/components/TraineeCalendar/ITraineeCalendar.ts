@@ -44,6 +44,7 @@ export interface ITraineeData {
     CategoryId: number;
     //TrainingInfo: string;
     SlotTimingId: number;
+    SessionId: string;
 }
 
 export enum TraineeBookingStatusTypes {
@@ -78,6 +79,7 @@ export interface ITraineeRegisteredDataStructure {
     //TrainingInfo: string;
     DoctorTimeZone : string;
     DisablePrevDay: boolean;
+    SessionId: string;
 }
 
 export interface IWeekTraineeData {

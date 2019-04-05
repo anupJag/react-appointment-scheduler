@@ -15,6 +15,17 @@ export interface ILeftSectionProps {
 }
 
 const leftSection = (props: ILeftSectionProps) => {
+
+    let defaultSelected : IDropdownOption[] = props.timezoneData && props.timezoneData.length > 0 ? props.timezoneData.filter(el => el.key === 48) : [];
+
+    if(!(defaultSelected && defaultSelected.length > 0)){
+        defaultSelected = [{
+            text: props.timezoneData[0].text,
+            key: props.timezoneData[0].key
+        }];
+    }
+
+
     return (
         <div className={styles.LeftSection}>
             <div className={styles.TextFieldSection}>
@@ -46,6 +57,7 @@ const leftSection = (props: ILeftSectionProps) => {
                     options={props.timezoneData}
                     onChanged={props.onTimezoneDropDownChanged}
                     disabled={props.isTimezoneDisabled}
+                    defaultSelectedKey={defaultSelected[0].key}
                 />
             </div>
         </div>

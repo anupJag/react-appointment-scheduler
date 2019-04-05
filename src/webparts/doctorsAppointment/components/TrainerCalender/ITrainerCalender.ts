@@ -40,7 +40,7 @@ export interface ITrainerData {
     //TrainingInfo: string;
     SlotTimingId: number;
     DoctorTimeZoneId: number;
-
+    SessionId : string;
 }
 
 export enum TrainerRegistrationStatus {
